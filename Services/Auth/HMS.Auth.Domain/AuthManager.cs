@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace HMS.Auth.Domain
 {
-    [Table(nameof(AuthReceptionist), Schema = DbSchema.Auth)]
+    [Table(nameof(AuthManager), Schema = DbSchema.Auth)]
 
-    public class AuthReceptionist
+    public class AuthManager
     {
         [Key]
-        public int ReceptionistId { get; set; }
+        public int ManagerId { get; set; }
         //public int UserId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -22,7 +22,5 @@ namespace HMS.Auth.Domain
         public string? PhoneNumber { get; set; }
         public string? CitizenIdentity { get; set; }
         public DateTime? DateOfBirth { get; set; }
-
-
     }
 }
