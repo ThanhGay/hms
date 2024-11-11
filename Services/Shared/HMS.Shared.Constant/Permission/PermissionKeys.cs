@@ -19,6 +19,10 @@ namespace HMS.Shared.Constant.Permission
         public const string AddCustomer = "add_customer";
         public const string UpdateInfCustomer = "update_information_customer";
         public const string DeleteCustomer = "delete_customer";
+        public const string GetReceptionistById = "get_receptionist_by_id";
+        public const string GetAllReceptionist = "get_all_receptionist";
+        public const string GetCustomerById = "get_customer_by_id";
+        public const string GetAllCustomer = "get_all_customer";
 
     }
 }

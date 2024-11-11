@@ -1,4 +1,5 @@
-﻿using HMS.Auth.Domain;
+﻿using HMS.Auth.ApplicationService.Common;
+using HMS.Auth.Domain;
 using HMS.Auth.Dtos.Receptionist;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,5 +15,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
         AuthReceptionist CreateReceptionist([FromQuery] string email, string password, AddReceptionistDto input);
         AuthReceptionist UpdateInfReceptionist(int receptionistId, AddReceptionistDto input);
         void DeleteReceptionist(int receptionistId);
+        AuthReceptionist GetReceptionistById([FromQuery] int id);
+        PageResultDto<AuthReceptionist> GetAllReceptionist([FromQuery] FilterDto input);
     }
 }

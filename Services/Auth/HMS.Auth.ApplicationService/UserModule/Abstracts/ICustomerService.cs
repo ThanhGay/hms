@@ -1,4 +1,5 @@
-﻿using HMS.Auth.Domain;
+﻿using HMS.Auth.ApplicationService.Common;
+using HMS.Auth.Domain;
 using HMS.Auth.Dtos.Customer;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,6 +14,8 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
     {
         AuthCustomer CreateCustomer([FromQuery] string email, string password, AddCustomer input);
         void DeleteCustomer(int customerId);
+        PageResultDto<AuthCustomer> GetAllCustomer([FromQuery] FilterDto input);
+        AuthCustomer GetCustomerById([FromQuery] int id);
         AuthCustomer UpdateInfCustomer(int customerId, AddCustomer input);
     }
 }

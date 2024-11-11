@@ -72,22 +72,10 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                     result.User = user;
                     result.Token = Createtokens(user, resultAuth.RoleId);
                 }
-                else if (resultAuth.RoleId == 2)
+                else
                 {
                     var findCustomer = _dbContext.AuthReceptionists.FirstOrDefault(c => c.ReceptionistId == resultAuth.UserId);
                     user.UserId = findCustomer.ReceptionistId;
-                    user.FirstName = findCustomer.FirstName;
-                    user.LastName = findCustomer.LastName;
-                    user.PhoneNumber = findCustomer.PhoneNumber;
-                    user.CitizenIdentity = findCustomer.CitizenIdentity;
-                    user.DateOfBirth = findCustomer.DateOfBirth;
-                    result.User = user;
-                    result.Token = Createtokens(user, resultAuth.RoleId);
-                }
-                else
-                {
-                    var findCustomer = _dbContext.AuthManagers.FirstOrDefault(c => c.ManagerId == resultAuth.UserId);
-                    user.UserId = findCustomer.ManagerId;
                     user.FirstName = findCustomer.FirstName;
                     user.LastName = findCustomer.LastName;
                     user.PhoneNumber = findCustomer.PhoneNumber;

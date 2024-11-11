@@ -14,7 +14,7 @@ namespace HMS.Auth.Infrastructures
         {
         }
         public DbSet<AuthUser> AuthUsers { get; set; }
-        public DbSet<AuthManager> AuthManagers { get; set; }
+        public DbSet<AuthPermission> AuthPermissions { get; set; }
         public DbSet<AuthCustomer> AuthCustomers { get; set; }
         public DbSet<AuthReceptionist> AuthReceptionists { get; set; }
         public DbSet<AuthRole> AuthRoles { get; set; }
@@ -41,10 +41,10 @@ namespace HMS.Auth.Infrastructures
                 .WithOne()
                 .HasForeignKey<AuthReceptionist>(a => a.ReceptionistId)
                 .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<AuthManager>()
-                .HasOne<AuthUser>()
-                .WithOne()
-                .HasForeignKey<AuthManager>(a => a.ManagerId)
+            modelBuilder.Entity<AuthRolePermission>()
+                .HasOne<AuthPermission>()
+                .WithMany()
+                .HasForeignKey(a => a.PermissonKey)
                 .OnDelete(DeleteBehavior.Restrict);
             base.OnModelCreating(modelBuilder);
         }

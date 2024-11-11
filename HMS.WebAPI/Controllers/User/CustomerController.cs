@@ -1,4 +1,5 @@
-﻿using HMS.Auth.ApplicationService.UserModule.Abstracts;
+﻿using HMS.Auth.ApplicationService.Common;
+using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Dtos.Customer;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
@@ -12,13 +13,13 @@ namespace HMS.WebAPI.Controllers.User
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
-
-        public CustomerController(ICustomerService customerService)
+        public CustomerController(ICustomerService customerService )
         {
             _customerService = customerService;
         }
+
         [Authorize]
-        [AuthorizationFilter("1,2")]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.AddCustomer })]
         [HttpPost("/add-customer")]
         public IActionResult AddCustomers([FromQuery] string email, string password, AddCustomer input)
         {
@@ -31,8 +32,9 @@ namespace HMS.WebAPI.Controllers.User
                 return BadRequest(ex.Message);
             }
         }
+
         [Authorize]
-        [AuthorizationFilter("1,2")]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateInfCustomer })]
         [HttpPut("/update-information-customer")]
         public IActionResult UpdateInformationCustomer(int customerId, AddCustomer input)
         {
@@ -45,8 +47,9 @@ namespace HMS.WebAPI.Controllers.User
                 return BadRequest(ex.Message);
             }
         }
+
         [Authorize]
-        [AuthorizationFilter("2")]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.DeleteCustomer })]
         [HttpDelete("/delete-customer")]
         public IActionResult DeleteCustomer(int id)
         {
@@ -54,6 +57,35 @@ namespace HMS.WebAPI.Controllers.User
             {
                 _customerService.DeleteCustomer(id);
                 return Ok("Thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] {PermissionKeys.GetCustomerById})]
+        [HttpGet("/get-customer-by-id")]
+        public IActionResult GetCustomerById([FromQuery] int id)
+        {
+            try
+            {
+                return Ok(_customerService.GetCustomerById(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllCustomer })]
+        [HttpGet("/get-all-customer")]
+        public IActionResult GetAllCustomer([FromQuery] FilterDto input)
+        {
+            try
+            {
+                return Ok(_customerService.GetAllCustomer(input));
             }
             catch (Exception ex)
             {

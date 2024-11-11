@@ -4,7 +4,7 @@ namespace HMS.WebAPI
 {
     public class CommonUntil
     {
-        public static string GetCurrentUserId(IHttpContextAccessor httpContextAccessor)
+        public static int GetCurrentUserId(IHttpContextAccessor httpContextAccessor)
         {
             var claims = httpContextAccessor.HttpContext?.User?.Identity as ClaimsIdentity;
                 //nếu trong program dùng JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -14,7 +14,7 @@ namespace HMS.WebAPI
                 {
                     throw new Exception($"Tài khoản không chứa claim \"{System.Security.Claims.ClaimTypes.NameIdentifier}\"");
                 }
-                return claim.Value;
+                return int.Parse(claim.Value);
             }
         }
 

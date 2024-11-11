@@ -4,6 +4,7 @@ using HMS.Auth.Infrastructures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.WebAPI.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241111173537_AuthDb4")]
+    partial class AuthDb4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,7 +126,8 @@ namespace HMS.WebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PermissonKey");
+                    b.HasIndex("PermissonKey")
+                        .IsUnique();
 
                     b.HasIndex("RoleId");
 
@@ -180,8 +184,8 @@ namespace HMS.WebAPI.Migrations
             modelBuilder.Entity("HMS.Auth.Domain.AuthRolePermission", b =>
                 {
                     b.HasOne("HMS.Auth.Domain.AuthPermission", null)
-                        .WithMany()
-                        .HasForeignKey("PermissonKey")
+                        .WithOne()
+                        .HasForeignKey("HMS.Auth.Domain.AuthRolePermission", "PermissonKey")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

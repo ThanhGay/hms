@@ -6,44 +6,17 @@ using HMS.Auth.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using HMS.Auth.Dtos.Customer;
-using HMS.Auth.Dtos.Receptionist;
-using Microsoft.AspNetCore.Http;
-using HMS.Shared.Constant.Permission;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
     public class CustomerService : AuthServiceBase, ICustomerService
     {
-        private readonly IHttpContextAccessor _contextAccessor;
-        public CustomerService(ILogger<ReceptionistService> logger, AuthDbContext dbContext, IHttpContextAccessor contextAccessor) : base(logger, dbContext) 
+        public CustomerService(ILogger<ReceptionistService> logger, AuthDbContext dbContext) : base(logger, dbContext) 
         {
-            _contextAccessor = contextAccessor;
         }
 
         public AuthCustomer CreateCustomer([FromQuery] string email, string password, AddCustomer input)
         {
-            int userId = CommonUntil.GetCurrentUserId(_contextAccessor);
-            var permisstionKey = from u in _dbContext.AuthUsers
-                                 join up in _dbContext.AuthRolesPermissions on u.RoleId equals up.RoleId
-                                 where u.UserId == userId
-                                 select new
-                                 {
-                                     roleId = u.RoleId,
-                                     permisstion = up.PermissonKey,
-                                 };
-            int checkPermisstion = 0;
-            foreach (var item in permisstionKey)
-            {
-                Console.WriteLine($"{item.permisstion}, {PermissionKeys.AddCustomer}");
-                if (item.permisstion == PermissionKeys.AddCustomer)
-                {
-                    checkPermisstion++;
-                }
-            }
-            if (checkPermisstion == 0)
-            {
-                throw new UserExceptions("Bạn Không được phép create customer");
-            }
             var findEmail = _dbContext.AuthUsers.Any(u => u.Email == email);
             if (findEmail)
             {
@@ -73,28 +46,6 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         }
         public AuthCustomer UpdateInfCustomer(int customerId, AddCustomer input)
         {
-            int userId = CommonUntil.GetCurrentUserId(_contextAccessor);
-            var permisstionKey = from u in _dbContext.AuthUsers
-                                 join up in _dbContext.AuthRolesPermissions on u.RoleId equals up.RoleId
-                                 where u.UserId == userId
-                                 select new
-                                 {
-                                     roleId = u.RoleId,
-                                     permisstion = up.PermissonKey,
-                                 };
-            int checkPermisstion = 0;
-            foreach (var item in permisstionKey)
-            {
-                Console.WriteLine($"{item.permisstion}, {PermissionKeys.UpdateInfCustomer}");
-                if (item.permisstion == PermissionKeys.UpdateInfCustomer)
-                {
-                    checkPermisstion++;
-                }
-            }
-            if (checkPermisstion == 0)
-            {
-                throw new UserExceptions("Bạn Không được phép update customer");
-            }
             var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(r => r.CustomerId == customerId)
                 ?? throw new UserExceptions("Không tồn tại cutomer");
             if (findCustomer != null)
@@ -111,33 +62,50 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         }
         public void DeleteCustomer(int customerId)
         {
-            int userId = CommonUntil.GetCurrentUserId(_contextAccessor);
-            var permisstionKey = from u in _dbContext.AuthUsers
-                                 join up in _dbContext.AuthRolesPermissions on u.RoleId equals up.RoleId
-                                 where u.UserId == userId
-                                 select new
-                                 {
-                                     roleId = u.RoleId,
-                                     permisstion = up.PermissonKey,
-                                 };
-            int checkPermisstion = 0;
-            foreach (var item in permisstionKey)
-            {
-                Console.WriteLine($"{item.permisstion}, {PermissionKeys.DeleteCustomer}");
-                if (item.permisstion == PermissionKeys.DeleteCustomer)
-                {
-                    checkPermisstion++;
-                }
-            }
-            if (checkPermisstion == 0)
-            {
-                throw new UserExceptions("Bạn Không được phép delete customer");
-            }
             var findCustomer = _dbContext.AuthUsers.FirstOrDefault(r => r.UserId == customerId)
             ?? throw new UserExceptions("Không tồn tại customer");
             findCustomer.IsDeleted = true;
             _dbContext.AuthUsers.Update(findCustomer);
             _dbContext.SaveChanges();
         }
+        public AuthCustomer GetCustomerById([FromQuery] int id)
+        {
+            var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(r => r.CustomerId == id)
+                ?? throw new UserExceptions("Không tồn tại customer");
+            var checkDelete = _dbContext.AuthUsers.FirstOrDefault(u => u.UserId == id);
+
+            if (checkDelete.IsDeleted)
+            {
+                throw new UserExceptions("Người dùng đã bị xóa");
+            }
+
+            return findCustomer;
+        }
+        public PageResultDto<AuthCustomer> GetAllCustomer([FromQuery] FilterDto input)
+        {
+            var result = new PageResultDto<AuthCustomer>();
+            var checkDelete = from au in _dbContext.AuthUsers
+                              join ac in _dbContext.AuthCustomers on au.UserId equals ac.CustomerId
+                              where au.IsDeleted == false
+                              select new AuthCustomer
+                              {
+                                  CustomerId = ac.CustomerId,
+                                  FirstName = ac.FirstName,
+                                  LastName = ac.LastName,
+                                  PhoneNumber = ac.PhoneNumber,
+                                  CitizenIdentity = ac.CitizenIdentity,
+                                  DateOfBirth = ac.DateOfBirth
+                              };
+            var query = checkDelete.Where(e =>
+                        string.IsNullOrEmpty(input.KeyWord)
+                        || e.LastName.ToLower().Contains(input.KeyWord.ToLower()));
+            result.TotalItem = query.Count();
+            query = query.OrderBy(e => e.LastName)
+                         .Skip(input.Skip())
+                         .Take(input.PageSize);
+            result.Items = query.ToList();
+            return result;
+        }
+
     }
 }
