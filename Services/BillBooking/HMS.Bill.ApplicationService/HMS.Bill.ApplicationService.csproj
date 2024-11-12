@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Shared\HMS.Shared.ApplicationService\HMS.Shared.ApplicationService.csproj" />
 		<ProjectReference Include="..\..\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
 		<ProjectReference Include="..\HMS.Bill.Dtos\HMS.Bill.Dtos.csproj" />
 		<ProjectReference Include="..\HMS.Bill.Infrastructures\HMS.Bill.Infrastructures.csproj" />
