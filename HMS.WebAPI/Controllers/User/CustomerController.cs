@@ -78,6 +78,7 @@ namespace HMS.WebAPI.Controllers.User
                 return BadRequest(ex.Message);
             }
         }
+
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllCustomer })]
         [HttpGet("/get-all-customer")]
