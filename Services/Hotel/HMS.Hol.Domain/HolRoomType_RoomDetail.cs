@@ -12,7 +12,6 @@ namespace HMS.Hol.Domain
     [Table(nameof(HolRoomType_RoomDetail), Schema = DbSchema.Hotel)]
     public class HolRoomType_RoomDetail
     {
-        [Key]
         public int RoomDetailID  { get; set; }  
         public int RoomTypeID { get; set; }
     }

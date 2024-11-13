@@ -12,7 +12,6 @@ namespace HMS.Bill.Domain
     [Table(nameof(BillBillBookingRoom), Schema = DbSchema.BillBooking)]
     public class BillBillBookingRoom
     {
-        [Key]
         public int BillID { get; set; }
         public int RoomID { get; set; }
        

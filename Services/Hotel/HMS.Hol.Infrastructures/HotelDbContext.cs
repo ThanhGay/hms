@@ -28,7 +28,49 @@ namespace HMS.Hol.Infrastructures
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder
+              .Entity<HolImage>()
+              .HasOne<HolRoom>()
+              .WithMany()
+              .HasForeignKey(e => e.RoomId)
+              .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder
+              .Entity<HolRoom>()
+              .HasOne<HolHotel>()
+              .WithMany()
+              .HasForeignKey(e => e.HotelId)
+              .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder
+              .Entity<HolRoom>()
+              .HasOne<HolRoomType>()
+              .WithMany()
+              .HasForeignKey(e => e.RoomTypeId)
+              .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder
+              .Entity<HolPrice>()
+              .HasOne<HolRoomType>()
+              .WithMany()
+              .HasForeignKey(e => e.RoomTypeID)
+              .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder
+                .Entity<HolRoomType_RoomDetail>()
+                .HasKey(e =>new{ e.RoomDetailID,e.RoomTypeID});
+            modelBuilder
+              .Entity<HolRoomType_RoomDetail>()
+              .HasOne<HolRoomType>()
+              .WithMany()
+              .HasForeignKey(e => e.RoomTypeID)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder
+              .Entity<HolRoomType_RoomDetail>()
+              .HasOne<HolRoomDetail>()
+              .WithMany()
+              .HasForeignKey(e => e.RoomDetailID)
+              .OnDelete(DeleteBehavior.Restrict);
+            
             base.OnModelCreating(modelBuilder);
+
         }
     }
 }

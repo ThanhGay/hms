@@ -25,6 +25,9 @@ namespace HMS.Bill.Infrastructures
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
+             .Entity<BillBillBookingRoom>()
+             .HasKey(e => new { e.BillID, e.RoomID });
+            modelBuilder
                 .Entity<BillBillBookingRoom>()
                 .HasOne<BillBillBooking>()
                 .WithMany()
