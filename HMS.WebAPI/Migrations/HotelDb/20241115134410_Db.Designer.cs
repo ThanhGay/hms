@@ -4,6 +4,7 @@ using HMS.Hol.Infrastructures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     [DbContext(typeof(HotelDbContext))]
-    partial class HotelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241115134410_Db")]
+    partial class Db
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,8 +63,6 @@ namespace HMS.WebAPI.Migrations.HotelDb
 
                     b.HasKey("BillID");
 
-                    b.HasIndex("ChargeId");
-
                     b.ToTable("HolBillBooking", "hol");
                 });
 
@@ -83,10 +84,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
             modelBuilder.Entity("HMS.Hol.Domain.HolCharge", b =>
                 {
                     b.Property<int>("ChargeId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChargeId"));
 
                     b.Property<string>("Descreption")
                         .IsRequired()
@@ -324,15 +322,6 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.ToTable("HolSubPrice", "hol");
                 });
 
-            modelBuilder.Entity("HMS.Hol.Domain.HolBillBooking", b =>
-                {
-                    b.HasOne("HMS.Hol.Domain.HolCharge", null)
-                        .WithMany()
-                        .HasForeignKey("ChargeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("HMS.Hol.Domain.HolBillBooking_Room", b =>
                 {
                     b.HasOne("HMS.Hol.Domain.HolBillBooking", null)
@@ -344,6 +333,15 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.HasOne("HMS.Hol.Domain.HolRoom", null)
                         .WithMany()
                         .HasForeignKey("RoomID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HMS.Hol.Domain.HolCharge", b =>
+                {
+                    b.HasOne("HMS.Hol.Domain.HolBillBooking", null)
+                        .WithMany()
+                        .HasForeignKey("ChargeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
