@@ -9,15 +9,14 @@ using System.Threading.Tasks;
 
 namespace HMS.Hol.Domain
 {
-    [Table(nameof(HolPrice), Schema = DbSchema.Hotel)]
-    public class HolPrice
+    [Table(nameof(HolSubPrice), Schema = DbSchema.Hotel)]
+    public class HolSubPrice
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]   
-        public int RoomID { get; set; }
+        public int SubPriceID { get; set; }
         public int PricePerHours { get; set; }
         public int PricePerNight { get; set; }
-        public int PricePerHolidayHours { get; set; }
         public DateTime DayStart  { get; set; }
         public DateTime DayEnd { get; set; }
         public int RoomTypeID { get; set; }

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using HMS.Bill.ApplicationService.Startup;
 using HMS.Hol.ApplicationService.Startup;
 
 namespace HMS.WebAPI
@@ -46,7 +45,6 @@ namespace HMS.WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.ConfigureAuth(typeof(Program).Namespace);
-            builder.ConfigureBillBooking(typeof(Program).Namespace);
             builder.ConfigureHotel(typeof(Program).Namespace);
             
             // configure logging
