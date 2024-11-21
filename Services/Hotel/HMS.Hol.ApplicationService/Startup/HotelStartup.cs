@@ -1,4 +1,10 @@
-﻿using HMS.Hol.Infrastructures;
+﻿using HMS.Hol.ApplicationService.BillManager.Abstracts;
+using HMS.Hol.ApplicationService.BillManager.Implements;
+using HMS.Hol.ApplicationService.HotelManager.Abstracts;
+using HMS.Hol.ApplicationService.HotelManager.Implements;
+using HMS.Hol.ApplicationService.RoomManager.Abstracts;
+using HMS.Hol.ApplicationService.RoomManager.Implements;
+using HMS.Hol.Infrastructures;
 using HMS.Shared.Constant.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +40,10 @@ namespace HMS.Hol.ApplicationService.Startup
                 ServiceLifetime.Scoped
             );
 
-
+            builder.Services.AddScoped<IHotelService, HotelService>();
+            builder.Services.AddScoped<IRoomService, RoomService>();
+            builder.Services.AddScoped<IRoomTypeService, RoomTypeService>();
+            builder.Services.AddScoped<IBillBookingService, BillBookingService>();
         }
 
     }

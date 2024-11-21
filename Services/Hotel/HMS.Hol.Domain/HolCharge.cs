@@ -15,6 +15,6 @@ namespace HMS.Hol.Domain
         [Key]
         public int ChargeId { get; set; }
         public int Price { get; set; }
-        public string Descreption { get; set; }
+        public string? Descreption { get; set; }
     }
 }
