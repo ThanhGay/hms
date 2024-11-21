@@ -1,16 +1,22 @@
-﻿using HMS.Hol.ApplicationService.RoomManager.Abstracts;
-using HMS.Hol.Dtos.RoomTypeManager;
-using HMS.Shared.Constant.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HMS.Hol.ApplicationService.Common;
+using HMS.Hol.ApplicationService.RoomManager.Abstracts;
+using HMS.Hol.Dtos.RoomTypeManager;
+using HMS.Hol.Infrastructures;
+using HMS.Shared.Constant.Common;
+using Microsoft.Extensions.Logging;
 
 namespace HMS.Hol.ApplicationService.RoomManager.Implements
 {
-    public class RoomTypeService : IRoomTypeService
+    public class RoomTypeService : HotelServiceBase, IRoomTypeService
     {
+        public RoomTypeService(ILogger<RoomTypeService> logger, HotelDbContext dbContext)
+            : base(logger, dbContext) { }
+
         public void CreateRoomType(CreateRoomTypeDto input)
         {
             throw new NotImplementedException();
