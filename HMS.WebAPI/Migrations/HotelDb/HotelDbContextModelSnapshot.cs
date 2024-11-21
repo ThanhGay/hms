@@ -48,6 +48,9 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.Property<int>("DiscountID")
                         .HasColumnType("int");
 
+                    b.Property<float>("PercentDiscount")
+                        .HasColumnType("real");
+
                     b.Property<int>("Prepayment")
                         .HasColumnType("int");
 
@@ -60,7 +63,8 @@ namespace HMS.WebAPI.Migrations.HotelDb
 
                     b.HasKey("BillID");
 
-                    b.HasIndex("ChargeId");
+                    b.HasIndex("ChargeId")
+                        .IsUnique();
 
                     b.ToTable("HolBillBooking", "hol");
                 });
@@ -89,7 +93,6 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChargeId"));
 
                     b.Property<string>("Descreption")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Price")
@@ -122,26 +125,6 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.HasIndex("RoomTypeID");
 
                     b.ToTable("HolDefaultPrice", "hol");
-                });
-
-            modelBuilder.Entity("HMS.Hol.Domain.HolDiscount", b =>
-                {
-                    b.Property<int>("DiscountID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ExpDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<float>("Percent")
-                        .HasColumnType("real");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("DiscountID");
-
-                    b.ToTable("HolDiscount", "hol");
                 });
 
             modelBuilder.Entity("HMS.Hol.Domain.HolHotel", b =>
@@ -244,13 +227,9 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomDetailID"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Price")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomID")
                         .HasColumnType("int");
 
                     b.HasKey("RoomDetailID");
@@ -327,8 +306,8 @@ namespace HMS.WebAPI.Migrations.HotelDb
             modelBuilder.Entity("HMS.Hol.Domain.HolBillBooking", b =>
                 {
                     b.HasOne("HMS.Hol.Domain.HolCharge", null)
-                        .WithMany()
-                        .HasForeignKey("ChargeId")
+                        .WithOne()
+                        .HasForeignKey("HMS.Hol.Domain.HolBillBooking", "ChargeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -353,15 +332,6 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.HasOne("HMS.Hol.Domain.HolRoomType", null)
                         .WithMany()
                         .HasForeignKey("RoomTypeID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("HMS.Hol.Domain.HolDiscount", b =>
-                {
-                    b.HasOne("HMS.Hol.Domain.HolBillBooking", null)
-                        .WithOne()
-                        .HasForeignKey("HMS.Hol.Domain.HolDiscount", "DiscountID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
