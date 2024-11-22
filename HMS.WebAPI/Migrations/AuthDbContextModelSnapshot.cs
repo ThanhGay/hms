@@ -47,6 +47,24 @@ namespace HMS.WebAPI.Migrations
                     b.ToTable("AuthCustomer", "auth");
                 });
 
+            modelBuilder.Entity("HMS.Auth.Domain.AuthCustomerVoucher", b =>
+                {
+                    b.Property<int>("VoucherId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("UsedAt")
+                        .HasColumnType("date");
+
+                    b.HasKey("VoucherId", "CustomerId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("AuthCustomerVoucher", "auth");
+                });
+
             modelBuilder.Entity("HMS.Auth.Domain.AuthPermission", b =>
                 {
                     b.Property<string>("PermissonKey")
@@ -159,11 +177,48 @@ namespace HMS.WebAPI.Migrations
                     b.ToTable("AuthUser", "auth");
                 });
 
+            modelBuilder.Entity("HMS.Auth.Domain.AuthVoucher", b =>
+                {
+                    b.Property<int>("VoucherId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VoucherId"));
+
+                    b.Property<DateOnly>("ExpDate")
+                        .HasColumnType("date");
+
+                    b.Property<float>("Percent")
+                        .HasColumnType("real");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("VoucherId");
+
+                    b.ToTable("AuthVoucher", "auth");
+                });
+
             modelBuilder.Entity("HMS.Auth.Domain.AuthCustomer", b =>
                 {
                     b.HasOne("HMS.Auth.Domain.AuthUser", null)
                         .WithOne()
                         .HasForeignKey("HMS.Auth.Domain.AuthCustomer", "CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HMS.Auth.Domain.AuthCustomerVoucher", b =>
+                {
+                    b.HasOne("HMS.Auth.Domain.AuthCustomer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HMS.Auth.Domain.AuthVoucher", null)
+                        .WithMany()
+                        .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

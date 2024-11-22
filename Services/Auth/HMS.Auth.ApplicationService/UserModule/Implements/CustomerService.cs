@@ -11,7 +11,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
     public class CustomerService : AuthServiceBase, ICustomerService
     {
-        public CustomerService(ILogger<ReceptionistService> logger, AuthDbContext dbContext) : base(logger, dbContext) 
+        public CustomerService(ILogger<CustomerService> logger, AuthDbContext dbContext) : base(logger, dbContext) 
         {
         }
 
@@ -20,7 +20,8 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             var findEmail = _dbContext.AuthUsers.Any(u => u.Email == email);
             if (findEmail)
             {
-                throw new UserExceptions("Đã tồn tại email");
+                _logger.LogError("Đã tồn tại email");
+                throw new UserExceptions("Không tồn tại email");
             }
             var user = new AuthUser
             {

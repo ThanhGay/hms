@@ -14,8 +14,7 @@ namespace HMS.Hol.Domain
     {
         [Key]
         public int RoomDetailID { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public int Price { get; set; }
-        public int RoomID { get; set; }
     }
 }

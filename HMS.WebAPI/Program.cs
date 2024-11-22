@@ -15,6 +15,7 @@ namespace HMS.WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            // configure jwt
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             builder
                 .Services.AddAuthentication(option =>
@@ -45,8 +46,19 @@ namespace HMS.WebAPI
             builder.Services.AddSwaggerGen();
             builder.ConfigureAuth(typeof(Program).Namespace);
             builder.ConfigureHotel(typeof(Program).Namespace);
+            
+            // configure logging
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.SetMinimumLevel(LogLevel.Information);
+
             var app = builder.Build();
-           
+            app.MapGet("/", () => "Hello world!");
+            app.MapGet("/Test", async (ILogger<Program> logger, HttpResponse response) =>
+            {
+                logger.LogInformation("Testing logging in Program.cs");
+                await response.WriteAsync("Testing");
+            });
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -56,7 +68,7 @@ namespace HMS.WebAPI
 
             app.UseHttpsRedirection();
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

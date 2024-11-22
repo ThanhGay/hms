@@ -92,5 +92,62 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                 throw new UserExceptions("Sai mật khẩu");
             }
         }
+
+        public List<string> GetFunctionManager()
+        {
+            var func = new List<string>();
+
+            var findFunc = from p in _dbContext.AuthRolesPermissions
+                           join pn in _dbContext.AuthPermissions on p.PermissonKey equals pn.PermissonKey
+                           where p.RoleId == 3
+                           select new
+                           {
+                               permission = p.PermissonKey,
+                               permissionName = pn.PermissionName
+                           };
+            foreach (var item in findFunc)
+            {
+                func.Add(item.permissionName);
+            }
+            return func;
+        }
+
+        public List<string> GetFunctionReceptionist()
+        {
+            var func = new List<string>();
+
+            var findFunc = from p in _dbContext.AuthRolesPermissions
+                           join pn in _dbContext.AuthPermissions on p.PermissonKey equals pn.PermissonKey
+                           where p.RoleId == 2
+                           select new
+                           {
+                               permission = p.PermissonKey,
+                               permissionName = pn.PermissionName
+                           };
+            foreach (var item in findFunc)
+            {
+                func.Add(item.permissionName);
+            }
+            return func;
+        }
+
+        public List<string> GetFunctionCustomer()
+        {
+            var func = new List<string>();
+
+            var findFunc = from p in _dbContext.AuthRolesPermissions
+                           join pn in _dbContext.AuthPermissions on p.PermissonKey equals pn.PermissonKey
+                           where p.RoleId == 1
+                           select new
+                           {
+                               permission = p.PermissonKey,
+                               permissionName = pn.PermissionName
+                           };
+            foreach (var item in findFunc)
+            {
+                func.Add(item.permissionName);
+            }
+            return func;
+        }
     }
 }

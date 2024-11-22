@@ -18,8 +18,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="UseModule\Abstracts\" />
-	  <Folder Include="UseModule\Implemetns\" />
+	  <Folder Include="BillManager\Implements\" />
+	  <Folder Include="HotelManager\Implements\" />
+	  <Folder Include="RoomManager\Implements\" />
 	</ItemGroup>
 
 </Project>

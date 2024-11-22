@@ -23,6 +23,10 @@ namespace HMS.Shared.Constant.Permission
         public const string GetAllReceptionist = "get_all_receptionist";
         public const string GetCustomerById = "get_customer_by_id";
         public const string GetAllCustomer = "get_all_customer";
+        public const string GetAllFunctionCustomer = "get_all_function_customer";
+        public const string GetAllFunctionReceptionist = "get_all_function_receptionist";
+        public const string GetAllFunctionManager = "get_all_function_manager";
+
 
     }
 }

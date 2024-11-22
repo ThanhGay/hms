@@ -10,6 +10,9 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
 {
     public interface IUserService
     {
+        List<string> GetFunctionCustomer();
+        List<string> GetFunctionManager();
+        List<string> GetFunctionReceptionist();
         ResultLogin Login([FromQuery] LoginDto input);
     }
 }

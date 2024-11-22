@@ -28,6 +28,7 @@
   <ItemGroup>
     <Folder Include="Controllers\Hotel\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Migrations\HotelDb\" />
   </ItemGroup>
 
 </Project>
