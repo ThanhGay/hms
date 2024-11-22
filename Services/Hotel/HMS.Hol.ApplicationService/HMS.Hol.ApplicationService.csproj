@@ -17,4 +17,9 @@
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="UseModule\Abstracts\" />
+	  <Folder Include="UseModule\Implemetns\" />
+	</ItemGroup>
+
 </Project>

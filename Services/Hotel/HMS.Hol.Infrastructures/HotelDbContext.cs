@@ -98,7 +98,7 @@ namespace HMS.Hol.Infrastructures
                 .OnDelete(DeleteBehavior.Restrict);
             modelBuilder
                 .Entity<HolCharge>()
-                .HasOne<HolBillBooking> ()
+                .HasOne<HolBillBooking>()
                 .WithMany()
                 .HasForeignKey(e=> e.ChargeId)
                 .OnDelete(DeleteBehavior.Restrict);
