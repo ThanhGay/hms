@@ -4,6 +4,7 @@ using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace HMS.WebAPI.Controllers.User
 {
@@ -33,7 +34,6 @@ namespace HMS.WebAPI.Controllers.User
 
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllFunctionCustomer })]
-
         [HttpGet("/get-all-function-customer")]
         public IActionResult GetFunctionCustomer()
         {
@@ -64,7 +64,6 @@ namespace HMS.WebAPI.Controllers.User
 
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllFunctionManager })]
-
         [HttpGet("/get-all-function-manager")]
         public IActionResult GetFunctionManager()
         {
@@ -77,5 +76,40 @@ namespace HMS.WebAPI.Controllers.User
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        [HttpPost("/logout")]
+        public IActionResult LogOut()
+        {
+            try
+            {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                _userService.AddToBlacklist(token);
+                return Ok("Đã đăng xuất thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("/test-serilog")]
+        public IActionResult TestSeriLog()
+        {
+            try
+            {
+                bool result = true;
+                if (result)
+                {
+                    Log.Warning("Test serlog");
+                }
+                return Ok("Success");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
