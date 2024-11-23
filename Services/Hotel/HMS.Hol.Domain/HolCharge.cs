@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace HMS.Hol.Domain
 {
-    [Table(nameof(HolRoomDetail), Schema = DbSchema.Hotel)]
-    public class HolRoomDetail
+    [Table(nameof(HolCharge), Schema = DbSchema.Hotel)]
+    public class HolCharge
     {
         [Key]
-        public int RoomDetailID { get; set; }
-        public string? Name { get; set; }
+        public int ChargeId { get; set; }
         public int Price { get; set; }
+        public string? Descreption { get; set; }
     }
 }
