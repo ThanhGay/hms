@@ -56,6 +56,31 @@ namespace HMS.WebAPI.Controllers.Hotel
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPut("update")]
+        public IActionResult UpdateHotel(UpdateHotelDto input)
+        {
+            try
+            {
+                return Ok(_hotelService.UpdateHotel(input));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete("delete/{hotelId}")]
+        public IActionResult DeleteHotel(int hotelId)
+        {
+            try
+            {
+                _hotelService.DeleteHotel(hotelId);
+                return Ok("Xóa hotel thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 
     }
