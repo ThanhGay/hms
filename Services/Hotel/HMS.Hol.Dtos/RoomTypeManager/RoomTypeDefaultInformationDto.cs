@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HMS.Hol.Dtos.RoomTypeManager
 {
-    public class RoomTypeInformationDto
+    public class RoomTypeDefaultInformationDto
     {
         public int RoomTypeId { get; set; }
         public required string RoomTypeName { get; set; }
