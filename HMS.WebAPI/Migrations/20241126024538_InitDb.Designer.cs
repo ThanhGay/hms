@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.WebAPI.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20241122154236_Db")]
-    partial class Db
+    [Migration("20241126024538_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
