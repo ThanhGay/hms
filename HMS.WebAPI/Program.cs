@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using HMS.Hol.ApplicationService.Startup;
+using HMS.Hol.ApplicationService.Common;
 
 namespace HMS.WebAPI
 {
@@ -46,7 +47,9 @@ namespace HMS.WebAPI
             builder.Services.AddSwaggerGen();
             builder.ConfigureAuth(typeof(Program).Namespace);
             builder.ConfigureHotel(typeof(Program).Namespace);
-            
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<Utils>();
+
             // configure logging
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();

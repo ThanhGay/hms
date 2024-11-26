@@ -12,6 +12,7 @@ namespace HMS.Hol.Infrastructures
     {
         public DbSet<HolBillBooking> BillBookings { get; set; }
         public DbSet<HolBillBooking_Room> BillBooking_Rooms { get; set; }
+        public DbSet<HolBillBooking_Charge> BillBooking_Charges { get; set; }
         public DbSet<HolCharge> Charges { get; set; }
         public DbSet<HolDefaultPrice> DefaultPrices { get; set; }
         public DbSet<HolHotel> Hotels { get; set; }
@@ -90,12 +91,21 @@ namespace HMS.Hol.Infrastructures
                 .WithMany()
                 .HasForeignKey(e => e.RoomID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<HolBillBooking_Charge>().HasKey(e => new { e.BillID, e.ChargeID });
+
             modelBuilder
-                .Entity<HolBillBooking>()
+                .Entity<HolBillBooking_Charge>()
                 .HasOne<HolCharge>()
                 .WithOne()
-                .HasForeignKey<HolBillBooking>(e => e.ChargeId)
+                .HasForeignKey<HolBillBooking_Charge>(e => e.ChargeID)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder
+               .Entity<HolBillBooking_Charge>()
+               .HasOne<HolBillBooking>()
+               .WithOne()
+               .HasForeignKey<HolBillBooking_Charge>(e => e.BillID)
+               .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }

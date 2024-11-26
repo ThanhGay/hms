@@ -12,6 +12,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
   </ItemGroup>
@@ -20,6 +21,7 @@
     <ProjectReference Include="..\Services\Auth\HMS.Auth.ApplicationService\HMS.Auth.ApplicationService.csproj" />
     <ProjectReference Include="..\Services\Hotel\HMS.Hol.ApplicationService\HMS.Hol.ApplicationService.csproj" />
     <ProjectReference Include="..\Services\Notification\HMS.Noti.ApplicationService\HMS.Noti.ApplicationService.csproj" />
+    <ProjectReference Include="..\Services\Payment\HMS.Pay.ApplicationService\HMS.Pay.ApplicationService.csproj" />
     <ProjectReference Include="..\Services\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
   </ItemGroup>
 
