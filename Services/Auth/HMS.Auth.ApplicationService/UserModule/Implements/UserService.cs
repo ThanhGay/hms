@@ -17,6 +17,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
     public class UserService : AuthServiceBase, IUserService
     {
         private readonly IConfiguration _configuration;
+        private static List<string> blackList = new List<string>();
         public UserService(ILogger<UserService> logger, AuthDbContext dbContext,IConfiguration configuration) : base(logger, dbContext) 
         {
             _configuration = configuration;
@@ -42,7 +43,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
                 claims: claims, 
-                expires: DateTime.Now.AddMinutes(_configuration.GetValue<int>("JWT:ExpiryMinutes")),
+                expires: DateTime.Now.AddMinutes(_configuration.GetValue<int>("JwtSettings:ExpiryMinutes")),
                 signingCredentials: creds
             );
 
@@ -148,6 +149,21 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                 func.Add(item.permissionName);
             }
             return func;
+        }
+
+        public void AddToBlacklist(string token)
+
+        {
+            if (!blackList.Contains(token))
+            {
+                blackList.Add(token);
+            }
+
+        }
+
+        public bool IsTokenBlacklisted(string token)
+        {
+            return blackList.Contains(token);
         }
     }
 }

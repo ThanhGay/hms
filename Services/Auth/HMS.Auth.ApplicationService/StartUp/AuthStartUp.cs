@@ -45,6 +45,7 @@ namespace HMS.Auth.ApplicationService.StartUp
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IReceptionistService, ReceptionistService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<IVoucherService, VoucherService>();
         }
     }
 }
