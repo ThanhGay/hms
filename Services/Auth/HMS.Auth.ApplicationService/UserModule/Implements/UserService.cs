@@ -43,7 +43,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
                 claims: claims, 
-                expires: DateTime.Now.AddMinutes(_configuration.GetValue<int>("JWT:ExpiryMinutes")),
+                expires: DateTime.Now.AddMinutes(_configuration.GetValue<int>("JwtSettings:ExpiryMinutes")),
                 signingCredentials: creds
             );
 

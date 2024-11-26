@@ -21,7 +21,7 @@ namespace HMS.WebAPI.Controllers.User
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.AddCustomer })]
         [HttpPost("/add-customer")]
-        public IActionResult AddCustomers([FromQuery] string email, string password, AddCustomer input)
+        public IActionResult AddCustomers([FromQuery] string email, string password, AddCustomerDto input)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace HMS.WebAPI.Controllers.User
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateInfCustomer })]
         [HttpPut("/update-information-customer")]
-        public IActionResult UpdateInformationCustomer(int customerId, AddCustomer input)
+        public IActionResult UpdateInformationCustomer(int customerId, UpdateCustomerDto input)
         {
             try
             {
@@ -89,6 +89,21 @@ namespace HMS.WebAPI.Controllers.User
                 return Ok(_customerService.GetAllCustomer(input));
             }
             catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllVoucherCustomer})]
+        [HttpGet("/get-all-voucher-customer")]
+        public IActionResult GetAllVoucherCustomer([FromQuery] FilterDto input, int customerId)
+        {
+            try
+            {
+                return Ok(_customerService.GetAllVoucherByCustomer(input, customerId));
+            }
+            catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }

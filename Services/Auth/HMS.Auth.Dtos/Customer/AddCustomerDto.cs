@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HMS.Auth.Dtos.Customer
 {
-    public class AddCustomer
+    public class AddCustomerDto
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

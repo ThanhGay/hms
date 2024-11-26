@@ -1,5 +1,6 @@
 ﻿using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Dtos;
+using HMS.Noti.ApplicationService.NotificationModule.Abstracts;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,9 +14,11 @@ namespace HMS.WebAPI.Controllers.User
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly INotificationService _notificationService;
+        public UserController(IUserService userService, INotificationService notificationService)
         {
             _userService = userService;
+            _notificationService = notificationService;
         }
 
         [HttpPost("/Login")]
@@ -104,6 +107,20 @@ namespace HMS.WebAPI.Controllers.User
                     Log.Warning("Test serlog");
                 }
                 return Ok("Success");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("/send-email")]
+        public async Task<IActionResult> TestSendEmail(string receptor, string subject, string body)
+        {
+            try
+            {
+                await _notificationService.SendEmail(receptor, subject, body);
+                return Ok("Thành công");
             }
             catch (Exception ex)
             {

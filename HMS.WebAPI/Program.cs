@@ -8,6 +8,7 @@ using HMS.Hol.ApplicationService.Startup;
 using HMS.WebAPI.Middlewares;
 using Serilog;
 using Serilog.Sinks.Network;
+using HMS.Noti.ApplicationService.StartUp;
 
 namespace HMS.WebAPI
 {
@@ -49,6 +50,7 @@ namespace HMS.WebAPI
             builder.Services.AddSwaggerGen();
             builder.ConfigureAuth(typeof(Program).Namespace);
             builder.ConfigureHotel(typeof(Program).Namespace);
+            builder.ConfigureNotification(typeof(Program).Namespace);
 
             //configure serilog
             Log.Logger = new LoggerConfiguration()
