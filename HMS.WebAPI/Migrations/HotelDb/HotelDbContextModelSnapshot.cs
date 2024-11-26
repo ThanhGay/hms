@@ -87,10 +87,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
             modelBuilder.Entity("HMS.Hol.Domain.HolCharge", b =>
                 {
                     b.Property<int>("ChargeId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChargeId"));
 
                     b.Property<string>("Descreption")
                         .HasColumnType("nvarchar(max)");
@@ -323,6 +320,15 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.HasOne("HMS.Hol.Domain.HolRoom", null)
                         .WithMany()
                         .HasForeignKey("RoomID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HMS.Hol.Domain.HolCharge", b =>
+                {
+                    b.HasOne("HMS.Hol.Domain.HolBillBooking", null)
+                        .WithMany()
+                        .HasForeignKey("ChargeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

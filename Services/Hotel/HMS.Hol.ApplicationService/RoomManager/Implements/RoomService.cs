@@ -185,7 +185,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
 
         public HolRoom CreateRoom(CreateRoomDto input, int HotelId)
         {
-            var existHotel = _dbContext.Hotels.Any(h => h.HotelID == HotelId);
+            var existHotel = _dbContext.Hotels.Any(h => h.HotelId == HotelId);
             var existRoomType = _dbContext.RoomTypes.Any(type =>
                 type.RoomTypeID == input.RoomTypeId
             );
@@ -236,7 +236,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             var existAnotherRoom = _dbContext.Rooms.Any(r =>
                 r.RoomID != input.RoomID && r.Floor == input.Floor && r.HotelId == HotelId
             );
-            var existHotel = _dbContext.Hotels.Any(h => h.HotelID == HotelId);
+            var existHotel = _dbContext.Hotels.Any(h => h.HotelId == HotelId);
             var existRoomType = _dbContext.RoomTypes.Any(type =>
                 type.RoomTypeID == input.RoomTypeId
             );

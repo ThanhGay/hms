@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.WebAPI.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20241111011547_AuthDb3")]
-    partial class AuthDb3
+    [Migration("20241122154236_Db")]
+    partial class Db
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,29 +50,38 @@ namespace HMS.WebAPI.Migrations
                     b.ToTable("AuthCustomer", "auth");
                 });
 
-            modelBuilder.Entity("HMS.Auth.Domain.AuthManager", b =>
+            modelBuilder.Entity("HMS.Auth.Domain.AuthCustomerVoucher", b =>
                 {
-                    b.Property<int>("ManagerId")
+                    b.Property<int>("VoucherId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CitizenIdentity")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly?>("UsedAt")
+                        .HasColumnType("date");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("VoucherId", "CustomerId");
 
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex("CustomerId");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.ToTable("AuthCustomerVoucher", "auth");
+                });
 
-                    b.HasKey("ManagerId");
+            modelBuilder.Entity("HMS.Auth.Domain.AuthPermission", b =>
+                {
+                    b.Property<string>("PermissonKey")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-                    b.ToTable("AuthManager", "auth");
+                    b.Property<string>("PermissionName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("PermissonKey");
+
+                    b.ToTable("AuthPermission", "auth");
                 });
 
             modelBuilder.Entity("HMS.Auth.Domain.AuthReceptionist", b =>
@@ -135,6 +144,8 @@ namespace HMS.WebAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PermissonKey");
+
                     b.HasIndex("RoleId");
 
                     b.ToTable("AuthRolePermission", "auth");
@@ -169,6 +180,28 @@ namespace HMS.WebAPI.Migrations
                     b.ToTable("AuthUser", "auth");
                 });
 
+            modelBuilder.Entity("HMS.Auth.Domain.AuthVoucher", b =>
+                {
+                    b.Property<int>("VoucherId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VoucherId"));
+
+                    b.Property<DateOnly>("ExpDate")
+                        .HasColumnType("date");
+
+                    b.Property<float>("Percent")
+                        .HasColumnType("real");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("VoucherId");
+
+                    b.ToTable("AuthVoucher", "auth");
+                });
+
             modelBuilder.Entity("HMS.Auth.Domain.AuthCustomer", b =>
                 {
                     b.HasOne("HMS.Auth.Domain.AuthUser", null)
@@ -178,11 +211,17 @@ namespace HMS.WebAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HMS.Auth.Domain.AuthManager", b =>
+            modelBuilder.Entity("HMS.Auth.Domain.AuthCustomerVoucher", b =>
                 {
-                    b.HasOne("HMS.Auth.Domain.AuthUser", null)
-                        .WithOne()
-                        .HasForeignKey("HMS.Auth.Domain.AuthManager", "ManagerId")
+                    b.HasOne("HMS.Auth.Domain.AuthCustomer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HMS.Auth.Domain.AuthVoucher", null)
+                        .WithMany()
+                        .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -198,6 +237,12 @@ namespace HMS.WebAPI.Migrations
 
             modelBuilder.Entity("HMS.Auth.Domain.AuthRolePermission", b =>
                 {
+                    b.HasOne("HMS.Auth.Domain.AuthPermission", null)
+                        .WithMany()
+                        .HasForeignKey("PermissonKey")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("HMS.Auth.Domain.AuthRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")

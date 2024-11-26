@@ -6,28 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     /// <inheritdoc />
-    public partial class Initdb : Migration
+    public partial class Db : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
                 name: "hol");
-
-            migrationBuilder.CreateTable(
-                name: "HolCharge",
-                schema: "hol",
-                columns: table => new
-                {
-                    ChargeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Price = table.Column<int>(type: "int", nullable: false),
-                    Descreption = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HolCharge", x => x.ChargeId);
-                });
 
             migrationBuilder.CreateTable(
                 name: "HolHotel",
@@ -73,36 +58,6 @@ namespace HMS.WebAPI.Migrations.HotelDb
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HolRoomType", x => x.RoomTypeID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "HolBillBooking",
-                schema: "hol",
-                columns: table => new
-                {
-                    BillID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckIn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckOut = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Prepayment = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DiscountID = table.Column<int>(type: "int", nullable: false),
-                    PercentDiscount = table.Column<float>(type: "real", nullable: false),
-                    CustomerID = table.Column<int>(type: "int", nullable: false),
-                    ReceptionistID = table.Column<int>(type: "int", nullable: false),
-                    ChargeId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HolBillBooking", x => x.BillID);
-                    table.ForeignKey(
-                        name: "FK_HolBillBooking_HolCharge_ChargeId",
-                        column: x => x.ChargeId,
-                        principalSchema: "hol",
-                        principalTable: "HolCharge",
-                        principalColumn: "ChargeId",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,6 +167,53 @@ namespace HMS.WebAPI.Migrations.HotelDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "HolImage",
+                schema: "hol",
+                columns: table => new
+                {
+                    ImageID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    URL = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    RoomId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HolImage", x => x.ImageID);
+                    table.ForeignKey(
+                        name: "FK_HolImage_HolRoom_RoomId",
+                        column: x => x.RoomId,
+                        principalSchema: "hol",
+                        principalTable: "HolRoom",
+                        principalColumn: "RoomID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HolBillBooking",
+                schema: "hol",
+                columns: table => new
+                {
+                    BillID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CheckIn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CheckOut = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Prepayment = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DiscountID = table.Column<int>(type: "int", nullable: false),
+                    PercentDiscount = table.Column<float>(type: "real", nullable: false),
+                    CustomerID = table.Column<int>(type: "int", nullable: false),
+                    ReceptionistID = table.Column<int>(type: "int", nullable: false),
+                    ChargeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HolBillBooking", x => x.BillID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HolBillBooking_Room",
                 schema: "hol",
                 columns: table => new
@@ -239,26 +241,23 @@ namespace HMS.WebAPI.Migrations.HotelDb
                 });
 
             migrationBuilder.CreateTable(
-                name: "HolImage",
+                name: "HolCharge",
                 schema: "hol",
                 columns: table => new
                 {
-                    ImageID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    URL = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: false)
+                    ChargeId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false),
+                    Descreption = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HolImage", x => x.ImageID);
+                    table.PrimaryKey("PK_HolCharge", x => x.ChargeId);
                     table.ForeignKey(
-                        name: "FK_HolImage_HolRoom_RoomId",
-                        column: x => x.RoomId,
+                        name: "FK_HolCharge_HolBillBooking_ChargeId",
+                        column: x => x.ChargeId,
                         principalSchema: "hol",
-                        principalTable: "HolRoom",
-                        principalColumn: "RoomID",
+                        principalTable: "HolBillBooking",
+                        principalColumn: "BillID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -310,11 +309,26 @@ namespace HMS.WebAPI.Migrations.HotelDb
                 schema: "hol",
                 table: "HolSubPrice",
                 column: "RoomTypeID");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_HolBillBooking_HolCharge_ChargeId",
+                schema: "hol",
+                table: "HolBillBooking",
+                column: "ChargeId",
+                principalSchema: "hol",
+                principalTable: "HolCharge",
+                principalColumn: "ChargeId",
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_HolBillBooking_HolCharge_ChargeId",
+                schema: "hol",
+                table: "HolBillBooking");
+
             migrationBuilder.DropTable(
                 name: "HolBillBooking_Room",
                 schema: "hol");
@@ -336,10 +350,6 @@ namespace HMS.WebAPI.Migrations.HotelDb
                 schema: "hol");
 
             migrationBuilder.DropTable(
-                name: "HolBillBooking",
-                schema: "hol");
-
-            migrationBuilder.DropTable(
                 name: "HolRoom",
                 schema: "hol");
 
@@ -348,15 +358,19 @@ namespace HMS.WebAPI.Migrations.HotelDb
                 schema: "hol");
 
             migrationBuilder.DropTable(
-                name: "HolCharge",
-                schema: "hol");
-
-            migrationBuilder.DropTable(
                 name: "HolHotel",
                 schema: "hol");
 
             migrationBuilder.DropTable(
                 name: "HolRoomType",
+                schema: "hol");
+
+            migrationBuilder.DropTable(
+                name: "HolCharge",
+                schema: "hol");
+
+            migrationBuilder.DropTable(
+                name: "HolBillBooking",
                 schema: "hol");
         }
     }
