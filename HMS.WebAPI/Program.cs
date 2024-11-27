@@ -1,14 +1,14 @@
-
-using HMS.Auth.ApplicationService.StartUp;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using HMS.Auth.ApplicationService.StartUp;
+using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.Startup;
+using HMS.Noti.ApplicationService.StartUp;
 using HMS.WebAPI.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Sinks.Network;
-using HMS.Noti.ApplicationService.StartUp;
 
 namespace HMS.WebAPI
 {
@@ -39,7 +39,7 @@ namespace HMS.WebAPI
                         ValidAudience = builder.Configuration["JwtSettings:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"])
-                            ),
+                        ),
                     };
                 });
             builder.Services.AddAuthorization();
@@ -57,9 +57,15 @@ namespace HMS.WebAPI
                 .ReadFrom.Configuration(builder.Configuration)
                 .CreateLogger();
             builder.Host.UseSerilog();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<Utils>();
+
+            // configure logging
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.SetMinimumLevel(LogLevel.Information);
 
             var app = builder.Build();
-
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace HMS.Hol.ApplicationService.Common
 {
-    public class HotelServiceBase
+    public abstract class HotelServiceBase
     {
         protected readonly ILogger _logger;
         protected readonly HotelDbContext _dbContext;

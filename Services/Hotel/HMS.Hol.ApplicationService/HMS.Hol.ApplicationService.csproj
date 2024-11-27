@@ -23,4 +23,9 @@
 	  <Folder Include="RoomManager\Implements\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="BouncyCastle" Version="1.8.9" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
 </Project>
