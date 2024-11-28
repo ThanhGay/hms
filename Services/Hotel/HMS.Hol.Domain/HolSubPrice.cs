@@ -15,8 +15,8 @@ namespace HMS.Hol.Domain
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]   
         public int SubPriceID { get; set; }
-        public int PricePerHours { get; set; }
-        public int PricePerNight { get; set; }
+        public decimal PricePerHours { get; set; }
+        public decimal PricePerNight { get; set; }
         public DateTime DayStart  { get; set; }
         public DateTime DayEnd { get; set; }
         public int RoomTypeID { get; set; }
