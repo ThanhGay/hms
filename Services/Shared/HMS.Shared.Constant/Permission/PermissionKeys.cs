@@ -26,7 +26,12 @@ namespace HMS.Shared.Constant.Permission
         public const string GetAllFunctionCustomer = "get_all_function_customer";
         public const string GetAllFunctionReceptionist = "get_all_function_receptionist";
         public const string GetAllFunctionManager = "get_all_function_manager";
-
-
+        public const string GetVoucherById = "get_voucher_by_id";
+        public const string GetAllVoucher = "get_all_voucher";
+        public const string CreateVoucher = "create_voucher";
+        public const string UpdateVoucher = "update_voucher";
+        public const string DeleteVoucher = "delete_voucher";
+        public const string SetVoucherToCustomer = "set_voucher_to_Customer";
+        public const string GetAllVoucherCustomer = "get_all_voucher_customer";
     }
 }

@@ -10,10 +10,14 @@ namespace HMS.Hol.ApplicationService.RoomManager.Abstracts
 {
     public interface IRoomTypeService
     {
-        public RoomTypeInformationDto CreateRoomType(CreateRoomTypeDto input);
-        public RoomTypeInformationDto UpdateRoomType(UpdateRoomTypeDto input);
+        public RoomTypeDefaultInformationDto CreateRoomType(CreateRoomTypeDto input);
+        public RoomTypeDefaultInformationDto UpdateRoomType(UpdateRoomTypeDto input);
         public void DeleteRoomType(int roomTypeId);
-        public PageResultDto<RoomTypeInformationDto> GetAll(FilterDto input);
-        public RoomTypeInformationDto GetById (int roomTypeId);
+        public PageResultDto<RoomTypeDefaultInformationDto> GetAll(FilterDto input);
+        public RoomTypeDefaultInformationDto GetById (int roomTypeId);
+
+        public void SetPriceInHoliday(SetPriceInHolidayDto input);
+        public void UpdatePriceInHoliday(UpdatePriceInHoliday input);
+        public void DeletePriceInHoliday(int subPriceId);
     }
 }

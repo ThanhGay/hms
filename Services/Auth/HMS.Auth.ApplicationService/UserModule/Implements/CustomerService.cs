@@ -6,22 +6,25 @@ using HMS.Auth.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using HMS.Auth.Dtos.Customer;
+using HMS.Auth.Dtos.Voucher;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
     public class CustomerService : AuthServiceBase, ICustomerService
     {
-        public CustomerService(ILogger<CustomerService> logger, AuthDbContext dbContext) : base(logger, dbContext) 
+        private readonly IVoucherService _voucherService;
+        public CustomerService(ILogger<CustomerService> logger, AuthDbContext dbContext, IVoucherService voucherService) : base(logger, dbContext)
         {
+            _voucherService = voucherService;
         }
 
-        public AuthCustomer CreateCustomer([FromQuery] string email, string password, AddCustomer input)
+        public AuthCustomer CreateCustomer([FromQuery] string email, string password, AddCustomerDto input)
         {
             var findEmail = _dbContext.AuthUsers.Any(u => u.Email == email);
             if (findEmail)
             {
                 _logger.LogError("Đã tồn tại email");
-                throw new UserExceptions("Không tồn tại email");
+                throw new UserExceptions("Đã tồn tại email");
             }
             var user = new AuthUser
             {
@@ -43,9 +46,22 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             };
             _dbContext.AuthCustomers.Add(customer);
             _dbContext.SaveChanges();
+
+            var newVoucher = new AuthVoucher
+            {
+                Percent = 50,
+                StartDate = DateOnly.FromDateTime(DateTime.Now),
+                ExpDate = DateOnly.FromDateTime(DateTime.Now).AddDays(30)
+            };
+            _dbContext.AuthVouchers.Add(newVoucher);
+            _dbContext.SaveChanges();
+
+
+            _voucherService.SetVoucherToCustomer(newVoucher.VoucherId, customer.CustomerId);
+
             return customer;
         }
-        public AuthCustomer UpdateInfCustomer(int customerId, AddCustomer input)
+        public AuthCustomer UpdateInfCustomer(int customerId, UpdateCustomerDto input)
         {
             var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(r => r.CustomerId == customerId)
                 ?? throw new UserExceptions("Không tồn tại cutomer");
@@ -102,6 +118,37 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                         || e.LastName.ToLower().Contains(input.KeyWord.ToLower()));
             result.TotalItem = query.Count();
             query = query.OrderBy(e => e.LastName)
+                         .Skip(input.Skip())
+                         .Take(input.PageSize);
+            result.Items = query.ToList();
+            return result;
+        }
+
+        public PageResultDto<VoucherCustomerDto> GetAllVoucherByCustomer([FromQuery] FilterDto input, int customerId)
+        {
+            var findCustomer = _dbContext.AuthCustomers.Any(x => x.CustomerId == customerId);
+            if (!findCustomer) { throw new UserExceptions("Không tồn tại khách hàng"); }
+
+            var result = new PageResultDto<VoucherCustomerDto>();
+
+            var findVoucher = from v in _dbContext.AuthVouchers
+                              join vc in _dbContext.AuthCustomerVouchers on v.VoucherId equals vc.VoucherId
+                              where vc.CustomerId == customerId
+                              select new VoucherCustomerDto
+                              {
+                                  VoucherId = v.VoucherId,
+                                  Percent = v.Percent,
+                                  StartDate = v.StartDate,
+                                  ExpDate = v.ExpDate,
+                                  checkUse = vc.UsedAt == null ? false : true,
+                              };
+
+
+            var query = findVoucher.Where(e =>
+            string.IsNullOrEmpty(input.KeyWord)
+            || e.VoucherId.ToString().ToLower().Contains(input.KeyWord.ToLower()));
+            result.TotalItem = query.Count();
+            query = query.OrderBy(e => e.VoucherId)
                          .Skip(input.Skip())
                          .Take(input.PageSize);
             result.Items = query.ToList();

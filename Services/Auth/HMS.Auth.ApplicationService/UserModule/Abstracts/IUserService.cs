@@ -10,9 +10,11 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
 {
     public interface IUserService
     {
+        void AddToBlacklist(string token);
         List<string> GetFunctionCustomer();
         List<string> GetFunctionManager();
         List<string> GetFunctionReceptionist();
+        bool IsTokenBlacklisted(string token);
         ResultLogin Login([FromQuery] LoginDto input);
     }
 }

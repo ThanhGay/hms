@@ -89,7 +89,13 @@ namespace HMS.Hol.Infrastructures
                 .Entity<HolBillBooking_Room>()
                 .HasOne<HolRoom>()
                 .WithMany()
-                .HasForeignKey(e => e.RoomID)
+                .HasForeignKey(e=> e.RoomID)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder
+                .Entity<HolCharge>()
+                .HasOne<HolBillBooking>()
+                .WithMany()
+                .HasForeignKey(e=> e.ChargeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<HolBillBooking_Charge>().HasKey(e => new { e.BillID, e.ChargeID });
