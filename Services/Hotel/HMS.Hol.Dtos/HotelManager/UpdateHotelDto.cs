@@ -12,5 +12,6 @@ namespace HMS.Hol.Dtos.HotelManager
         public required string HotelName { get; set; }
         public required string HotelAddress { get; set; }
         public required string Hotline { get; set; }
+
     }
 }
