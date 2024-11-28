@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Shared\HMS.Shared.ApplicationService\HMS.Shared.ApplicationService.csproj" />
 		<ProjectReference Include="..\..\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
+		<ProjectReference Include="..\HMS.Auth.Domain\HMS.Auth.Domain.csproj" />
 		<ProjectReference Include="..\HMS.Auth.Dtos\HMS.Auth.Dtos.csproj" />
 		<ProjectReference Include="..\HMS.Auth.Infrastructures\HMS.Auth.Infrastructures.csproj" />
 

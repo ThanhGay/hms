@@ -14,12 +14,13 @@ namespace HMS.Hol.Domain
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int HotelID { get; set; }
+        public int HotelId { get; set; }
         [MaxLength(250)]
         public string HotelName { get; set; }
         [MaxLength(250)]
         public string HotelAddress { get; set; }
         [MaxLength(100)]
         public string Hotline { get; set; }
+        
     }
 }

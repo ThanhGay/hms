@@ -107,5 +107,62 @@ namespace HMS.WebAPI.Controllers.Type
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Định giá cho các loại phòng trong khoảng thời gian
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost("set-price-holiday")]
+        public IActionResult SetPriceInHoliday(SetPriceInHolidayDto input)
+        {
+            try
+            {
+                _roomTypeService.SetPriceInHoliday(input);
+                return Ok("Đặt giá cho ngày lễ thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật giá của các ngày quy định là ngày lễ
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPut("update-price-holiday")]
+        public IActionResult UpdatePriceHoliday(UpdatePriceInHoliday input)
+        {
+            try
+            {
+                _roomTypeService.UpdatePriceInHoliday(input);
+                return Ok("Cập nhật giá cho ngày lễ thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Xóa giá ngày lễ
+        /// </summary>
+        /// <param name="subPriceId"></param>
+        /// <returns></returns>
+        [HttpDelete("delete-price-holiday/{subPriceId}")]
+        public IActionResult DeletePriceHoliday(int subPriceId)
+        {
+            try
+            {
+                _roomTypeService.DeletePriceInHoliday(subPriceId);
+                return Ok("Xóa giá ngày lễ thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

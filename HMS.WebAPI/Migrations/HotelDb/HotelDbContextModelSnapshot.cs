@@ -87,10 +87,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
             modelBuilder.Entity("HMS.Hol.Domain.HolCharge", b =>
                 {
                     b.Property<int>("ChargeId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChargeId"));
 
                     b.Property<string>("Descreption")
                         .HasColumnType("nvarchar(max)");
@@ -129,11 +126,11 @@ namespace HMS.WebAPI.Migrations.HotelDb
 
             modelBuilder.Entity("HMS.Hol.Domain.HolHotel", b =>
                 {
-                    b.Property<int>("HotelID")
+                    b.Property<int>("HotelId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HotelID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HotelId"));
 
                     b.Property<string>("HotelAddress")
                         .IsRequired()
@@ -150,7 +147,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("HotelID");
+                    b.HasKey("HotelId");
 
                     b.ToTable("HolHotel", "hol");
                 });
@@ -323,6 +320,15 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.HasOne("HMS.Hol.Domain.HolRoom", null)
                         .WithMany()
                         .HasForeignKey("RoomID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HMS.Hol.Domain.HolCharge", b =>
+                {
+                    b.HasOne("HMS.Hol.Domain.HolBillBooking", null)
+                        .WithMany()
+                        .HasForeignKey("ChargeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
