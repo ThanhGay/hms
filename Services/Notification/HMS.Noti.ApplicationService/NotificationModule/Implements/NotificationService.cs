@@ -1,4 +1,4 @@
-﻿using HMS.Noti.ApplicationService.NotificationModule.Abstracts;
+﻿using HMS.Shared.ApplicationService.Notification;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;

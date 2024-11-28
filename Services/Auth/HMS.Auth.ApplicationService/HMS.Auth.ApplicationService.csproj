@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Shared\HMS.Shared.ApplicationService\HMS.Shared.ApplicationService.csproj" />
 		<ProjectReference Include="..\..\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
 		<ProjectReference Include="..\HMS.Auth.Dtos\HMS.Auth.Dtos.csproj" />
 		<ProjectReference Include="..\HMS.Auth.Infrastructures\HMS.Auth.Infrastructures.csproj" />
@@ -26,6 +27,7 @@
 	  </PackageReference>
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
 	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+	  <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
 	</ItemGroup>
 

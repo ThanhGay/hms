@@ -1,4 +1,4 @@
-
+﻿
 using HMS.Auth.ApplicationService.StartUp;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -7,9 +7,8 @@ using System.Text;
 using HMS.Hol.ApplicationService.Startup;
 using HMS.WebAPI.Middlewares;
 using Serilog;
-using Serilog.Sinks.Network;
 using HMS.Noti.ApplicationService.StartUp;
-
+using Serilog.Extensions.Hosting;
 namespace HMS.WebAPI
 {
     public class Program
@@ -53,10 +52,14 @@ namespace HMS.WebAPI
             builder.ConfigureNotification(typeof(Program).Namespace);
 
             //configure serilog
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Configuration)
-                .CreateLogger();
-            builder.Host.UseSerilog();
+            builder.Host.UseSerilog((context, loggerConfig) =>
+            {
+                loggerConfig.ReadFrom.Configuration(context.Configuration);
+            });
+
+            // Đăng ký dịch vụ cần thiết
+            builder.Services.AddSingleton<DiagnosticContext>();
+
 
             var app = builder.Build();
 
@@ -69,6 +72,7 @@ namespace HMS.WebAPI
             }
 
             //configure serilog
+            app.UseMiddleware<RequestLogContextMiddleware>();
             app.UseSerilogRequestLogging();
 
             app.UseHttpsRedirection();

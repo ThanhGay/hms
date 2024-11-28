@@ -4,10 +4,13 @@ using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Domain;
 using HMS.Auth.Dtos;
 using HMS.Auth.Infrastructures;
+using HMS.Shared.ApplicationService.Notification;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -18,9 +21,12 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
     {
         private readonly IConfiguration _configuration;
         private static List<string> blackList = new List<string>();
-        public UserService(ILogger<UserService> logger, AuthDbContext dbContext,IConfiguration configuration) : base(logger, dbContext) 
+        private static Dictionary<string, (string Otp, DateTime Expiry)> otpStore = new Dictionary<string, (string, DateTime)>();
+        private readonly INotificationService _notificationService;
+        public UserService(ILogger<UserService> logger, AuthDbContext dbContext,IConfiguration configuration, INotificationService notificationService) : base(logger, dbContext) 
         {
             _configuration = configuration;
+            _notificationService = notificationService;
         }
 
         private string Createtokens(UserDto input,int role)
@@ -164,6 +170,39 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         public bool IsTokenBlacklisted(string token)
         {
             return blackList.Contains(token);
+        }
+
+        public async Task ForgotPassword([FromQuery] string email)
+        {
+            var findEmail = _dbContext.AuthUsers.Any( u => u.Email == email );
+            if (!findEmail) { throw new UserExceptions("Tài khoản chưa đăng kí"); }
+            Random random = new Random();
+            string randomNumber = random.Next(0, 1000000).ToString("D6");
+            otpStore[email] = (randomNumber, DateTime.Now.AddMinutes(5));
+            await _notificationService.SendEmail(email, "OTP của bạn để lấy lại mật khẩu", randomNumber ); 
+        }
+
+        public void ResetPassword(string email, string otp, string password)
+        {
+            if (otpStore.ContainsKey(email))
+            {
+                var (storedOtp, expiry) = otpStore[email];
+                if(DateTime.Now > expiry)
+                {
+                    otpStore.Remove(email);
+                    throw new UserExceptions("Đã hết hạn Otp");
+                }
+                if(storedOtp == otp)
+                {
+                    var findUser = _dbContext.AuthUsers.FirstOrDefault(u => u.Email == email);
+                    findUser.Password = BCrypt.Net.BCrypt.HashPassword(password);
+
+                    otpStore.Remove(email);
+
+                    _dbContext.AuthUsers.Update(findUser);
+                    _dbContext.SaveChanges();
+                }
+            }   
         }
     }
 }

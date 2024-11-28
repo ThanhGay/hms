@@ -1,6 +1,5 @@
 ﻿using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Dtos;
-using HMS.Noti.ApplicationService.NotificationModule.Abstracts;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,11 +13,9 @@ namespace HMS.WebAPI.Controllers.User
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly INotificationService _notificationService;
-        public UserController(IUserService userService, INotificationService notificationService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _notificationService = notificationService;
         }
 
         [HttpPost("/Login")]
@@ -26,7 +23,7 @@ namespace HMS.WebAPI.Controllers.User
         {
             try
             {
-
+                
                 return Ok(_userService.Login(input));
             }
             catch (Exception ex)
@@ -97,14 +94,14 @@ namespace HMS.WebAPI.Controllers.User
         }
 
         [HttpPost("/test-serilog")]
-        public IActionResult TestSeriLog()
+        public IActionResult TestSeriLog([FromQuery] int id, [FromBody] string str)
         {
             try
             {
                 bool result = true;
                 if (result)
                 {
-                    Log.Warning("Test serlog");
+                    Log.Warning($"Test serlog, {id}, {str}");
                 }
                 return Ok("Success");
             }
@@ -114,13 +111,29 @@ namespace HMS.WebAPI.Controllers.User
             }
         }
 
-        [HttpPost("/send-email")]
-        public async Task<IActionResult> TestSendEmail(string receptor, string subject, string body)
+        //[Authorize]
+        [HttpPost("/forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromQuery] string email)
         {
             try
             {
-                await _notificationService.SendEmail(receptor, subject, body);
-                return Ok("Thành công");
+                await _userService.ForgotPassword(email);
+                return Ok("Đã gửi otp");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //[Authorize]
+        [HttpPut("/update-password")]
+        public IActionResult UpdatePassword([FromQuery] string email, string otp, string password)
+        {
+            try
+            {
+                _userService.ResetPassword(email, otp, password);
+                return Ok("Đã đổi mật khẩu thành công");
             }
             catch (Exception ex)
             {

@@ -1,5 +1,5 @@
-﻿using HMS.Noti.ApplicationService.NotificationModule.Abstracts;
-using HMS.Noti.ApplicationService.NotificationModule.Implements;
+﻿using HMS.Noti.ApplicationService.NotificationModule.Implements;
+using HMS.Shared.ApplicationService.Notification;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;
