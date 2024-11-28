@@ -25,7 +25,6 @@
     <ProjectReference Include="..\Services\Auth\HMS.Auth.Dtos\HMS.Auth.Dtos.csproj" />
     <ProjectReference Include="..\Services\Hotel\HMS.Hol.ApplicationService\HMS.Hol.ApplicationService.csproj" />
     <ProjectReference Include="..\Services\Notification\HMS.Noti.ApplicationService\HMS.Noti.ApplicationService.csproj" />
-    <ProjectReference Include="..\Services\Payment\HMS.Pay.ApplicationService\HMS.Pay.ApplicationService.csproj" />
     <ProjectReference Include="..\Services\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
   </ItemGroup>
 
