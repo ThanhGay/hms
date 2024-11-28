@@ -1,14 +1,17 @@
-﻿
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using HMS.Auth.ApplicationService.StartUp;
+using HMS.Hol.ApplicationService.Common;
+using HMS.Hol.ApplicationService.Startup;
+using HMS.Noti.ApplicationService.StartUp;
+using HMS.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using HMS.Hol.ApplicationService.Startup;
-using HMS.WebAPI.Middlewares;
 using Serilog;
 using HMS.Noti.ApplicationService.StartUp;
 using Serilog.Extensions.Hosting;
+using Serilog.Sinks.Network;
+
 namespace HMS.WebAPI
 {
     public class Program
@@ -38,7 +41,7 @@ namespace HMS.WebAPI
                         ValidAudience = builder.Configuration["JwtSettings:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"])
-                            ),
+                        ),
                     };
                 });
             builder.Services.AddAuthorization();
@@ -60,9 +63,19 @@ namespace HMS.WebAPI
             // Đăng ký dịch vụ cần thiết
             builder.Services.AddSingleton<DiagnosticContext>();
 
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+            builder.Host.UseSerilog();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<Utils>();
+
+            // configure logging
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.SetMinimumLevel(LogLevel.Information);
 
             var app = builder.Build();
-
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

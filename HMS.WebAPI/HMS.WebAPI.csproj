@@ -17,6 +17,7 @@
     <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.Network" Version="2.0.2.68" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
   </ItemGroup>
@@ -27,6 +28,7 @@
     <ProjectReference Include="..\Services\Auth\HMS.Auth.Dtos\HMS.Auth.Dtos.csproj" />
     <ProjectReference Include="..\Services\Hotel\HMS.Hol.ApplicationService\HMS.Hol.ApplicationService.csproj" />
     <ProjectReference Include="..\Services\Notification\HMS.Noti.ApplicationService\HMS.Noti.ApplicationService.csproj" />
+    <ProjectReference Include="..\Services\Payment\HMS.Pay.ApplicationService\HMS.Pay.ApplicationService.csproj" />
     <ProjectReference Include="..\Services\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
   </ItemGroup>
 
