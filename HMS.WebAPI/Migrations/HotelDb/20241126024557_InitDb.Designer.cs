@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20241122154425_Db")]
-    partial class Db
+    [Migration("20241126024557_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,11 +129,11 @@ namespace HMS.WebAPI.Migrations.HotelDb
 
             modelBuilder.Entity("HMS.Hol.Domain.HolHotel", b =>
                 {
-                    b.Property<int>("HotelID")
+                    b.Property<int>("HotelId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HotelID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HotelId"));
 
                     b.Property<string>("HotelAddress")
                         .IsRequired()
@@ -150,7 +150,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("HotelID");
+                    b.HasKey("HotelId");
 
                     b.ToTable("HolHotel", "hol");
                 });

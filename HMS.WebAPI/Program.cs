@@ -5,6 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using HMS.Hol.ApplicationService.Startup;
+using HMS.WebAPI.Middlewares;
+using Serilog;
+using Serilog.Sinks.Network;
+using HMS.Noti.ApplicationService.StartUp;
 
 namespace HMS.WebAPI
 {
@@ -46,19 +50,17 @@ namespace HMS.WebAPI
             builder.Services.AddSwaggerGen();
             builder.ConfigureAuth(typeof(Program).Namespace);
             builder.ConfigureHotel(typeof(Program).Namespace);
-            
-            // configure logging
-            builder.Logging.ClearProviders();
-            builder.Logging.AddConsole();
-            builder.Logging.SetMinimumLevel(LogLevel.Information);
+            builder.ConfigureNotification(typeof(Program).Namespace);
+
+            //configure serilog
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+            builder.Host.UseSerilog();
 
             var app = builder.Build();
-            app.MapGet("/", () => "Hello world!");
-            app.MapGet("/Test", async (ILogger<Program> logger, HttpResponse response) =>
-            {
-                logger.LogInformation("Testing logging in Program.cs");
-                await response.WriteAsync("Testing");
-            });
+
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -66,11 +68,15 @@ namespace HMS.WebAPI
                 app.UseSwaggerUI();
             }
 
+            //configure serilog
+            app.UseSerilogRequestLogging();
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseMiddleware<TokenValidationMiddleware>();
 
             app.MapControllers();
 

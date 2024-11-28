@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     /// <inheritdoc />
-    public partial class Db : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
                 schema: "hol",
                 columns: table => new
                 {
-                    HotelID = table.Column<int>(type: "int", nullable: false)
+                    HotelId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     HotelName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     HotelAddress = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
@@ -27,7 +27,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HolHotel", x => x.HotelID);
+                    table.PrimaryKey("PK_HolHotel", x => x.HotelId);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,7 +103,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
                         column: x => x.HotelId,
                         principalSchema: "hol",
                         principalTable: "HolHotel",
-                        principalColumn: "HotelID",
+                        principalColumn: "HotelId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_HolRoom_HolRoomType_RoomTypeId",

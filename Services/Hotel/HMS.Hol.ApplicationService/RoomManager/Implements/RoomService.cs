@@ -10,6 +10,7 @@ using HMS.Hol.Dtos.RoomManager;
 using HMS.Hol.Infrastructures;
 using HMS.Shared.Constant.Common;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HMS.Hol.ApplicationService.RoomManager.Implements
 {
@@ -48,35 +49,137 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             return result;
         }
 
+        /// <summary>
+        /// Return information of room (price in current)
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public RoomDetailDto GetById(int roomId)
         {
-            var existRoom = _dbContext.Rooms.Any(r => r.RoomID == roomId);
+            var existRoom = _dbContext.Rooms.FirstOrDefault(r => r.RoomID == roomId);
 
-            if (!existRoom)
+            if (existRoom == null)
             {
                 throw new Exception($"Không tìm thấy phòng");
             }
             else
             {
-                var foundRoomQuery =
-                    from r in _dbContext.Rooms
-                    join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
-                    join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
-                    where r.RoomID == roomId
-                    select new RoomDetailDto
-                    {
-                        RoomId = r.RoomID,
-                        Description = t.Description,
-                        RoomTypeName = t.RoomTypeName,
-                        Floor = r.Floor,
-                        HotelId = r.HotelId,
-                        PricePerHour = p.PricePerHour,
-                        PricePerNight = p.PricePerNight,
-                        RoomName = r.RoomName,
-                        RoomTypeId = r.RoomTypeId,
-                    };
+                var priceHoliDay = _dbContext.SubPrices.Any(r =>
+                    r.RoomTypeID == existRoom.RoomTypeId
+                && (
+                DateOnly.FromDateTime(r.DayStart) <= DateOnly.FromDateTime(DateTime.Now)
+                        && DateOnly.FromDateTime(DateTime.Now) <= DateOnly.FromDateTime(r.DayEnd)
+                    )
+                );
+                if (priceHoliDay)
+                {
+                    var foundRoomQuery =
+                        from r in _dbContext.Rooms
+                        join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
+                        join sp in _dbContext.SubPrices on t.RoomTypeID equals sp.RoomTypeID
+                        where r.RoomID == roomId
+                        select new RoomDetailDto
+                        {
+                            RoomId = r.RoomID,
+                            Description = t.Description,
+                            RoomTypeName = t.RoomTypeName,
+                            Floor = r.Floor,
+                            HotelId = r.HotelId,
+                            PricePerHour = sp.PricePerHours,
+                            PricePerNight = sp.PricePerNight,
+                            RoomName = r.RoomName,
+                            RoomTypeId = r.RoomTypeId,
+                        };
 
-                return foundRoomQuery.ToList()[0];
+                    return foundRoomQuery.ToList()[0];
+                }
+                else
+                {
+                    var foundRoomQuery =
+                        from r in _dbContext.Rooms
+                        join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
+                        join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
+                        where r.RoomID == roomId
+                        select new RoomDetailDto
+                        {
+                            RoomId = r.RoomID,
+                            Description = t.Description,
+                            RoomTypeName = t.RoomTypeName,
+                            Floor = r.Floor,
+                            HotelId = r.HotelId,
+                            PricePerHour = p.PricePerHour,
+                            PricePerNight = p.PricePerNight,
+                            RoomName = r.RoomName,
+                            RoomTypeId = r.RoomTypeId,
+                        };
+
+                    return foundRoomQuery.ToList()[0];
+                }
+            }
+        }
+
+        public RoomDetailDto GetById(int roomId, DateOnly date)
+        {
+            var existRoom = _dbContext.Rooms.FirstOrDefault(r => r.RoomID == roomId);
+
+            if (existRoom == null)
+            {
+                throw new Exception($"Không tìm thấy phòng");
+            }
+            else
+            {
+                var priceHoliDay = _dbContext.SubPrices.Any(r =>
+                    r.RoomTypeID == existRoom.RoomTypeId
+                    && (
+                        DateOnly.FromDateTime(r.DayStart) <= date
+                        && date <= DateOnly.FromDateTime(r.DayEnd)
+                    )
+                );
+                if (priceHoliDay)
+                {
+                    var foundRoomQuery =
+                        from r in _dbContext.Rooms
+                        join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
+                        join sp in _dbContext.SubPrices on t.RoomTypeID equals sp.RoomTypeID
+                        where r.RoomID == roomId
+                        select new RoomDetailDto
+                        {
+                            RoomId = r.RoomID,
+                            Description = t.Description,
+                            RoomTypeName = t.RoomTypeName,
+                            Floor = r.Floor,
+                            HotelId = r.HotelId,
+                            PricePerHour = sp.PricePerHours,
+                            PricePerNight = sp.PricePerNight,
+                            RoomName = r.RoomName,
+                            RoomTypeId = r.RoomTypeId,
+                        };
+
+                    return foundRoomQuery.ToList()[0];
+                }
+                else
+                {
+                    var foundRoomQuery =
+                        from r in _dbContext.Rooms
+                        join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
+                        join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
+                        where r.RoomID == roomId
+                        select new RoomDetailDto
+                        {
+                            RoomId = r.RoomID,
+                            Description = t.Description,
+                            RoomTypeName = t.RoomTypeName,
+                            Floor = r.Floor,
+                            HotelId = r.HotelId,
+                            PricePerHour = p.PricePerHour,
+                            PricePerNight = p.PricePerNight,
+                            RoomName = r.RoomName,
+                            RoomTypeId = r.RoomTypeId,
+                        };
+
+                    return foundRoomQuery.ToList()[0];
+                }
             }
         }
 
