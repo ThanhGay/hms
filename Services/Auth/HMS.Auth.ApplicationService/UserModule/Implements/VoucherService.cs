@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
-    internal class VoucherService : AuthServiceBase, IVoucherService
+    public class VoucherService : AuthServiceBase, IVoucherService
     {
         public VoucherService(ILogger<VoucherService> logger, AuthDbContext authDbContext ) : base( logger, authDbContext ) { }
 
