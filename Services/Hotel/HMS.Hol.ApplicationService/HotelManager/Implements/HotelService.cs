@@ -18,15 +18,14 @@ namespace HMS.Hol.ApplicationService.HotelManager.Implements
         {
             try
             {
-                // Validate input
-                if (string.IsNullOrWhiteSpace(input.HotelName) ||
-                    string.IsNullOrWhiteSpace(input.HotelAddress) ||
-                    string.IsNullOrWhiteSpace(input.Hotline))
-                {
-                    throw new ArgumentException("HotelName, HotelAddress, and Hotline bắt buộc phải có.");
-                }
+                //// Validate input
+                //if (string.IsNullOrWhiteSpace(input.HotelName) ||
+                //    string.IsNullOrWhiteSpace(input.HotelAddress) ||
+                //    string.IsNullOrWhiteSpace(input.Hotline))
+                //{
+                //    throw new ArgumentException("HotelName, HotelAddress, and Hotline bắt buộc phải có.");
+                //}
 
-                // Check if the hotel already exists (example: check by name and address)
                 var existingHotel = _dbContext.Hotels
                     .FirstOrDefault(h => h.HotelName == input.HotelName && h.HotelAddress == input.HotelAddress);
 
