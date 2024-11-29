@@ -227,8 +227,8 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             var user = new AuthUser
             {
                 Email = input.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(input.PassWord),
-                RoleId = 1
+                Password = BCrypt.Net.BCrypt.HashPassword(input.Password),
+                RoleId = 3
             };
             _dbContext.AuthUsers.Add(user);
             _dbContext.SaveChanges();

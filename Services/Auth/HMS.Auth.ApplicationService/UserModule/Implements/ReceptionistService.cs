@@ -32,7 +32,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             var user = new AuthUser
             {
                 Email = input.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(input.Passwrod),
+                Password = BCrypt.Net.BCrypt.HashPassword(input.Password),
                 RoleId = 2
             };
             _dbContext.AuthUsers.Add(user);
