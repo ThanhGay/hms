@@ -12,6 +12,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.Network" Version="2.0.2.68" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
@@ -19,14 +21,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Services\Auth\HMS.Auth.ApplicationService\HMS.Auth.ApplicationService.csproj" />
+    <ProjectReference Include="..\Services\Auth\HMS.Auth.Domain\HMS.Auth.Domain.csproj" />
+    <ProjectReference Include="..\Services\Auth\HMS.Auth.Dtos\HMS.Auth.Dtos.csproj" />
     <ProjectReference Include="..\Services\Hotel\HMS.Hol.ApplicationService\HMS.Hol.ApplicationService.csproj" />
     <ProjectReference Include="..\Services\Notification\HMS.Noti.ApplicationService\HMS.Noti.ApplicationService.csproj" />
     <ProjectReference Include="..\Services\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
-    <Folder Include="Migrations\HotelDb\" />
+    <Folder Include="Controllers\Hotel\" />
   </ItemGroup>
 
 </Project>

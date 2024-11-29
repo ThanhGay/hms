@@ -18,14 +18,14 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
         public RoomTypeService(ILogger<RoomTypeService> logger, HotelDbContext dbContext)
             : base(logger, dbContext) { }
 
-        public PageResultDto<RoomTypeInformationDto> GetAll(FilterDto input)
+        public PageResultDto<RoomTypeDefaultInformationDto> GetAll(FilterDto input)
         {
-            var result = new PageResultDto<RoomTypeInformationDto>();
+            var result = new PageResultDto<RoomTypeDefaultInformationDto>();
 
             var query =
                 from t in _dbContext.RoomTypes
                 join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
-                select new RoomTypeInformationDto
+                select new RoomTypeDefaultInformationDto
                 {
                     RoomTypeId = t.RoomTypeID,
                     Description = t.Description,
@@ -51,7 +51,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             return result;
         }
 
-        public RoomTypeInformationDto GetById(int roomTypeId)
+        public RoomTypeDefaultInformationDto GetById(int roomTypeId)
         {
             var existRoomType = _dbContext.RoomTypes.FirstOrDefault(type =>
                 type.RoomTypeID == roomTypeId
@@ -62,7 +62,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                     p.RoomTypeID == roomTypeId
                 );
 
-                var returnData = new RoomTypeInformationDto
+                var returnData = new RoomTypeDefaultInformationDto
                 {
                     RoomTypeId = roomTypeId,
                     Description = existRoomType.Description,
@@ -79,7 +79,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
         }
 
-        public RoomTypeInformationDto CreateRoomType(CreateRoomTypeDto input)
+        public RoomTypeDefaultInformationDto CreateRoomType(CreateRoomTypeDto input)
         {
             var existType = _dbContext.RoomTypes.Any(type =>
                 type.RoomTypeName == input.RoomTypeName
@@ -109,7 +109,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                 _dbContext.DefaultPrices.Add(newTypeDefault);
                 _dbContext.SaveChanges();
 
-                var returnData = new RoomTypeInformationDto
+                var returnData = new RoomTypeDefaultInformationDto
                 {
                     RoomTypeId = newType.RoomTypeID,
                     RoomTypeName = newType.RoomTypeName,
@@ -122,7 +122,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
         }
 
-        public RoomTypeInformationDto UpdateRoomType(UpdateRoomTypeDto input)
+        public RoomTypeDefaultInformationDto UpdateRoomType(UpdateRoomTypeDto input)
         {
             var existTypeId = _dbContext.RoomTypes.Any(type => type.RoomTypeID == input.RoomTypeId);
             var existTypeName = _dbContext.RoomTypes.Any(type =>
@@ -156,7 +156,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                 _dbContext.DefaultPrices.Update(existTypePrice);
                 _dbContext.SaveChanges();
 
-                var returnData = new RoomTypeInformationDto
+                var returnData = new RoomTypeDefaultInformationDto
                 {
                     RoomTypeId = existType.RoomTypeID,
                     RoomTypeName = existType.RoomTypeName,
@@ -188,6 +188,81 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             else
             {
                 throw new Exception($"Không tìm thấy thể loại phòng có Id: \"{roomTypeId}\".");
+            }
+        }
+
+        public void SetPriceInHoliday(SetPriceInHolidayDto input)
+        {
+            var existTypeId = _dbContext.RoomTypes.Any(type => type.RoomTypeID == input.RoomTypeId);
+            var existSubPrice = _dbContext.SubPrices.Any(sp =>
+                sp.RoomTypeID == input.RoomTypeId
+                && DateOnly.FromDateTime(input.StartDate) == DateOnly.FromDateTime(sp.DayStart)
+                && DateOnly.FromDateTime(input.EndDate) == DateOnly.FromDateTime(sp.DayEnd)
+            );
+
+            if (existSubPrice)
+            {
+                throw new Exception(
+                    $"Đã định giá cho thể loại phòng {input.RoomTypeId} từ ngày {DateOnly.FromDateTime(input.StartDate)} đến ngày {DateOnly.FromDateTime(input.EndDate)}."
+                );
+            }
+            else if (!existTypeId)
+            {
+                throw new Exception($"Không tìm thấy thể loại phòng có Id \"{input.RoomTypeId}\".");
+            }
+            else
+            {
+                var newPriceInHoliday = new HolSubPrice
+                {
+                    RoomTypeID = input.RoomTypeId,
+                    DayStart = input.StartDate,
+                    DayEnd = input.EndDate,
+                    PricePerHours = input.PricePerHour,
+                    PricePerNight = input.PricePerNight,
+                };
+
+                _dbContext.SubPrices.Add(newPriceInHoliday);
+                _dbContext.SaveChanges();
+            }
+        }
+
+        public void UpdatePriceInHoliday(UpdatePriceInHoliday input)
+        {
+            var existPriceInHolidayId = _dbContext.SubPrices.Any(sp =>
+                sp.SubPriceID == input.SubPriceId
+            );
+            if (existPriceInHolidayId)
+            {
+                var existHolidayPrice = _dbContext.SubPrices.FirstOrDefault(sp =>
+                    sp.SubPriceID == input.SubPriceId
+                );
+                existHolidayPrice.PricePerHours = input.PricePerHour;
+                existHolidayPrice.PricePerNight = input.PricePerNight;
+                existHolidayPrice.DayStart = input.StartDate;
+                existHolidayPrice.DayEnd = input.EndDate;
+
+                _dbContext.SubPrices.Update(existHolidayPrice);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                throw new Exception($"Không tìm thấy");
+            }
+        }
+
+        public void DeletePriceInHoliday(int subPriceId)
+        {
+            var existPriceInHoliday = _dbContext.SubPrices.FirstOrDefault(sp =>
+                sp.SubPriceID == subPriceId
+            );
+            if (existPriceInHoliday != null)
+            {
+                _dbContext.SubPrices.Remove(existPriceInHoliday);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                throw new Exception($"Không tìm thấy");
             }
         }
     }

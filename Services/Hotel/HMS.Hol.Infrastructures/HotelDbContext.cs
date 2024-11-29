@@ -77,8 +77,6 @@ namespace HMS.Hol.Infrastructures
                 .HasForeignKey(e => e.RoomTypeID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<HolBillBooking_Room>().HasKey(e => new { e.BillID, e.RoomID });
-
             modelBuilder
                 .Entity<HolBillBooking_Room>()
                 .HasOne<HolBillBooking>()
@@ -89,23 +87,23 @@ namespace HMS.Hol.Infrastructures
                 .Entity<HolBillBooking_Room>()
                 .HasOne<HolRoom>()
                 .WithMany()
-                .HasForeignKey(e => e.RoomID)
+                .HasForeignKey(e=> e.RoomID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<HolBillBooking_Charge>().HasKey(e => new { e.BillID, e.ChargeID });
+            modelBuilder
+             .Entity<HolBillBooking_Charge>()
+             .HasOne<HolBillBooking>()
+             .WithMany()
+             .HasForeignKey(e => e.BillID)
+             .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder
                 .Entity<HolBillBooking_Charge>()
                 .HasOne<HolCharge>()
-                .WithOne()
-                .HasForeignKey<HolBillBooking_Charge>(e => e.ChargeID)
+                .WithMany()
+                .HasForeignKey(e => e.ChargeID)
                 .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder
-               .Entity<HolBillBooking_Charge>()
-               .HasOne<HolBillBooking>()
-               .WithOne()
-               .HasForeignKey<HolBillBooking_Charge>(e => e.BillID)
-               .OnDelete(DeleteBehavior.Restrict);
+
 
             base.OnModelCreating(modelBuilder);
         }

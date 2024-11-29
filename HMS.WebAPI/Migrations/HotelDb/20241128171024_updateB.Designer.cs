@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20241124203121_InitHotel")]
-    partial class InitHotel
+    [Migration("20241128171024_updateB")]
+    partial class updateB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,6 +48,12 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.Property<int?>("DiscountID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("ExpectedCheckIn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpectedCheckOut")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal?>("Prepayment")
                         .HasColumnType("decimal(18,2)");
 
@@ -65,32 +71,48 @@ namespace HMS.WebAPI.Migrations.HotelDb
 
             modelBuilder.Entity("HMS.Hol.Domain.HolBillBooking_Charge", b =>
                 {
+                    b.Property<int>("Booking_ChargeID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Booking_ChargeID"));
+
                     b.Property<int>("BillID")
                         .HasColumnType("int");
 
                     b.Property<int>("ChargeID")
                         .HasColumnType("int");
 
-                    b.HasKey("BillID", "ChargeID");
+                    b.HasKey("Booking_ChargeID");
 
-                    b.HasIndex("BillID")
-                        .IsUnique();
+                    b.HasIndex("BillID");
 
-                    b.HasIndex("ChargeID")
-                        .IsUnique();
+                    b.HasIndex("ChargeID");
 
                     b.ToTable("HolBillBooking_Charge", "hol");
                 });
 
             modelBuilder.Entity("HMS.Hol.Domain.HolBillBooking_Room", b =>
                 {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
                     b.Property<int>("BillID")
                         .HasColumnType("int");
 
                     b.Property<int>("RoomID")
                         .HasColumnType("int");
 
-                    b.HasKey("BillID", "RoomID");
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BillID");
 
                     b.HasIndex("RoomID");
 
@@ -99,19 +121,19 @@ namespace HMS.WebAPI.Migrations.HotelDb
 
             modelBuilder.Entity("HMS.Hol.Domain.HolCharge", b =>
                 {
-                    b.Property<int>("ChargeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChargeId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Descreption")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("ChargeId");
+                    b.HasKey("Id");
 
                     b.ToTable("HolCharge", "hol");
                 });
@@ -124,11 +146,11 @@ namespace HMS.WebAPI.Migrations.HotelDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DefaultPriceID"));
 
-                    b.Property<int>("PricePerHour")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PricePerHour")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("PricePerNight")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PricePerNight")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("RoomTypeID")
                         .HasColumnType("int");
@@ -142,11 +164,11 @@ namespace HMS.WebAPI.Migrations.HotelDb
 
             modelBuilder.Entity("HMS.Hol.Domain.HolHotel", b =>
                 {
-                    b.Property<int>("HotelID")
+                    b.Property<int>("HotelId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HotelID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HotelId"));
 
                     b.Property<string>("HotelAddress")
                         .IsRequired()
@@ -163,7 +185,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("HotelID");
+                    b.HasKey("HotelId");
 
                     b.ToTable("HolHotel", "hol");
                 });
@@ -242,8 +264,8 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("RoomDetailID");
 
@@ -300,11 +322,11 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.Property<DateTime>("DayStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PricePerHours")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PricePerHours")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("PricePerNight")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PricePerNight")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("RoomTypeID")
                         .HasColumnType("int");
@@ -319,14 +341,14 @@ namespace HMS.WebAPI.Migrations.HotelDb
             modelBuilder.Entity("HMS.Hol.Domain.HolBillBooking_Charge", b =>
                 {
                     b.HasOne("HMS.Hol.Domain.HolBillBooking", null)
-                        .WithOne()
-                        .HasForeignKey("HMS.Hol.Domain.HolBillBooking_Charge", "BillID")
+                        .WithMany()
+                        .HasForeignKey("BillID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HMS.Hol.Domain.HolCharge", null)
-                        .WithOne()
-                        .HasForeignKey("HMS.Hol.Domain.HolBillBooking_Charge", "ChargeID")
+                        .WithMany()
+                        .HasForeignKey("ChargeID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

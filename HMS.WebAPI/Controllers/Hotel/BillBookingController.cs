@@ -25,6 +25,50 @@ namespace HMS.WebAPI.Controllers.Hotel
             return Ok(new { message = "Thêm thành công", data = result });
         }
 
+        [HttpPost("create-pre-booking")]
+        public IActionResult CreatePreBooking([FromBody] CreatePreBookingDto input)
+        {
+            var result = _billBookingService.CreatePreBooking(input);
+            return Ok(new { message = "Thêm thành công", data = result });
+        }
+
+        [HttpPost("create-charge")]
+        public IActionResult CreateCharge([FromBody] CreateChargeDto input)
+        {
+            var result = _billBookingService.CreateCharge(input);
+            return Ok(new { message = "Thêm thành công", data = result });
+        }
+
+        [HttpPost("create-booking_room")]
+        public IActionResult CreateBooking_Room(int roomIds, int bookingId)
+        {
+            _billBookingService.CreateBooking_Room(roomIds, bookingId); ;
+            return Ok(new { message = "Thêm thành công", });
+        }
+
+        [HttpPost("create-booking_charge")]
+        public IActionResult CreateBooking_Charge(int chargeIds, int bookingId)
+        {
+            _billBookingService.CreateBooking_Room(chargeIds, bookingId); ;
+            return Ok(new { message = "Thêm thành công", });
+        }
+
+        [HttpPut("check-in")]
+        public IActionResult CheckIn(CheckInDto checkIn)
+        {
+            _billBookingService.CheckIn(checkIn);
+            return Ok(new { message = "Check in thành công" });
+        }
+
+        [HttpPut("check-out")]
+        public IActionResult CheckOut(CheckOutDto checkOut)
+        {
+            _billBookingService.CheckOut(checkOut);
+            return Ok(new { message = "Check out thành công" });
+        }
+
+
+
         [HttpPut("update-booking")]
         public IActionResult UpdateBooking([FromBody] BookingDto input)
         {
@@ -53,6 +97,30 @@ namespace HMS.WebAPI.Controllers.Hotel
             return Ok(_billBookingService.GetAllBooking(input));
 
         }
+
+        [HttpGet("get-expected-total-by-billId/{billId}")]
+        public IActionResult GetExpectedTotalByBillId(int billId)
+        {
+            var result = _billBookingService.GetExpectedTotalByBillId(billId);
+            return Ok(new
+            {
+                message = $"Tiền dự đoán: {result}đ"
+            });
+
+        }
+
+        [HttpGet("get-total-amount-by-billId/{billId}")]
+        public IActionResult GetTotalAmountByBillId(int billId)
+        {
+            var result = _billBookingService.GetTotalAmountByBillId(billId);
+            return Ok(new
+            {
+                message = $"Tổng tiền thanh toán: {result}đ"
+            });
+
+        }
+
+
 
     }
 }

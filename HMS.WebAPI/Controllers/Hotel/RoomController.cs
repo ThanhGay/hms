@@ -42,6 +42,19 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        [HttpGet("get-at-time/{roomId}")]
+        public IActionResult GetById(int roomId, [FromQuery] DateOnly date)
+        {
+            try
+            {
+                return Ok(_roomService.GetById(roomId, date));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("create")]
         public IActionResult CreateRoomInHotel(CreateRoomDto input, [FromQuery] int hotelId)
         {

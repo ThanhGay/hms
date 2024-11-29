@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
+		<ProjectReference Include="..\HMS.Noti.Domain\HMS.Noti.Domain.csproj" />
 		<ProjectReference Include="..\HMS.Noti.Dtos\HMS.Noti.Dtos.csproj" />
 		<ProjectReference Include="..\HMS.Noti.Infrastructures\HMS.Noti.Infrastructures.csproj" />
 	</ItemGroup>
