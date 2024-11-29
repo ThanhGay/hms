@@ -59,21 +59,20 @@ namespace HMS.WebAPI
             {
                 loggerConfig.ReadFrom.Configuration(context.Configuration);
             });
-
             // Đăng ký dịch vụ cần thiết
-            builder.Services.AddSingleton<DiagnosticContext>();
+            //builder.Services.AddSingleton<DiagnosticContext>();
 
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Configuration)
-                .CreateLogger();
-            builder.Host.UseSerilog();
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<Utils>();
+            //Log.Logger = new LoggerConfiguration()
+            //    .ReadFrom.Configuration(builder.Configuration)
+            //    .CreateLogger();
+            //builder.Host.UseSerilog();
+            //builder.Services.AddHttpContextAccessor();
+            //builder.Services.AddScoped<Utils>();
 
             // configure logging
-            builder.Logging.ClearProviders();
-            builder.Logging.AddConsole();
-            builder.Logging.SetMinimumLevel(LogLevel.Information);
+            //builder.Logging.ClearProviders();
+            //builder.Logging.AddConsole();
+            //builder.Logging.SetMinimumLevel(LogLevel.Information);
 
             var app = builder.Build();
 

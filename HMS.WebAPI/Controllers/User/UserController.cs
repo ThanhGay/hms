@@ -1,5 +1,6 @@
 ﻿using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Dtos;
+using HMS.Auth.Dtos.Receptionist;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,12 +20,43 @@ namespace HMS.WebAPI.Controllers.User
         }
 
         [HttpPost("/Login")]
-        public IActionResult Login([FromQuery] LoginDto input)
+        public IActionResult Login([FromBody] LoginDto input)
         {
             try
             {
                 
                 return Ok(_userService.Login(input));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("/logout")]
+        public IActionResult LogOut()
+        {
+            try
+            {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                _userService.AddToBlacklist(token);
+                return Ok("Đã đăng xuất thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("/forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromForm] string email)
+        {
+            try
+            {
+                await _userService.ForgotPassword(email);
+                return Ok("Đã gửi otp");
             }
             catch (Exception ex)
             {
@@ -77,65 +109,31 @@ namespace HMS.WebAPI.Controllers.User
             }
         }
 
+
         [Authorize]
-        [HttpPost("/logout")]
-        public IActionResult LogOut()
-        {
-            try
-            {
-                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-                _userService.AddToBlacklist(token);
-                return Ok("Đã đăng xuất thành công");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost("/test-serilog")]
-        public IActionResult TestSeriLog([FromQuery] int id, [FromBody] string str)
-        {
-            try
-            {
-                bool result = true;
-                if (result)
-                {
-                    Log.Warning($"Test serlog, {id}, {str}");
-                }
-                return Ok("Success");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        //[Authorize]
-        [HttpPost("/forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromQuery] string email)
-        {
-            try
-            {
-                await _userService.ForgotPassword(email);
-                return Ok("Đã gửi otp");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        //[Authorize]
         [HttpPut("/update-password")]
-        public IActionResult UpdatePassword([FromQuery] string email, string otp, string password)
+        public IActionResult UpdatePassword([FromBody] UpdatePassWordDto input)
         {
             try
             {
-                _userService.ResetPassword(email, otp, password);
+                _userService.ResetPassword(input);
                 return Ok("Đã đổi mật khẩu thành công");
             }
             catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("/create-acc-manager")]
+        public IActionResult CreateManager([FromBody] AddReceptionistDto input)
+        {
+            try
+            {
+                _userService.CreateManager(input);
+                return Ok("Thành công");
+            }
+            catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }

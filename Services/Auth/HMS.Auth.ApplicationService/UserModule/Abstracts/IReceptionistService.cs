@@ -12,8 +12,8 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
 {
     public interface IReceptionistService
     {
-        AuthReceptionist CreateReceptionist([FromQuery] string email, string password, AddReceptionistDto input);
-        AuthReceptionist UpdateInfReceptionist(int receptionistId, AddReceptionistDto input);
+        AuthReceptionist CreateReceptionist([FromBody] AddReceptionistDto input);
+        AuthReceptionist UpdateInfReceptionist(UpdateReceptionistDto input);
         void DeleteReceptionist(int receptionistId);
         AuthReceptionist GetReceptionistById([FromQuery] int id);
         PageResultDto<AuthReceptionist> GetAllReceptionist([FromQuery] FilterDto input);

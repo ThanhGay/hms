@@ -18,6 +18,6 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
         PageResultDto<AuthVoucher> GetAllVoucher([FromQuery] FilterDto input);
         AuthVoucher GetVoucherById(int voucherId);
         void SetVoucherToCustomer(int voucherId, int customerId);
-        AuthVoucher UpdateVoucher([FromQuery] UpdateVoucherDto input, int voucherId);
+        AuthVoucher UpdateVoucher([FromBody] UpdateVoucherDto input);
     }
 }

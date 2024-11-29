@@ -18,9 +18,9 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             _voucherService = voucherService;
         }
 
-        public AuthCustomer CreateCustomer([FromQuery] string email, string password, AddCustomerDto input)
+        public AuthCustomer CreateCustomer([FromBody] AddCustomerDto input)
         {
-            var findEmail = _dbContext.AuthUsers.Any(u => u.Email == email);
+            var findEmail = _dbContext.AuthUsers.Any(u => u.Email == input.Email);
             if (findEmail)
             {
                 _logger.LogError("Đã tồn tại email");
@@ -28,8 +28,8 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             }
             var user = new AuthUser
             {
-                Email = email,
-                Password = BCrypt.Net.BCrypt.HashPassword(password),
+                Email = input.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(input.PassWord),
                 RoleId = 1
             };
             _dbContext.AuthUsers.Add(user);
@@ -61,9 +61,9 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
             return customer;
         }
-        public AuthCustomer UpdateInfCustomer(int customerId, UpdateCustomerDto input)
+        public AuthCustomer UpdateInfCustomer(UpdateCustomerDto input)
         {
-            var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(r => r.CustomerId == customerId)
+            var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(r => r.CustomerId == input.CustomerId)
                 ?? throw new UserExceptions("Không tồn tại cutomer");
             if (findCustomer != null)
             {

@@ -3,6 +3,8 @@ using HMS.Auth.ApplicationService.Common;
 using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Domain;
 using HMS.Auth.Dtos;
+using HMS.Auth.Dtos.Customer;
+using HMS.Auth.Dtos.Receptionist;
 using HMS.Auth.Infrastructures;
 using HMS.Shared.ApplicationService.Notification;
 using Microsoft.AspNetCore.Mvc;
@@ -59,9 +61,17 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         public ResultLogin Login([FromQuery] LoginDto input)
         {
             var checkDelete = _dbContext.AuthUsers.Any(e => e.Email == input.Email && e.IsDeleted == true);
-            if (checkDelete) { throw new UserExceptions("Tài khoản đã bị xóa"); };
-            var resultAuth = _dbContext.AuthUsers.FirstOrDefault(a => a.Email == input.Email)
-                ?? throw new UserExceptions("Không tồn tại Email");
+            if (checkDelete) 
+            {
+                _logger.LogError("Tài khoản đã bị khóa");
+                throw new UserExceptions("Tài khoản đã bị xóa"); 
+            };
+            var resultAuth = _dbContext.AuthUsers.FirstOrDefault(a => a.Email == input.Email);
+            if(resultAuth == null) 
+            {
+                _logger.LogError("không tồn tại email");
+                throw new UserExceptions("Không tồn tại Email");
+            };
             var checkPassword = BCrypt.Net.BCrypt.Verify(input.Password, resultAuth.Password);
             if (checkPassword)
             {
@@ -96,6 +106,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             }
             else
             {
+                _logger.LogError("Sai mật khẩu");
                 throw new UserExceptions("Sai mật khẩu");
             }
         }
@@ -182,27 +193,58 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             await _notificationService.SendEmail(email, "OTP của bạn để lấy lại mật khẩu", randomNumber ); 
         }
 
-        public void ResetPassword(string email, string otp, string password)
+        public void ResetPassword(UpdatePassWordDto input)
         {
-            if (otpStore.ContainsKey(email))
+            if (otpStore.ContainsKey(input.Email))
             {
-                var (storedOtp, expiry) = otpStore[email];
+                var (storedOtp, expiry) = otpStore[input.Email];
                 if(DateTime.Now > expiry)
                 {
-                    otpStore.Remove(email);
+                    otpStore.Remove(input.Email);
                     throw new UserExceptions("Đã hết hạn Otp");
                 }
-                if(storedOtp == otp)
+                if(storedOtp == input.Otp)
                 {
-                    var findUser = _dbContext.AuthUsers.FirstOrDefault(u => u.Email == email);
-                    findUser.Password = BCrypt.Net.BCrypt.HashPassword(password);
+                    var findUser = _dbContext.AuthUsers.FirstOrDefault(u => u.Email == input.Email);
+                    findUser.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
 
-                    otpStore.Remove(email);
+                    otpStore.Remove(input.Email);
 
                     _dbContext.AuthUsers.Update(findUser);
                     _dbContext.SaveChanges();
                 }
             }   
+        }
+
+        public void CreateManager([FromBody] AddReceptionistDto input)
+        {
+            var findEmail = _dbContext.AuthUsers.Any(u => u.Email == input.Email);
+            if (findEmail)
+            {
+                _logger.LogError("Đã tồn tại email");
+                throw new UserExceptions("Đã tồn tại email");
+            }
+            var user = new AuthUser
+            {
+                Email = input.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(input.PassWord),
+                RoleId = 1
+            };
+            _dbContext.AuthUsers.Add(user);
+            _dbContext.SaveChanges();
+
+            var Receptionist = new AuthReceptionist
+            {
+                ReceptionistId = user.UserId,
+                FirstName = input.FirstName,
+                LastName = input.LastName,
+                CitizenIdentity = input.CitizenIdentity,
+                PhoneNumber = input.PhoneNumber,
+                DateOfBirth = input.DateOfBirth,
+            };
+            _dbContext.AuthReceptionists.Add(Receptionist);
+            _dbContext.SaveChanges();
+
         }
     }
 }

@@ -24,42 +24,11 @@ namespace HMS.WebAPI.Controllers.User
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.AddReceptionist })]
         [HttpPost("/add-receptionist")]
-        public IActionResult AddReceptionist([FromQuery] string email, string password, AddReceptionistDto input)
+        public IActionResult AddReceptionist(AddReceptionistDto input)
         {
             try
             {
-                return Ok(_receptionistService.CreateReceptionist(email, password, input));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateInfReceptionist })]
-        [HttpPut("/update-information-receptionist")]
-        public IActionResult UpdateInformationReceptionist(int receptionistId, AddReceptionistDto input)
-        {
-            try
-            {
-                return Ok(_receptionistService.UpdateInfReceptionist(receptionistId, input));
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.DeleteReceptionist })]
-        [HttpDelete("/delete-receptionist")]
-        public IActionResult Delete(int id)
-        {
-            try
-            {
-                _receptionistService.DeleteReceptionist(id);
-                return Ok("Đã xóa thành công");
+                return Ok(_receptionistService.CreateReceptionist(input));
             }
             catch (Exception ex)
             {
@@ -70,11 +39,11 @@ namespace HMS.WebAPI.Controllers.User
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetReceptionistById })]
         [HttpGet("/get-receptionist-by-id")]
-        public IActionResult GetReceptionistById([FromQuery] int id)
+        public IActionResult GetReceptionistById([FromForm] int receptionistId)
         {
             try
             {
-                return Ok(_receptionistService.GetReceptionistById(id));
+                return Ok(_receptionistService.GetReceptionistById(receptionistId));
             }
             catch (Exception ex)
             {
@@ -96,5 +65,37 @@ namespace HMS.WebAPI.Controllers.User
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateInfReceptionist })]
+        [HttpPut("/update-information-receptionist")]
+        public IActionResult UpdateInformationReceptionist([FromBody] UpdateReceptionistDto input)
+        {
+            try
+            {
+                return Ok(_receptionistService.UpdateInfReceptionist(input));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.DeleteReceptionist })]
+        [HttpDelete("/delete-receptionist")]
+        public IActionResult Delete(int receptionistId)
+        {
+            try
+            {
+                _receptionistService.DeleteReceptionist(receptionistId);
+                return Ok("Đã xóa thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

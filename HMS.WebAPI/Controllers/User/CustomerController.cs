@@ -21,11 +21,12 @@ namespace HMS.WebAPI.Controllers.User
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.AddCustomer })]
         [HttpPost("/add-customer")]
-        public IActionResult AddCustomers([FromQuery] string email, string password, AddCustomerDto input)
+
+        public IActionResult AddCustomers([FromBody] AddCustomerDto input)
         {
             try
             {
-                return Ok(_customerService.CreateCustomer(email, password, input));
+                return Ok(_customerService.CreateCustomer(input));
             }
             catch (Exception ex)
             {
@@ -34,44 +35,13 @@ namespace HMS.WebAPI.Controllers.User
         }
 
         [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateInfCustomer })]
-        [HttpPut("/update-information-customer")]
-        public IActionResult UpdateInformationCustomer(int customerId, UpdateCustomerDto input)
-        {
-            try
-            {
-                return Ok(_customerService.UpdateInfCustomer(customerId, input));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.DeleteCustomer })]
-        [HttpDelete("/delete-customer")]
-        public IActionResult DeleteCustomer(int id)
-        {
-            try
-            {
-                _customerService.DeleteCustomer(id);
-                return Ok("Thành công");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] {PermissionKeys.GetCustomerById})]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetCustomerById })]
         [HttpGet("/get-customer-by-id")]
-        public IActionResult GetCustomerById([FromQuery] int id)
+        public IActionResult GetCustomerById([FromForm] int customerId)
         {
             try
             {
-                return Ok(_customerService.GetCustomerById(id));
+                return Ok(_customerService.GetCustomerById(customerId));
             }
             catch (Exception ex)
             {
@@ -95,15 +65,46 @@ namespace HMS.WebAPI.Controllers.User
         }
 
         [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllVoucherCustomer})]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllVoucherCustomer })]
         [HttpGet("/get-all-voucher-customer")]
-        public IActionResult GetAllVoucherCustomer([FromQuery] FilterDto input, int customerId)
+        public IActionResult GetAllVoucherCustomer([FromQuery] FilterDto input, [FromForm] int customerId)
         {
             try
             {
                 return Ok(_customerService.GetAllVoucherByCustomer(input, customerId));
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateInfCustomer })]
+        [HttpPut("/update-information-customer")]
+        public IActionResult UpdateInformationCustomer(UpdateCustomerDto input)
+        {
+            try
+            {
+                return Ok(_customerService.UpdateInfCustomer(input));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.DeleteCustomer })]
+        [HttpDelete("/delete-customer")]
+        public IActionResult DeleteCustomer(int customerId)
+        {
+            try
+            {
+                _customerService.DeleteCustomer(customerId);
+                return Ok("Thành công");
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
