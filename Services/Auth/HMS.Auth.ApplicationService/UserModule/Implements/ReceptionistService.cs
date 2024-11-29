@@ -22,17 +22,17 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         {
         }
 
-        public AuthReceptionist CreateReceptionist([FromQuery] string email, string password, AddReceptionistDto input)
+        public AuthReceptionist CreateReceptionist([FromBody] AddReceptionistDto input)
         {
-            var findEmail = _dbContext.AuthUsers.Any(u => u.Email == email);
+            var findEmail = _dbContext.AuthUsers.Any(u => u.Email == input.Email);
             if (findEmail)
             {
                 throw new UserExceptions("Đã tồn tại email");
             }
             var user = new AuthUser
             {
-                Email = email,
-                Password = BCrypt.Net.BCrypt.HashPassword(password),
+                Email = input.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(input.Passwrod),
                 RoleId = 2
             };
             _dbContext.AuthUsers.Add(user);
@@ -51,9 +51,9 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             _dbContext.SaveChanges();
             return receptionist;
         }
-        public AuthReceptionist UpdateInfReceptionist(int receptionistId, AddReceptionistDto input)
+        public AuthReceptionist UpdateInfReceptionist(UpdateReceptionistDto input)
         {
-            var findReceptionist = _dbContext.AuthReceptionists.FirstOrDefault(r => r.ReceptionistId == receptionistId)
+            var findReceptionist = _dbContext.AuthReceptionists.FirstOrDefault(r => r.ReceptionistId == input.ReceptionistId)
                 ?? throw new UserExceptions("Không tồn tại receptioníst");
             if (findReceptionist != null)
             {

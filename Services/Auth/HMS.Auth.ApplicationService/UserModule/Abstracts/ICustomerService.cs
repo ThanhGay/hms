@@ -12,11 +12,11 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
 {
     public interface ICustomerService
     {
-        AuthCustomer CreateCustomer([FromQuery] string email, string password, AddCustomerDto input);
+        AuthCustomer CreateCustomer([FromBody] AddCustomerDto input);
         void DeleteCustomer(int customerId);
         PageResultDto<AuthCustomer> GetAllCustomer([FromQuery] FilterDto input);
         PageResultDto<VoucherCustomerDto> GetAllVoucherByCustomer([FromQuery] FilterDto input, int customerId);
         AuthCustomer GetCustomerById([FromQuery] int id);
-        AuthCustomer UpdateInfCustomer(int customerId, UpdateCustomerDto input);
+        AuthCustomer UpdateInfCustomer(UpdateCustomerDto input);
     }
 }

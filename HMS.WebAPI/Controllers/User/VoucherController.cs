@@ -20,7 +20,7 @@ namespace HMS.WebAPI.Controllers.User
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.CreateVoucher } )]
         [HttpPost("/create-voucher")]
-        public IActionResult CreateVoucher([FromQuery] CreateVoucherDto input)
+        public IActionResult CreateVoucher([FromBody] CreateVoucherDto input)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace HMS.WebAPI.Controllers.User
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] {PermissionKeys.SetVoucherToCustomer})]
         [HttpPost("/set-voucher-to-customer")]
-        public IActionResult SetVoucherCustomer([FromQuery] int customerId, int voucherId)
+        public IActionResult SetVoucherCustomer([FromForm] int customerId, [FromForm] int voucherId)
         {
             try
             {
@@ -81,11 +81,11 @@ namespace HMS.WebAPI.Controllers.User
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateVoucher})]
         [HttpPut("/update-voucher")]
-        public IActionResult UpdateVoucher([FromQuery] UpdateVoucherDto input, int voucherId)
+        public IActionResult UpdateVoucher([FromBody] UpdateVoucherDto input)
         {
             try
             {
-                return Ok(_voucherService.UpdateVoucher(input, voucherId));
+                return Ok(_voucherService.UpdateVoucher(input));
             }
             catch(Exception ex)
             {

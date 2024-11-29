@@ -36,9 +36,9 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             return newVoucher;
         }
 
-        public AuthVoucher UpdateVoucher([FromQuery] UpdateVoucherDto input, int voucherId)
+        public AuthVoucher UpdateVoucher([FromBody] UpdateVoucherDto input)
         {
-            var findVoucher = _dbContext.AuthVouchers.FirstOrDefault(x => x.VoucherId == voucherId)
+            var findVoucher = _dbContext.AuthVouchers.FirstOrDefault(x => x.VoucherId == input.VoucherId)
                 ??  throw new UserExceptions("Không tồn tại voucher");
             
             findVoucher.Percent = input.Percent;

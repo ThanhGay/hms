@@ -1,4 +1,6 @@
 ﻿using HMS.Auth.Dtos;
+using HMS.Auth.Dtos.Customer;
+using HMS.Auth.Dtos.Receptionist;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,12 +13,13 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
     public interface IUserService
     {
         void AddToBlacklist(string token);
+        void CreateManager([FromBody] AddReceptionistDto input);
         Task ForgotPassword([FromQuery] string email);
         List<string> GetFunctionCustomer();
         List<string> GetFunctionManager();
         List<string> GetFunctionReceptionist();
         bool IsTokenBlacklisted(string token);
         ResultLogin Login([FromQuery] LoginDto input);
-        void ResetPassword(string email, string otp, string password);
+        void ResetPassword(UpdatePassWordDto input);
     }
 }
