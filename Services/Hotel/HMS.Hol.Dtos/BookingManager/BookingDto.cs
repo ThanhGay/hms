@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HMS.Hol.Dtos.RoomManager;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,12 @@ namespace HMS.Hol.Dtos.BookingManager
     public class BookingDto
     {
         public int BillID { get; set; }
-        public DateTime BookingDate { get; set; } = DateTime.Now;
+        public DateTime BookingDate { get; set; }
+        public DateTime ExpectedCheckIn { get; set; }
+        public DateTime ExpectedCheckOut { get; set; }
         public DateTime? CheckIn { get; set; }
         public DateTime? CheckOut { get; set; }
-        public decimal? Prepayment { get; set; }
+        public decimal? Prepayment { get; set; } = 0;
         public string Status { get; set; }
         public int? DiscountID { get; set; }
         public int? CustomerID { get; set; }

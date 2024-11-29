@@ -11,6 +11,7 @@ using Serilog;
 using HMS.Noti.ApplicationService.StartUp;
 using Serilog.Extensions.Hosting;
 using Serilog.Sinks.Network;
+using HMS.Hol.ApplicationService.Common;
 
 namespace HMS.WebAPI
 {

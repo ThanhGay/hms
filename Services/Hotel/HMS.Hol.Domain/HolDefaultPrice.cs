@@ -14,8 +14,8 @@ namespace HMS.Hol.Domain
     {
         [Key]
         public int DefaultPriceID { get; set; }
-        public int PricePerHour { get; set; }
-        public int PricePerNight { get; set; }
+        public decimal PricePerHour { get; set; }
+        public decimal PricePerNight { get; set; }
         public int RoomTypeID { get; set; }
     }
 }
