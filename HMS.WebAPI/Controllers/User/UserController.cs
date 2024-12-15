@@ -3,7 +3,6 @@ using HMS.Auth.Dtos;
 using HMS.Auth.Dtos.Receptionist;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -120,20 +119,6 @@ namespace HMS.WebAPI.Controllers.User
                 return Ok("Đã đổi mật khẩu thành công");
             }
             catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost("/create-acc-manager")]
-        public IActionResult CreateManager([FromBody] AddReceptionistDto input)
-        {
-            try
-            {
-                _userService.CreateManager(input);
-                return Ok("Thành công");
-            }
-            catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }
