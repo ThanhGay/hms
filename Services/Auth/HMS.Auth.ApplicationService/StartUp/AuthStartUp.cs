@@ -2,6 +2,7 @@
 using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.ApplicationService.UserModule.Implements;
 using HMS.Auth.Infrastructures;
+using HMS.Shared.ApplicationService.Auth;
 using HMS.Shared.Constant.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace HMS.Auth.ApplicationService.StartUp
             builder.Services.AddScoped<IReceptionistService, ReceptionistService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IVoucherService, VoucherService>();
+            builder.Services.AddScoped<IInformationService, InformationService>();
         }
     }
 }

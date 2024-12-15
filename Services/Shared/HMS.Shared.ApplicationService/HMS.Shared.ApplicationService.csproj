@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Auth\HMS.Auth.Domain\HMS.Auth.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
