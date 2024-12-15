@@ -72,10 +72,13 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                 _logger.LogError("không tồn tại email");
                 throw new UserExceptions("Không tồn tại Email");
             };
+            var roleName = _dbContext.AuthRoles.FirstOrDefault(r => r.RoleId == resultAuth.RoleId);
+
             var checkPassword = BCrypt.Net.BCrypt.Verify(input.Password, resultAuth.Password);
             if (checkPassword)
             {
                 var result = new ResultLogin();
+                result.Role = roleName.RoleName;
                 var user = new UserDto();
                 if (resultAuth.RoleId == 1)
                 {
@@ -216,35 +219,5 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             }   
         }
 
-        public void CreateManager([FromBody] AddReceptionistDto input)
-        {
-            var findEmail = _dbContext.AuthUsers.Any(u => u.Email == input.Email);
-            if (findEmail)
-            {
-                _logger.LogError("Đã tồn tại email");
-                throw new UserExceptions("Đã tồn tại email");
-            }
-            var user = new AuthUser
-            {
-                Email = input.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(input.Password),
-                RoleId = 3
-            };
-            _dbContext.AuthUsers.Add(user);
-            _dbContext.SaveChanges();
-
-            var Receptionist = new AuthReceptionist
-            {
-                ReceptionistId = user.UserId,
-                FirstName = input.FirstName,
-                LastName = input.LastName,
-                CitizenIdentity = input.CitizenIdentity,
-                PhoneNumber = input.PhoneNumber,
-                DateOfBirth = input.DateOfBirth,
-            };
-            _dbContext.AuthReceptionists.Add(Receptionist);
-            _dbContext.SaveChanges();
-
-        }
     }
 }
