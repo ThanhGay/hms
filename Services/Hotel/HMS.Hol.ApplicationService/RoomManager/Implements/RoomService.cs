@@ -67,8 +67,8 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             {
                 var priceHoliDay = _dbContext.SubPrices.Any(r =>
                     r.RoomTypeID == existRoom.RoomTypeId
-                && (
-                DateOnly.FromDateTime(r.DayStart) <= DateOnly.FromDateTime(DateTime.Now)
+                    && (
+                        DateOnly.FromDateTime(r.DayStart) <= DateOnly.FromDateTime(DateTime.Now)
                         && DateOnly.FromDateTime(DateTime.Now) <= DateOnly.FromDateTime(r.DayEnd)
                     )
                 );
@@ -174,6 +174,75 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             HotelId = r.HotelId,
                             PricePerHour = p.PricePerHour,
                             PricePerNight = p.PricePerNight,
+                            RoomName = r.RoomName,
+                            RoomTypeId = r.RoomTypeId,
+                        };
+
+                    return foundRoomQuery.ToList()[0];
+                }
+            }
+        }
+
+        public RoomFullDetailDto GetById(int roomId, DateOnly start, DateOnly end)
+        {
+            var existRoom = _dbContext.Rooms.FirstOrDefault(r => r.RoomID == roomId);
+
+            if (existRoom == null)
+            {
+                throw new Exception($"Không tìm thấy phòng");
+            }
+            else
+            {
+                var priceHoliDay = _dbContext.SubPrices.Any(r =>
+                    r.RoomTypeID == existRoom.RoomTypeId
+                    && (
+                        DateOnly.FromDateTime(r.DayStart) <= start
+                        && end <= DateOnly.FromDateTime(r.DayEnd)
+                    )
+                );
+                if (priceHoliDay)
+                {
+                    var foundRoomQuery =
+                        from r in _dbContext.Rooms
+                        join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
+                        join sp in _dbContext.SubPrices on t.RoomTypeID equals sp.RoomTypeID
+                        join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
+                        where r.RoomID == roomId
+                        select new RoomFullDetailDto
+                        {
+                            RoomId = r.RoomID,
+                            Description = t.Description,
+                            RoomTypeName = t.RoomTypeName,
+                            Floor = r.Floor,
+                            HotelId = r.HotelId,
+                            PricePerHour = p.PricePerHour,
+                            PricePerNight = p.PricePerNight,
+                            PricePerHolidayHour = sp.PricePerHours,
+                            PricePerHolidayNight = sp.PricePerNight,
+                            RoomName = r.RoomName,
+                            RoomTypeId = r.RoomTypeId,
+                        };
+
+                    return foundRoomQuery.ToList()[0];
+                }
+                else
+                {
+                    var foundRoomQuery =
+                        from r in _dbContext.Rooms
+                        join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
+                        join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
+                        where r.RoomID == roomId
+                        select new RoomFullDetailDto
+                        {
+                            RoomId = r.RoomID,
+                            Description = t.Description,
+                            RoomTypeName = t.RoomTypeName,
+                            Floor = r.Floor,
+                            HotelId = r.HotelId,
+                            PricePerHour = p.PricePerHour,
+                            PricePerNight = p.PricePerNight,
+                            PricePerHolidayHour = p.PricePerHour,
+                            PricePerHolidayNight = p.PricePerNight,
                             RoomName = r.RoomName,
                             RoomTypeId = r.RoomTypeId,
                         };

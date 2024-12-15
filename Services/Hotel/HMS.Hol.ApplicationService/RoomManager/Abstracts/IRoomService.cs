@@ -17,5 +17,6 @@ namespace HMS.Hol.ApplicationService.RoomManager.Abstracts
         public PageResultDto<RoomDetailDto> GetAllRoom(int hotelId);
         public RoomDetailDto GetById(int roomId);
         public RoomDetailDto GetById(int roomId, DateOnly date);
+        public RoomFullDetailDto GetById(int roomId, DateOnly start, DateOnly end);
     }
 }
