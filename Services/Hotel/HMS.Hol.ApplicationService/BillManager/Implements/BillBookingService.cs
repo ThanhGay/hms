@@ -32,7 +32,6 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
 
         public BookingDto CreateBooking(CreateBookingDto input)
         {
-
             var exists = _dbContext.BillBookings
                 .FirstOrDefault(s => s.BookingDate == input.BookingDate);
 
@@ -41,6 +40,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 throw new HotelExceptions("Booking này đã tồn tại!");
             }
 
+            // Kiểm tra ngày check-out hợp lệ
             if (input.ExpectedCheckOut <= input.ExpectedCheckIn)
             {
                 throw new HotelExceptions("Ngày Check Out không hợp lệ!");
@@ -60,6 +60,27 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             _dbContext.BillBookings.Add(newBooking);
             _dbContext.SaveChanges();
 
+            if (input.RoomIds != null && input.RoomIds.Any())
+            {
+                foreach (var roomId in input.RoomIds)
+                {
+                    var roomExists = _dbContext.Rooms.Any(r => r.RoomID == roomId);
+                    if (!roomExists)
+                    {
+                        throw new HotelExceptions($"Room với ID {roomId} không tồn tại.");
+                    }
+
+                    var bookingRoom = new HolBillBooking_Room
+                    {
+                        BillID = newBooking.BillID,
+                        RoomID = roomId,
+                        status = newBooking.Status
+                    };
+                    _dbContext.BillBooking_Rooms.Add(bookingRoom);
+                }
+                _dbContext.SaveChanges();
+            }
+
             return new BookingDto
             {
                 BillID = newBooking.BillID,
@@ -74,27 +95,9 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 CustomerID = newBooking.CustomerID,
                 ReceptionistID = newBooking.ReceptionistID,
             };
-
         }
 
 
-        //var roomDetails = (from bill in _dbContext.BillBooking_Rooms
-        //                   join room in _dbContext.Rooms on bill.RoomID equals room.RoomID
-        //                   join roomType in _dbContext.RoomTypes on room.RoomTypeId equals roomType.RoomTypeID
-        //                   join defaultPrice in _dbContext.DefaultPrices on roomType.RoomTypeID equals defaultPrice.RoomTypeID
-        //                   where bill.BillID == billId
-        //                   select new RoomDetailDto
-        //                   {
-        //                       RoomId = room.RoomID,
-        //                       RoomName = room.RoomName,
-        //                       Floor = room.Floor,
-        //                       RoomTypeName = roomType.RoomTypeName,
-        //                       Description = roomType.Description,
-        //                       PricePerHour = defaultPrice.PricePerHour,
-        //                       PricePerNight = defaultPrice.PricePerNight,
-        //                       RoomTypeId = room.RoomTypeId,
-        //                       HotelId = room.HotelId
-        //                   }).ToListAsync();
 
         public BookingDto CreatePreBooking(CreatePreBookingDto input)
         {
