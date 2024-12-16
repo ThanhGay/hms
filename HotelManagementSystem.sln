@@ -45,6 +45,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HMS.Noti.Dtos", "Services\N
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9876AA92-50A0-44ED-9EF5-CFACE12462DE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F9E07597-8B7E-4DC0-8549-345416DCC64C}"
+	ProjectSection(SolutionItems) = preProject
+		Jenkinsfile = Jenkinsfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
