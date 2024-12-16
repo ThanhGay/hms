@@ -9,3 +9,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Data Source=192.168.1.2;Initial Catalog=HMS_Db;User ID=sa;Password=yourStrong(!)Password;Trust Server Certificate=True  
+    networks:
+      - mynetwork2
+networks:
+  mynetwork2:
+    driver: bridge
