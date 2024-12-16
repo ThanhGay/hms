@@ -5,6 +5,7 @@ using ZaloPay.Helper;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ZaloPay.Helper.Crypto;
+using HMS.Hol.ApplicationService.BillManager.Abstracts;
 
 
 namespace HMS.WebAPI.Controllers.Hotel
