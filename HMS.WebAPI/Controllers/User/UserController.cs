@@ -123,6 +123,5 @@ namespace HMS.WebAPI.Controllers.User
                 return BadRequest(ex.Message);
             }
         }
-
     }
 }
