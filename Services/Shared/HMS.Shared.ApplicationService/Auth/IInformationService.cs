@@ -11,6 +11,6 @@ namespace HMS.Shared.ApplicationService.Auth
     {
         AuthCustomer GetCustomerById(int id);
         float GetVoucherCustomer(int voucherId);
-        void UseVoucher(int voucherId, DateOnly useAt);
+        void UseVoucher(int? voucherId, DateOnly useAt);
     }
 }
