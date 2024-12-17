@@ -24,8 +24,16 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpPost("create-booking")]
         public IActionResult CreateBooking([FromBody] CreateBookingDto input)
         {
-            var result = _billBookingService.CreateBooking(input);
-            return Ok(new { message = "Thêm thành công", data = result });
+            try
+            {
+                var result = _billBookingService.CreateBooking(input);
+                return Ok(new { message = "Thêm thành công", data = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         [Authorize]
@@ -33,8 +41,16 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpPost("create-pre-booking")]
         public IActionResult CreatePreBooking([FromBody] CreatePreBookingDto input)
         {
-            var result = _billBookingService.CreatePreBooking(input);
-            return Ok(new { message = "Thêm thành công", data = result });
+
+            try
+            {
+                var result = _billBookingService.CreatePreBooking(input);
+                return Ok(new { message = "Thêm thành công", data = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -42,8 +58,16 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpPost("create-charge")]
         public IActionResult CreateCharge([FromBody] CreateChargeDto input)
         {
-            var result = _billBookingService.CreateCharge(input);
-            return Ok(new { message = "Thêm thành công", data = result });
+
+            try
+            {
+                var result = _billBookingService.CreateCharge(input);
+                return Ok(new { message = "Thêm thành công", data = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -51,8 +75,16 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpPost("create-booking-room")]
         public IActionResult CreateBooking_Room(int roomIds, int bookingId)
         {
-            _billBookingService.CreateBooking_Room(roomIds, bookingId); ;
-            return Ok(new { message = "Thêm thành công", });
+
+            try
+            {
+                _billBookingService.CreateBooking_Room(roomIds, bookingId); ;
+                return Ok(new { message = "Thêm thành công", });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -60,8 +92,16 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpPost("create-booking-charge")]
         public IActionResult CreateBooking_Charge(int chargeIds, int bookingId)
         {
-            _billBookingService.CreateBooking_Room(chargeIds, bookingId); ;
-            return Ok(new { message = "Thêm thành công", });
+
+            try
+            {
+                _billBookingService.CreateBooking_Room(chargeIds, bookingId); ;
+                return Ok(new { message = "Thêm thành công", });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -69,8 +109,16 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpPut("check-in")]
         public IActionResult CheckIn(CheckInDto checkIn)
         {
-            _billBookingService.CheckIn(checkIn);
-            return Ok(new { message = "Check in thành công" });
+
+            try
+            {
+                _billBookingService.CheckIn(checkIn);
+                return Ok(new { message = "Check in thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -78,8 +126,16 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpPut("check-out")]
         public IActionResult CheckOut(CheckOutDto checkOut)
         {
-            _billBookingService.CheckOut(checkOut);
-            return Ok(new { message = "Check out thành công" });
+
+            try
+            {
+                _billBookingService.CheckOut(checkOut);
+                return Ok(new { message = "Check out thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -87,8 +143,16 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpPut("update-booking")]
         public IActionResult UpdateBooking([FromBody] BookingDto input)
         {
-            _billBookingService.UpdateBooking(input);
-            return Ok(new { message = "Cập nhật thành công" });
+
+            try
+            {
+                _billBookingService.UpdateBooking(input);
+                return Ok(new { message = "Cập nhật thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -96,8 +160,16 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpDelete("delete-booking/{id}")]
         public IActionResult DeleteBooking(int id)
         {
-            _billBookingService.DeleteBooking(id);
-            return Ok(new { message = "Xóa thành công" });
+
+            try
+            {
+                _billBookingService.DeleteBooking(id);
+                return Ok(new { message = "Xóa thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -106,7 +178,14 @@ namespace HMS.WebAPI.Controllers.Hotel
         public IActionResult GetIdBooking(int id)
         {
 
-            return Ok(_billBookingService.GetIdBooking(id));
+            try
+            {
+                return Ok(_billBookingService.GetIdBooking(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -115,7 +194,14 @@ namespace HMS.WebAPI.Controllers.Hotel
         public IActionResult GetAllBooking([FromQuery] FilterDto input)
         {
 
-            return Ok(_billBookingService.GetAllBooking(input));
+            try
+            {
+                return Ok(_billBookingService.GetAllBooking(input));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
@@ -124,11 +210,20 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpGet("get-expected-total-by-billId/{billId}")]
         public IActionResult GetExpectedTotalByBillId(int billId)
         {
-            var result = _billBookingService.GetExpectedTotalByBillId(billId);
-            return Ok(new
+
+
+            try
             {
-                message = $"Tiền dự đoán: {result}đ"
-            });
+                var result = _billBookingService.GetExpectedTotalByBillId(billId);
+                return Ok(new
+                {
+                    message = $"Tiền dự đoán: {result}đ"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
@@ -137,51 +232,102 @@ namespace HMS.WebAPI.Controllers.Hotel
         [HttpGet("get-total-amount-by-billId/{billId}")]
         public IActionResult GetTotalAmountByBillId(int billId)
         {
-            var result = _billBookingService.GetTotalAmountByBillId(billId);
-            return Ok(new
+
+            try
             {
-                message = $"Tổng tiền thanh toán: {result}đ"
-            });
+                var result = _billBookingService.GetTotalAmountByBillId(billId);
+                return Ok(new
+                {
+                    message = $"Tổng tiền thanh toán: {result}đ"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
-
-
-
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.UpdateCharge })]
         [HttpPut("update-charge")]
         public IActionResult UpdateCharge([FromBody] ChargeDto input)
         {
-            _billBookingService.UpdateCharge(input);
-            return Ok(new { message = "Cập nhật thành công" });
+
+            try
+            {
+                _billBookingService.UpdateCharge(input);
+                return Ok(new { message = "Cập nhật thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.DeleteCharge })]
         [HttpDelete("delete-charge/{id}")]
         public IActionResult DeleteCharge(int id)
         {
-            _billBookingService.DeleteCharge(id);
-            return Ok(new { message = "Xóa thành công" });
+
+            try
+            {
+                _billBookingService.DeleteCharge(id);
+                return Ok(new { message = "Xóa thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetChargeById })]
         [HttpGet("get-charge/{id}")]
         public IActionResult GetChargeById(int id)
         {
 
-            return Ok(_billBookingService.GetChargeById(id));
+            try
+            {
+                return Ok(_billBookingService.GetChargeById(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetChargeByIdBooking })]
         [HttpGet("get-all-charge-by-booking/{id}")]
         public IActionResult GetChargeByIdBooking(int id)
         {
-
-            return Ok(_billBookingService.GetChargeByIdBooking(id));
-
+            try
+            {
+                return Ok(_billBookingService.GetChargeByIdBooking(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CancelBooking })]
         [HttpPut("cancel-booking")]
         public IActionResult CancelBooking(int bookingId)
         {
-            _billBookingService.CancelBooking(bookingId);
-            return Ok(new { message = "Cập nhật thành công" });
+
+            try
+            {
+                _billBookingService.CancelBooking(bookingId);
+                return Ok(new { message = "Cập nhật thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

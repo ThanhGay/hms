@@ -68,5 +68,10 @@ namespace HMS.Shared.Constant.Permission
         public const string UpdatePriceHoliday = "update_price_in_holiday";
         public const string DeletePriceHoliday = "delete_price_in_holiday";
         public const string GetAllVoucherUse = "get_all_voucher_Use";
+        public const string UpdateCharge = "update_charge";
+        public const string DeleteCharge = "delete_charge";
+        public const string GetChargeById = "get_charge_by_id";
+        public const string GetChargeByIdBooking = "get_charge_by_id_booking";
+        public const string CancelBooking = "cancel_booking";
     }
 }
