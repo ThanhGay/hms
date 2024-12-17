@@ -20,5 +20,6 @@ namespace HMS.Hol.Dtos.BookingManager
         public int? DiscountID { get; set; }
         public int? CustomerID { get; set; }
         public int? ReceptionistID { get; set; }
+        public List<RoomBookingDto> Rooms { get; set; }
     }
 }

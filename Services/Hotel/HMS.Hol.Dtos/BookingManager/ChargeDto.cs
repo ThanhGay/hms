@@ -10,6 +10,6 @@ namespace HMS.Hol.Dtos.BookingManager
     {
         public int ChargeId { get; set; }
         public decimal Price { get; set; }
-        public string? Descreption { get; set; }
+        public string Descreption { get; set; }
     }
 }

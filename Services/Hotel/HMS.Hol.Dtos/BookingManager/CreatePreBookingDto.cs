@@ -14,6 +14,6 @@ namespace HMS.Hol.Dtos.BookingManager
         public string Status { get; set; } = "PreBooking";
         public int? DiscountID { get; set; }
         public int CustomerID { get; set; }
-        public int? ReceptionistID { get; set; }
+        public List<int> RoomIds { get; set; }
     }
 }

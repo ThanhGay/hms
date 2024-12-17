@@ -26,5 +26,10 @@ namespace HMS.Hol.ApplicationService.BillManager.Abstracts
         void CheckOut(CheckOutDto checkOut);
         decimal GetExpectedTotalByBillId(int billId);
         decimal GetTotalAmountByBillId(int billId);
+        void UpdateCharge(ChargeDto input);
+        void DeleteCharge(int id);
+        ChargeDto GetChargeById(int id);
+        List<ChargeDto> GetChargeByIdBooking(int bookingId);
+        void CancelBooking(int bookingId);
     }
 }
