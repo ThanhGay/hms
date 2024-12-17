@@ -10,7 +10,7 @@ using System.Collections.Specialized;
 
 namespace HMS.WebAPI.Controllers.Hotel
 {
-    [Route("api/[controller]")]
+    [Route("api/bill-booking")]
     [ApiController]
     public class BillBookingController : ControllerBase
     {
@@ -48,7 +48,7 @@ namespace HMS.WebAPI.Controllers.Hotel
 
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateBookingRoom })]
-        [HttpPost("create-booking_room")]
+        [HttpPost("create-booking-room")]
         public IActionResult CreateBooking_Room(int roomIds, int bookingId)
         {
             _billBookingService.CreateBooking_Room(roomIds, bookingId); ;
@@ -57,7 +57,7 @@ namespace HMS.WebAPI.Controllers.Hotel
 
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateBookingCharge })]
-        [HttpPost("create-booking_charge")]
+        [HttpPost("create-booking-charge")]
         public IActionResult CreateBooking_Charge(int chargeIds, int bookingId)
         {
             _billBookingService.CreateBooking_Room(chargeIds, bookingId); ;
@@ -146,5 +146,42 @@ namespace HMS.WebAPI.Controllers.Hotel
         }
 
 
+
+
+        [HttpPut("update-charge")]
+        public IActionResult UpdateCharge([FromBody] ChargeDto input)
+        {
+            _billBookingService.UpdateCharge(input);
+            return Ok(new { message = "Cập nhật thành công" });
+        }
+
+        [HttpDelete("delete-charge/{id}")]
+        public IActionResult DeleteCharge(int id)
+        {
+            _billBookingService.DeleteCharge(id);
+            return Ok(new { message = "Xóa thành công" });
+        }
+
+        [HttpGet("get-charge/{id}")]
+        public IActionResult GetChargeById(int id)
+        {
+
+            return Ok(_billBookingService.GetChargeById(id));
+        }
+
+        [HttpGet("get-all-charge-by-booking/{id}")]
+        public IActionResult GetChargeByIdBooking(int id)
+        {
+
+            return Ok(_billBookingService.GetChargeByIdBooking(id));
+
+        }
+
+        [HttpPut("cancel-booking")]
+        public IActionResult CancelBooking(int bookingId)
+        {
+            _billBookingService.CancelBooking(bookingId);
+            return Ok(new { message = "Cập nhật thành công" });
+        }
     }
 }

@@ -27,8 +27,11 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
             return findCustomer;
         }
-        public float GetVoucherCustomer(int voucherId)
+        public float GetVoucherCustomer(int? voucherId)
         {
+            if (voucherId == null) {
+                return 0;
+            }
             var findVou = _dbContext.AuthVouchers.Any(v => v.VoucherId == voucherId);
             if (!findVou)
             {
@@ -39,13 +42,18 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
             return result.Percent;
         }
-        public void UseVoucher(int voucherId, DateOnly useAt)
+        public void UseVoucher(int? voucherId, DateOnly useAt)
         {
-            var check = _dbContext.AuthCustomerVouchers.FirstOrDefault(v => v.VoucherId == voucherId);
-
-            check.UsedAt = useAt;
-            _dbContext.AuthCustomerVouchers.Update(check);
-            _dbContext.SaveChanges();
+            if (voucherId == null)
+            {
+            }
+            else
+            {
+                var check = _dbContext.AuthCustomerVouchers.FirstOrDefault(v => v.VoucherId == voucherId);
+                check.UsedAt = useAt;
+                _dbContext.AuthCustomerVouchers.Update(check);
+                _dbContext.SaveChanges();
+            }
 
         }
     }

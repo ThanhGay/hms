@@ -1,5 +1,6 @@
 ﻿using HMS.Hol.ApplicationService.BillManager.Abstracts;
 using HMS.Hol.ApplicationService.BillManager.Implements;
+using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.HotelManager.Abstracts;
 using HMS.Hol.ApplicationService.HotelManager.Implements;
 using HMS.Hol.ApplicationService.RoomManager.Abstracts;
@@ -44,6 +45,8 @@ namespace HMS.Hol.ApplicationService.Startup
             builder.Services.AddScoped<IRoomService, RoomService>();
             builder.Services.AddScoped<IRoomTypeService, RoomTypeService>();
             builder.Services.AddScoped<IBillBookingService, BillBookingService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<Utils>();
         }
 
     }

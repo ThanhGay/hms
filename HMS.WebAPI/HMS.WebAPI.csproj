@@ -36,8 +36,4 @@
     <ProjectReference Include="..\Services\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\Hotel\" />
-  </ItemGroup>
-
 </Project>
