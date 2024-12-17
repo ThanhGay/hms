@@ -80,6 +80,22 @@ namespace HMS.WebAPI.Controllers.User
         }
 
         [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllVoucherUse })]
+        [HttpGet("/get-all-voucher-customer-use")]
+        public IActionResult GetAllVoucherUse(int customerId)
+        {
+            try
+            {
+                return Ok(_customerService.GetAllVoucherUse(customerId));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateInfCustomer })]
         [HttpPut("/update-information-customer")]
         public IActionResult UpdateInformationCustomer(UpdateCustomerDto input)

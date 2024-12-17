@@ -39,6 +39,14 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
             return result.Percent;
         }
-        
+        public void UseVoucher(int voucherId, DateOnly useAt)
+        {
+            var check = _dbContext.AuthCustomerVouchers.FirstOrDefault(v => v.VoucherId == voucherId);
+
+            check.UsedAt = useAt;
+            _dbContext.AuthCustomerVouchers.Update(check);
+            _dbContext.SaveChanges();
+
+        }
     }
 }
