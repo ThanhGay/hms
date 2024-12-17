@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20241129031937_InitDb")]
-    partial class InitDb
+    [Migration("20241217040259_HolDb")]
+    partial class HolDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

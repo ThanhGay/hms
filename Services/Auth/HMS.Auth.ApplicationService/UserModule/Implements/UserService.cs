@@ -216,7 +216,17 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                     _dbContext.AuthUsers.Update(findUser);
                     _dbContext.SaveChanges();
                 }
-            }   
+                else
+                {
+                    _logger.LogError("Không đúng OTP");
+                    throw new UserExceptions("Không đúng OTP");
+                }
+            }
+            else
+            {
+                _logger.LogError("Không đúng email");
+                throw new UserExceptions("Không đúng email");
+            }
         }
 
     }

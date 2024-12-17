@@ -18,8 +18,8 @@ namespace HMS.WebAPI.Controllers.User
             _customerService = customerService;
         }
 
-        //[Authorize]
-        //[TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.AddCustomer })]
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.AddCustomer })]
         [HttpPost("/add-customer")]
 
         public IActionResult AddCustomers([FromBody] AddCustomerDto input)

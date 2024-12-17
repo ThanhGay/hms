@@ -1,5 +1,7 @@
 ﻿using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Dtos.RoomManager;
+using HMS.Shared.Constant.Permission;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +17,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         {
             _roomService = roomService;
         }
-
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] {PermissionKeys.GetAllRoomInHotel })]
         [HttpGet("all")]
         public IActionResult GetAllRoomInHotel([FromQuery] int hotelId)
         {
@@ -29,6 +32,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetRoomById })]
         [HttpGet("get/{roomId}")]
         public IActionResult GetById(int roomId)
         {
@@ -42,6 +47,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllTimeByRoomId })]
         [HttpGet("get-at-time/{roomId}")]
         public IActionResult GetById(int roomId, [FromQuery] DateOnly date)
         {
@@ -55,6 +62,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAtRangeTimeByRoomId })]
         [HttpGet("get-at-range-time/{roomId}")]
         public IActionResult GetByById(
             int roomId,
@@ -72,6 +81,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.CreateRoomInHotel })]
         [HttpPost("create")]
         public IActionResult CreateRoomInHotel(CreateRoomDto input, [FromQuery] int hotelId)
         {
@@ -85,6 +96,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateRoomByIdInHotel })]
         [HttpPut("update")]
         public IActionResult UpdateRoom(UpdateRoomDto input, [FromQuery] int hotelId)
         {
@@ -98,6 +111,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.DeleteRoomById })]
         [HttpDelete("delete/{roomId}")]
         public IActionResult DeleteRoom(int roomId)
         {

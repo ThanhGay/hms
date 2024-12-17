@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     /// <inheritdoc />
-    public partial class InitDb : Migration
+    public partial class HolDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
