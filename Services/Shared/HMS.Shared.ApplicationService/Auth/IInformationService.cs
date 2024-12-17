@@ -10,5 +10,7 @@ namespace HMS.Shared.ApplicationService.Auth
     public interface IInformationService
     {
         AuthCustomer GetCustomerById(int id);
+        float GetVoucherCustomer(int voucherId);
+        void UseVoucher(int voucherId, DateOnly useAt);
     }
 }

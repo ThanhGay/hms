@@ -5,6 +5,8 @@ using ZaloPay.Helper;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ZaloPay.Helper.Crypto;
+using HMS.Shared.Constant.Permission;
+using Microsoft.AspNetCore.Authorization;
 using HMS.Hol.ApplicationService.BillManager.Abstracts;
 
 
@@ -65,7 +67,8 @@ namespace HMS.WebAPI.Controllers.Hotel
 
             return await HttpHelper.PostFormAsync(zalo_paymentUrl, param);
         }
-
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.CreatePaymentUrl })]
         [HttpPost("create-payment-url")]
         public async Task<IActionResult> CreatePaymentUrl([FromBody] VnPayRequest request)
         {
@@ -104,7 +107,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
-
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.ReturnVnPayUrl })]
         [HttpGet("return-vnpay-url")]
         public IActionResult ReturnVnpayUrl([FromQuery] VnPayResponse response)
         {

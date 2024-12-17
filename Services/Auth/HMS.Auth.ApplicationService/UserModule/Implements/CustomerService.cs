@@ -155,5 +155,23 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             return result;
         }
 
+        public List<AuthVoucher> GetAllVoucherUse(int customerId)
+        {
+            var findCustomer = _dbContext.AuthCustomers.Any(x => x.CustomerId == customerId);
+            if (!findCustomer) { throw new UserExceptions("Không tồn tại khách hàng"); }
+            var findVoucher = from v in _dbContext.AuthVouchers
+                              join vc in _dbContext.AuthCustomerVouchers on v.VoucherId equals vc.VoucherId
+                              where vc.CustomerId == customerId && vc.UsedAt == null
+                              select new AuthVoucher
+                              {
+                                  VoucherId = v.VoucherId,
+                                  Percent = v.Percent,
+                                  ExpDate = v.ExpDate,
+                                  StartDate = v.StartDate,
+                              };
+            return findVoucher.ToList();
+
+        }
+
     }
 }

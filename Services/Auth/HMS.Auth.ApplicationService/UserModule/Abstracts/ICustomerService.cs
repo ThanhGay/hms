@@ -16,6 +16,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
         void DeleteCustomer(int customerId);
         PageResultDto<AuthCustomer> GetAllCustomer([FromQuery] FilterDto input);
         PageResultDto<VoucherCustomerDto> GetAllVoucherByCustomer([FromQuery] FilterDto input, int customerId);
+        List<AuthVoucher> GetAllVoucherUse(int customerId);
         AuthCustomer GetCustomerById([FromQuery] int id);
         AuthCustomer UpdateInfCustomer(UpdateCustomerDto input);
     }

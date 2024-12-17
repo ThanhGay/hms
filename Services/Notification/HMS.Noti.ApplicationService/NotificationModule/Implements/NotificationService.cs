@@ -19,14 +19,12 @@ namespace HMS.Noti.ApplicationService.NotificationModule.Implements
         public async Task SendEmail(string receptor, string subject, string body)
         {
             var email = _configuration.GetValue<string>("configure_email:email");
-            Console.WriteLine($"Email: {email} tồn tại");
+
             var password = _configuration.GetValue<string>("configure_email:password");
-            Console.WriteLine($"Email: {password} tồn tại");
+
             var host = _configuration.GetValue<string>("configure_email:host");
-            Console.WriteLine($"Email: {host} tồn tại");
 
             var port = _configuration.GetValue<int>("configure_email:port");
-            Console.WriteLine($"Email: {port} tồn tại");
 
             var smtpClient = new SmtpClient(host, port);
             smtpClient.EnableSsl = true;

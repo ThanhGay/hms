@@ -27,5 +27,26 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
             return findCustomer;
         }
+        public float GetVoucherCustomer(int voucherId)
+        {
+            var findVou = _dbContext.AuthVouchers.Any(v => v.VoucherId == voucherId);
+            if (!findVou)
+            {
+                _logger.LogError("Người dùng không có tại voucher này");
+                throw new UserExceptions("Người dùng không có tại voucher này");
+            }
+            var result = _dbContext.AuthVouchers.FirstOrDefault(v => v.VoucherId == voucherId);
+
+            return result.Percent;
+        }
+        public void UseVoucher(int voucherId, DateOnly useAt)
+        {
+            var check = _dbContext.AuthCustomerVouchers.FirstOrDefault(v => v.VoucherId == voucherId);
+
+            check.UsedAt = useAt;
+            _dbContext.AuthCustomerVouchers.Update(check);
+            _dbContext.SaveChanges();
+
+        }
     }
 }

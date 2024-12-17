@@ -18,8 +18,8 @@ namespace HMS.WebAPI.Controllers.User
             _customerService = customerService;
         }
 
-        //[Authorize]
-        //[TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.AddCustomer })]
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.AddCustomer })]
         [HttpPost("/add-customer")]
 
         public IActionResult AddCustomers([FromBody] AddCustomerDto input)
@@ -78,6 +78,22 @@ namespace HMS.WebAPI.Controllers.User
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllVoucherUse })]
+        [HttpGet("/get-all-voucher-customer-use")]
+        public IActionResult GetAllVoucherUse(int customerId)
+        {
+            try
+            {
+                return Ok(_customerService.GetAllVoucherUse(customerId));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateInfCustomer })]

@@ -1,6 +1,8 @@
 ﻿using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Dtos.RoomTypeManager;
 using HMS.Shared.Constant.Common;
+using HMS.Shared.Constant.Permission;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +24,9 @@ namespace HMS.WebAPI.Controllers.Type
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        /// 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllRoomType })]
         [HttpGet("all")]
         public IActionResult All(FilterDto input)
         {
@@ -40,6 +45,9 @@ namespace HMS.WebAPI.Controllers.Type
         /// </summary>
         /// <param name="roomTypeId"></param>
         /// <returns></returns>
+        /// 
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetRoomTypeById })]
         [HttpGet("get/{roomTypeId}")]
         public IActionResult Get(int roomTypeId)
         {
@@ -58,6 +66,9 @@ namespace HMS.WebAPI.Controllers.Type
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.CreateRoomType })]
         [HttpPost("create")]
         public IActionResult CreateRoomType(CreateRoomTypeDto input)
         {
@@ -76,6 +87,8 @@ namespace HMS.WebAPI.Controllers.Type
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateRoomType })]
         [HttpPut("update")]
         public IActionResult UpdateInformation(UpdateRoomTypeDto input)
         {
@@ -94,6 +107,8 @@ namespace HMS.WebAPI.Controllers.Type
         /// </summary>
         /// <param name="roomTypeId"></param>
         /// <returns></returns>
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.DeleteRoomTypeById })]
         [HttpDelete("delete/{roomTypeId}")]
         public IActionResult Delete(int roomTypeId)
         {
@@ -113,6 +128,8 @@ namespace HMS.WebAPI.Controllers.Type
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.SetPriceInHoliday })]
         [HttpPost("set-price-holiday")]
         public IActionResult SetPriceInHoliday(SetPriceInHolidayDto input)
         {
@@ -132,6 +149,9 @@ namespace HMS.WebAPI.Controllers.Type
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdatePriceHoliday })]
         [HttpPut("update-price-holiday")]
         public IActionResult UpdatePriceHoliday(UpdatePriceInHoliday input)
         {
@@ -151,6 +171,9 @@ namespace HMS.WebAPI.Controllers.Type
         /// </summary>
         /// <param name="subPriceId"></param>
         /// <returns></returns>
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.DeletePriceHoliday })]
         [HttpDelete("delete-price-holiday/{subPriceId}")]
         public IActionResult DeletePriceHoliday(int subPriceId)
         {
