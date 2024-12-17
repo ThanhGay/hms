@@ -11,7 +11,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
     public interface IUserService
     {
         void AddToBlacklist(string token);
-        Task ForgotPassword([FromQuery] string email);
+        Task ForgotPassword([FromForm] string email);
         List<string> GetFunctionCustomer();
         List<string> GetFunctionManager();
         List<string> GetFunctionReceptionist();

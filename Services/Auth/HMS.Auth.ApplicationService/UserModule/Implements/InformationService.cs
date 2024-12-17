@@ -27,5 +27,23 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
             return findCustomer;
         }
+        public AuthVoucher GetVoucherCustomer(int voucherId, int customerId)
+        {
+            var AnyCustomer = _dbContext.AuthCustomers.Any(a => a.CustomerId == voucherId);
+            if (!AnyCustomer)
+            {
+                _logger.LogError("Không tìm thấy người dùng");
+                throw new UserExceptions("Không tìm thấy người dùng");
+            }
+            var findVou = _dbContext.AuthCustomerVouchers.Any(v => v.VoucherId == voucherId && v.CustomerId == customerId);
+            if (!findVou)
+            {
+                _logger.LogError("Người dùng không có tại voucher này");
+                throw new UserExceptions("Người dùng không có tại voucher này");
+            }
+            var result = _dbContext.AuthVouchers.FirstOrDefault(v => v.VoucherId == voucherId);
+            return result;
+        }
+        
     }
 }

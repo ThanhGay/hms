@@ -186,14 +186,14 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             return blackList.Contains(token);
         }
 
-        public async Task ForgotPassword([FromQuery] string email)
+        public async Task ForgotPassword([FromForm] string email)
         {
             var findEmail = _dbContext.AuthUsers.Any( u => u.Email == email );
             if (!findEmail) { throw new UserExceptions("Tài khoản chưa đăng kí"); }
             Random random = new Random();
             string randomNumber = random.Next(0, 1000000).ToString("D6");
             otpStore[email] = (randomNumber, DateTime.Now.AddMinutes(5));
-            await _notificationService.SendEmail(email, "OTP của bạn để lấy lại mật khẩu", randomNumber ); 
+            await _notificationService.SendEmail(email, "OTP của bạn để lấy lại mật khẩu: ", randomNumber ); 
         }
 
         public void ResetPassword(UpdatePassWordDto input)

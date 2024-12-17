@@ -48,7 +48,6 @@ namespace HMS.WebAPI.Controllers.User
             }
         }
 
-        [Authorize]
         [HttpPost("/forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromForm] string email)
         {
@@ -109,7 +108,6 @@ namespace HMS.WebAPI.Controllers.User
         }
 
 
-        [Authorize]
         [HttpPut("/update-password")]
         public IActionResult UpdatePassword([FromBody] UpdatePassWordDto input)
         {
