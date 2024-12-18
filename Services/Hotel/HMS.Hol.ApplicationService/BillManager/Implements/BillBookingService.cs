@@ -159,7 +159,11 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 throw new HotelExceptions("Customer này đã không tồn tại!");
             }
 
-
+            var check = _informationService.CheckVoucher(input.DiscountID, input.CustomerID);
+            if(check == 1)
+            {
+                throw new HotelExceptions("Voucher đã được sử dụng");
+            }
             var exists = _dbContext.BillBookings
             .FirstOrDefault(s => s.BookingDate == input.BookingDate);
 
@@ -173,7 +177,6 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 _logger.LogError("Ngày Check Out không hợp lệ!");
                 throw new HotelExceptions("Ngày Check Out không hợp lệ!");
             }
-
             var newBooking = new HolBillBooking
             {
                 BookingDate = input.BookingDate,
@@ -455,7 +458,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
         public decimal GetTotalChargeByBillId(int billId)
         {
             var checkCharge = _dbContext.BillBooking_Charges.FirstOrDefault(b => b.BillID == billId);
-
+           
             if (checkCharge == null)
             {
                 return 0;
@@ -464,11 +467,17 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                                join charge in _dbContext.Charges
                                on bookingCharge.ChargeID equals charge.Id
                                where bookingCharge.BillID == billId
-                               select charge.Price)
-                               .DefaultIfEmpty(0)
-                               .Sum();
-
-            return totalCharge;
+                               select new
+                               {
+                                   money = charge.Price
+                               }).ToList();
+            decimal total = 0;
+            foreach (var item in totalCharge)
+            {
+                total += item.money;  
+            }
+            Console.WriteLine($"TOtal charge: {total}");
+            return total;
         }
 
 
@@ -623,6 +632,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             var bill = _dbContext.BillBookings.FirstOrDefault(s => s.BillID == billId);
 
             decimal checkOutLate = 0;
+            
             Console.WriteLine($"checkout: {bill.CheckOut}");
             Console.WriteLine($"expert check out:{bill.ExpectedCheckOut}");
 
@@ -700,6 +710,32 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 CustomerID = findBooking.CustomerID,
                 ReceptionistID = findBooking.ReceptionistID,
                 BookingDate = findBooking.BookingDate,
+                Rooms = _dbContext.BillBooking_Rooms
+                    .Where(br => br.BillID == findBooking.BillID)
+                    .Join(_dbContext.Rooms,
+                          br => br.RoomID,
+                          r => r.RoomID,
+                          (br, r) => new RoomBookingDto
+                          {
+                              RoomID = r.RoomID,
+                              RoomName = r.RoomName,
+                              Floor = r.Floor,
+                              RoomTypeId = r.RoomTypeId,
+                              HotelId = r.HotelId,
+                          })
+                    .ToList(),
+                Charges = _dbContext.BillBooking_Charges
+                    .Where(br => br.BillID == findBooking.BillID)
+                    .Join(_dbContext.Charges,
+                          br => br.ChargeID,
+                          r => r.Id,
+                          (br, r) => new ChargeDto
+                          {
+                              ChargeId = r.Id,
+                              Descreption = r.Descreption,
+                              Price = r.Price,
+                          })
+                    .ToList(),
                 Status = findBooking.Status
             };
         }

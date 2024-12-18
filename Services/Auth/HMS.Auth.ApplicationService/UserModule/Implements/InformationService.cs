@@ -73,5 +73,15 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             }
 
         }
+
+        public int CheckVoucher(int? voucherId, int customerId)
+        {
+            var checkVoucher = _dbContext.AuthCustomerVouchers.FirstOrDefault(v => v.VoucherId == voucherId && v.CustomerId == customerId);
+            if (checkVoucher.UsedAt != null)
+            {
+                return 1;
+            }
+            return 0;
+        }
     }
 }
