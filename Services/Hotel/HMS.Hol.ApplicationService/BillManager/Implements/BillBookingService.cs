@@ -42,7 +42,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 throw new HotelExceptions("Customer này đã không tồn tại!");
             }
 
-            var existsReceptionist = _informationService.GetCustomerById(input.ReceptionistID);
+            var existsReceptionist = _informationService.GetReceptionistById(input.ReceptionistID);
             if (existsReceptionist == null)
             {
                 _logger.LogError("Receptionist này đã không tồn tại!");
@@ -75,7 +75,18 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 CustomerID = input.CustomerID,
                 ReceptionistID = input.ReceptionistID,
             };
-
+            if (input.RoomIds != null && input.RoomIds.Any())
+            {
+                foreach (var roomId in input.RoomIds)
+                {
+                    var roomExists = _dbContext.Rooms.Any(r => r.RoomID == roomId);
+                    if (!roomExists)
+                    {
+                        _logger.LogError($"Room với ID {roomId} không tồn tại.");
+                        throw new HotelExceptions($"Room với ID {roomId} không tồn tại.");
+                    }
+                }
+            }
             _dbContext.BillBookings.Add(newBooking);
             _dbContext.SaveChanges();
 
@@ -172,6 +183,18 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 Status = input.Status,
                 CustomerID = input.CustomerID,
             };
+            if (input.RoomIds != null && input.RoomIds.Any())
+            {
+                foreach (var roomId in input.RoomIds)
+                {
+                    var roomExists = _dbContext.Rooms.Any(r => r.RoomID == roomId);
+                    if (!roomExists)
+                    {
+                        _logger.LogError($"Room với ID {roomId} không tồn tại.");
+                        throw new HotelExceptions($"Room với ID {roomId} không tồn tại.");
+                    }
+                }
+            }
             _dbContext.BillBookings.Add(newBooking);
             _dbContext.SaveChanges();
 
@@ -393,8 +416,6 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             }
         }
 
-
-
         public PriceDto GetPriceRoom(int id)
         {
             var defaultP = (from room in _dbContext.Rooms
@@ -433,6 +454,12 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
         // Tính tổng các phí ngoài
         public decimal GetTotalChargeByBillId(int billId)
         {
+            var checkCharge = _dbContext.BillBooking_Charges.FirstOrDefault(b => b.BillID == billId);
+
+            if (checkCharge == null)
+            {
+                return 0;
+            }
             var totalCharge = (from bookingCharge in _dbContext.BillBooking_Charges
                                join charge in _dbContext.Charges
                                on bookingCharge.ChargeID equals charge.Id
@@ -540,11 +567,14 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             foreach (var room in roomList)
             {
                 totalAmount += GetTotalAmountByRoom(room.CheckIn, room.CheckOut, room.RoomId);
+                Console.WriteLine($"Total: {totalAmount}");
+
             }
             if (bill.DiscountID != null)
             {
                 decimal voucher = Convert.ToDecimal(_informationService.GetVoucherCustomer(bill.DiscountID));
-                totalAmount = totalAmount - voucher * totalAmount;
+                totalAmount = totalAmount - ((voucher/100) * totalAmount);
+                
                 return totalAmount;
             }
             return totalAmount;
@@ -578,6 +608,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             foreach (var room in roomList)
             {
                 totalAmount += GetTotalAmountByRoom(room.CheckIn, room.CheckOut, room.RoomId);
+                Console.WriteLine($"Total {totalAmount}");
             }
 
             return totalAmount;
@@ -592,11 +623,15 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             var bill = _dbContext.BillBookings.FirstOrDefault(s => s.BillID == billId);
 
             decimal checkOutLate = 0;
+            Console.WriteLine($"checkout: {bill.CheckOut}");
+            Console.WriteLine($"expert check out:{bill.ExpectedCheckOut}");
+
             if (bill.CheckOut > bill.ExpectedCheckOut)
             {
                 checkOutLate = GetTotalLateByBillId(billId);
             }
-
+            Console.WriteLine(expectedTotal);
+            Console.WriteLine(checkOutLate);
             decimal totalAmount = charge + expectedTotal + checkOutLate;
             return totalAmount;
         }
@@ -689,6 +724,31 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             result.Items = query
                 .Select(s => new BookingDto
                 {
+                    BillID = s.BillID,
+                    BookingDate = s.BookingDate,
+                    CheckIn = s.CheckIn,
+                    CheckOut = s.CheckOut,
+                    CustomerID = s.CustomerID,
+                    DiscountID = s.DiscountID,
+                    ExpectedCheckIn = s.ExpectedCheckIn,
+                    ExpectedCheckOut = s.ExpectedCheckOut,
+                    Prepayment = s.Prepayment,
+                    ReceptionistID = s.ReceptionistID,
+                    Rooms = _dbContext.BillBooking_Rooms
+                    .Where(br => br.BillID == s.BillID)
+                    .Join(_dbContext.Rooms,
+                          br => br.RoomID,
+                          r => r.RoomID,
+                          (br, r) => new RoomBookingDto
+                          {
+                              RoomID = r.RoomID,
+                              RoomName = r.RoomName,
+                              Floor = r.Floor,
+                              RoomTypeId = r.RoomTypeId,
+                              HotelId = r.HotelId,
+                          })
+                    .ToList(),
+                    Status = s.Status
                 })
                 .ToList();
 
