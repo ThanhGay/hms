@@ -129,12 +129,12 @@ namespace HMS.WebAPI.Controllers.Hotel
         }
 
         [HttpPost("add-image/{roomId}")]
-        public IActionResult UploadImage(UploadImageDto image, int roomId)
+        public async Task<IActionResult> UploadImage(UploadImageDto image, int roomId)
         {
             try
             {
-                _roomService.AddImgae(image, roomId);
-                return Ok($"Đã thêm ảnh cho {roomId}");
+                var result = await _roomService.AddImgae(image, roomId);
+                return Ok(result);
             }
             catch (Exception ex)
             {
