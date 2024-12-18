@@ -88,6 +88,9 @@ namespace HMS.WebAPI
             app.UseMiddleware<RequestLogContextMiddleware>();
             app.UseSerilogRequestLogging();
 
+            //upload file
+            app.UseStaticFiles();
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();

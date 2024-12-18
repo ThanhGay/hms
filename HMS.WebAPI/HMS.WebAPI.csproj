@@ -36,4 +36,8 @@
     <ProjectReference Include="..\Services\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
 </Project>

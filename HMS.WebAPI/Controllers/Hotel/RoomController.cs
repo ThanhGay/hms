@@ -1,5 +1,6 @@
 ﻿using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Dtos.RoomManager;
+using HMS.Hol.Dtos.Upload;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -120,6 +121,20 @@ namespace HMS.WebAPI.Controllers.Hotel
             {
                 _roomService.DeleteRoom(roomId);
                 return Ok("Xóa phòng thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("add-image/{roomId}")]
+        public IActionResult UploadImage(UploadImageDto image, int roomId)
+        {
+            try
+            {
+                _roomService.AddImgae(image, roomId);
+                return Ok($"Đã thêm ảnh cho {roomId}");
             }
             catch (Exception ex)
             {

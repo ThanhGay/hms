@@ -7,6 +7,7 @@ using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Domain;
 using HMS.Hol.Dtos.RoomManager;
+using HMS.Hol.Dtos.Upload;
 using HMS.Hol.Infrastructures;
 using HMS.Shared.Constant.Common;
 using Microsoft.Extensions.Logging;
@@ -92,7 +93,20 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
                 else
                 {
@@ -114,7 +128,20 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
             }
         }
@@ -156,7 +183,20 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
                 else
                 {
@@ -178,7 +218,20 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
             }
         }
@@ -223,7 +276,20 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
                 else
                 {
@@ -247,7 +313,20 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
             }
         }
@@ -359,6 +438,75 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             {
                 _dbContext.Rooms.Remove(existRoom);
                 _dbContext.SaveChanges();
+            }
+        }
+
+        public async Task<ImageDto> AddImgae(UploadImageDto image, int roomId)
+        {
+            var existRoom = _dbContext.Rooms.Any(r => r.RoomID == roomId);
+            if (existRoom)
+            {
+                string createdImageName = "";
+
+                if (image.ImageFile != null)
+                {
+                    string[] allowedFileExtentions = [".jpg", ".jpeg", ".png"];
+
+                    var ext = Path.GetExtension(image.ImageFile.FileName);
+                    if (!allowedFileExtentions.Contains(ext))
+                    {
+                        throw new ArgumentException(
+                            $"Only {string.Join(",", allowedFileExtentions)} are allowed."
+                        );
+                    }
+
+                    if (image.ImageFile.Length > 0)
+                    {
+                        var path = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot",
+                            "Images",
+                            image.ImageFile.FileName
+                        );
+                        using (var stream = System.IO.File.Create(path))
+                        {
+                            await image.ImageFile.CopyToAsync(stream);
+                        }
+                        ;
+
+                        createdImageName = "/images/" + image.ImageFile.FileName;
+                    }
+
+                    var rtnData = new ImageDto
+                    {
+                        Description = image.Description,
+                        ImageURL = createdImageName,
+                        Name = image.Name,
+                    };
+
+                    var img = new HolImage
+                    {
+                        Name = image.Name,
+                        Description = image.Description,
+                        URL = createdImageName,
+                        RoomId = roomId,
+                    };
+
+                    _dbContext.Images.Add(img);
+                    _dbContext.SaveChanges();
+
+                    return rtnData;
+                }
+                else
+                {
+                    _logger.LogError($"Không có file nào dược chọn");
+                    throw new Exception($"No file selected");
+                }
+            }
+            else
+            {
+                _logger.LogError("Không tồn tại phòng");
+                throw new Exception($"Không tồn tại phòng");
             }
         }
     }
