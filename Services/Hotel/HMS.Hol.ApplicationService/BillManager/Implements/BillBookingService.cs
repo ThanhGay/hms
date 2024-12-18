@@ -449,12 +449,13 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
         {
 
             var priceRoom = GetPriceRoom(roomId);
-            if (checkIn <= priceRoom.DateStart && checkOut <= priceRoom.DateEnd)
+            // 
+            if (checkIn >= priceRoom.DateStart && checkOut <= priceRoom.DateEnd)
             {
                 TimeSpan overlap = checkOut - checkIn;
                 int days = overlap.Days;
                 int hours = overlap.Hours;
-                decimal totalAmount = days * priceRoom.PricePerNightSub + hours * priceRoom.PricePerNightSub;
+                decimal totalAmount = days * priceRoom.PricePerNightSub + hours * priceRoom.PricePerHourSub;
                 return totalAmount;
             }
             else if (checkOut < priceRoom.DateStart || checkIn > priceRoom.DateEnd)
@@ -462,7 +463,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 TimeSpan overlap = checkOut - checkIn;
                 int days = overlap.Days;
                 int hours = overlap.Hours;
-                decimal totalAmount = days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerNightDefault;
+                decimal totalAmount = days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerHourDefault;
                 return totalAmount;
             }
             else if (checkIn < priceRoom.DateStart && checkOut > priceRoom.DateStart && checkOut < priceRoom.DateEnd)
@@ -473,7 +474,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 int hours = overlap.Hours;
                 int daysSub = overlapSub.Days;
                 int hoursSub = overlapSub.Hours;
-                decimal totalAmount = days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerNightDefault
+                decimal totalAmount = days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerHourDefault
                     + daysSub * priceRoom.PricePerNightSub + hoursSub * priceRoom.PricePerHourSub;
                 return totalAmount;
             }
@@ -486,7 +487,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 int hours = overlap.Hours;
                 int daysSub = overlapSub.Days;
                 int hoursSub = overlapSub.Hours;
-                decimal totalAmount = days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerNightDefault
+                decimal totalAmount = days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerHourDefault
                     + daysSub * priceRoom.PricePerNightSub + hoursSub * priceRoom.PricePerHourSub;
                 return totalAmount;
             }
@@ -501,7 +502,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 int hours2 = overlap2.Hours;
                 int daysSub = overlapSub.Days;
                 int hoursSub = overlapSub.Hours;
-                decimal totalAmount = (days1 + days2) * priceRoom.PricePerNightDefault + (hours1 + hours2) * priceRoom.PricePerNightDefault
+                decimal totalAmount = (days1 + days2) * priceRoom.PricePerNightDefault + (hours1 + hours2) * priceRoom.PricePerHourDefault
                     + daysSub * priceRoom.PricePerNightSub + hoursSub * priceRoom.PricePerHourSub;
                 return totalAmount;
             }
