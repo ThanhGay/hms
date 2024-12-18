@@ -46,6 +46,7 @@ namespace HMS.Hol.ApplicationService.Startup
             builder.Services.AddScoped<IRoomTypeService, RoomTypeService>();
             builder.Services.AddScoped<IBillBookingService, BillBookingService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IInteriorService, InteriorService>();
             builder.Services.AddScoped<Utils>();
         }
 

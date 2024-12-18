@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Domain;
+using HMS.Hol.Dtos.InteriorManager;
 using HMS.Hol.Dtos.RoomTypeManager;
 using HMS.Hol.Infrastructures;
 using HMS.Shared.Constant.Common;
