@@ -24,7 +24,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
         {
             var result = new PageResultDto<RoomDetailDto>();
 
-            var foundRoomQuery =
+            var foundRoomQuery = (
                 from r in _dbContext.Rooms
                 join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
                 join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
@@ -40,8 +40,22 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                     PricePerNight = p.PricePerNight,
                     RoomName = r.RoomName,
                     RoomTypeId = r.RoomTypeId,
-                };
-
+                    RoomImages = _dbContext
+                        .Images.Where(i => i.RoomId == r.RoomID)
+                        .Select(i => new ImageDto
+                        {
+                            Description = i.Description,
+                            ImageURL = i.URL,
+                            Name = i.Name,
+                        })
+                        .ToList(),
+                }
+            ).ToList();
+            //foreach (var item in foundRoomQuery)
+            //{
+            //    var listImage = GetAllImageByRoomId(item.RoomId);
+            //    item.RoomImages = listImage;
+            //}
             var totalRoom = foundRoomQuery.Count();
 
             result.TotalItem = totalRoom;
@@ -508,6 +522,21 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                 _logger.LogError("Không tồn tại phòng");
                 throw new Exception($"Không tồn tại phòng");
             }
+        }
+
+        public List<ImageDto> GetAllImageByRoomId(int roomId)
+        {
+            var result = _dbContext
+                .Images.Where(i => i.RoomId == roomId)
+                .Select(i => new ImageDto
+                {
+                    Name = i.Name,
+                    Description = i.Description,
+                    ImageURL = i.URL,
+                })
+                .ToList();
+
+            return result;
         }
     }
 }

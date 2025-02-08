@@ -18,8 +18,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         {
             _roomService = roomService;
         }
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] {PermissionKeys.GetAllRoomInHotel })]
+        //[Authorize]
+        //[TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] {PermissionKeys.GetAllRoomInHotel })]
         [HttpGet("all")]
         public IActionResult GetAllRoomInHotel([FromQuery] int hotelId)
         {
@@ -141,5 +141,18 @@ namespace HMS.WebAPI.Controllers.Hotel
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("get-all-image-by-roomid")]
+        public IActionResult GetAllImageByRoomId(int roomId)
+        {
+            try
+            {
+                return Ok(_roomService.GetAllImageByRoomId(roomId));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

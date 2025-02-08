@@ -19,8 +19,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         {
             _hotelService = hotelService;
         }
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllHotel})]
+        //[Authorize]
+        //[TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllHotel})]
         [HttpGet("all")]
         public IActionResult GetAllHotel([FromQuery] FilterDto input)
         {

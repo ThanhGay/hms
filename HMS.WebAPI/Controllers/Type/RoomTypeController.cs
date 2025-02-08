@@ -25,8 +25,8 @@ namespace HMS.WebAPI.Controllers.Type
         /// <param name="input"></param>
         /// <returns></returns>
         /// 
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllRoomType })]
+        //[Authorize]
+        //[TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllRoomType })]
         [HttpGet("all")]
         public IActionResult All(FilterDto input)
         {

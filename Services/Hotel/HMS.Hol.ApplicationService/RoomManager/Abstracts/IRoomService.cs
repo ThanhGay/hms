@@ -20,5 +20,6 @@ namespace HMS.Hol.ApplicationService.RoomManager.Abstracts
         public RoomDetailDto GetById(int roomId, DateOnly date);
         public RoomFullDetailDto GetById(int roomId, DateOnly start, DateOnly end);
         public Task<ImageDto> AddImgae(UploadImageDto image, int roomId);
+        List<ImageDto> GetAllImageByRoomId(int roomId);
     }
 }
