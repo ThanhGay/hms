@@ -18,8 +18,7 @@ namespace HMS.WebAPI.Controllers.Hotel
         {
             _roomService = roomService;
         }
-        //[Authorize]
-        //[TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] {PermissionKeys.GetAllRoomInHotel })]
+
         [HttpGet("all")]
         public IActionResult GetAllRoomInHotel([FromQuery] int hotelId)
         {
@@ -33,8 +32,6 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetRoomById })]
         [HttpGet("get/{roomId}")]
         public IActionResult GetById(int roomId)
         {

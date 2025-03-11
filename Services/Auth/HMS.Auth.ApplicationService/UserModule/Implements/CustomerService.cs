@@ -6,16 +6,22 @@ using HMS.Auth.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using HMS.Auth.Dtos.Customer;
-using HMS.Auth.Dtos.Voucher;
+using HMS.Shared.ApplicationService.Hotel.Room;
+using HMS.Shared.ApplicationService.Auth;
+using Microsoft.AspNetCore.Http;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
     public class CustomerService : AuthServiceBase, ICustomerService
     {
         private readonly IVoucherService _voucherService;
-        public CustomerService(ILogger<CustomerService> logger, AuthDbContext dbContext, IVoucherService voucherService) : base(logger, dbContext)
+        private readonly IInformationRoomService _informationRoomService;
+        private readonly IHttpContextAccessor _HttpContextAccessor;
+        public CustomerService(ILogger<CustomerService> logger, AuthDbContext dbContext, IVoucherService voucherService, IInformationRoomService informationRoomService, IHttpContextAccessor HttpContextAccessor) : base(logger, dbContext)
         {
             _voucherService = voucherService;
+            _informationRoomService = informationRoomService;
+            _HttpContextAccessor = HttpContextAccessor;
         }
 
         public AuthCustomer CreateCustomer([FromBody] AddCustomerDto input)
@@ -124,16 +130,15 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             return result;
         }
 
-        public PageResultDto<VoucherCustomerDto> GetAllVoucherByCustomer([FromQuery] FilterDto input, int customerId)
+        public PageResultDto<VoucherCustomerDto> GetAllVoucherByCustomer([FromQuery] FilterDto input)
         {
-            var findCustomer = _dbContext.AuthCustomers.Any(x => x.CustomerId == customerId);
-            if (!findCustomer) { throw new UserExceptions("Không tồn tại khách hàng"); }
+            int userId = CommonUtils.GetCurrentUserId(_HttpContextAccessor);
 
             var result = new PageResultDto<VoucherCustomerDto>();
 
             var findVoucher = from v in _dbContext.AuthVouchers
                               join vc in _dbContext.AuthCustomerVouchers on v.VoucherId equals vc.VoucherId
-                              where vc.CustomerId == customerId
+                              where vc.CustomerId == userId
                               select new VoucherCustomerDto
                               {
                                   VoucherId = v.VoucherId,
@@ -142,7 +147,6 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                                   ExpDate = v.ExpDate,
                                   checkUse = vc.UsedAt == null ? false : true,
                               };
-
 
             var query = findVoucher.Where(e =>
             string.IsNullOrEmpty(input.KeyWord)
@@ -171,6 +175,75 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                               };
             return findVoucher.ToList();
 
+        }
+
+        public AuthFavouriteRoom AddFavourite(int roomId)
+        {
+            int userId = CommonUtils.GetCurrentUserId(_HttpContextAccessor);
+
+            var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(c => c.CustomerId == userId)
+                ?? throw new UserExceptions("Không tồn tại người dùng");
+            
+            
+            if (_informationRoomService.CheckRoom(roomId))
+            {
+                AuthFavouriteRoom addFav = new AuthFavouriteRoom { CustomerId = userId, RoomId = roomId };
+                _dbContext.AuthFavouriteRooms.Add(addFav);
+                _dbContext.SaveChanges();
+                return addFav;
+            }
+            else
+            {
+                throw new UserExceptions("Không tồn tại phòng");
+            }
+
+        }
+        public void RemoveFavourite(int roomId)
+        {
+            int userId = CommonUtils.GetCurrentUserId(_HttpContextAccessor);
+
+            var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(c => c.CustomerId == userId)
+                ?? throw new UserExceptions("Không tồn tại người dùng");
+
+
+            if (_informationRoomService.CheckRoom(roomId))
+            {
+                var findFav = _dbContext.AuthFavouriteRooms.FirstOrDefault(c => c.CustomerId == userId && c.RoomId == roomId)
+                    ?? throw new UserExceptions("Không tồn tại yêu thích");
+                _dbContext.AuthFavouriteRooms.Remove(findFav);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                throw new UserExceptions("Không tồn tại phòng");
+            }
+
+        }
+        public PageResultDto<FavouriteRoomDto> GetAllFavourite([FromQuery] FilterDto input)
+        {
+            int userId = CommonUtils.GetCurrentUserId(_HttpContextAccessor);
+
+            var result = new PageResultDto<FavouriteRoomDto>();
+
+            var findFavourite = from v in _dbContext.AuthFavouriteRooms
+                              where v.CustomerId == userId
+                                select new FavouriteRoomDto
+                                {
+                                  HotelId = _informationRoomService.FindHotelRoom(v.RoomId),
+                                  FavouriteId = v.FavouriteId,
+                                  RoomId = v.RoomId
+                              };
+
+
+            var query = findFavourite.Where(e =>
+            string.IsNullOrEmpty(input.KeyWord)
+            || e.FavouriteId.ToString().ToLower().Contains(input.KeyWord.ToLower()));
+            result.TotalItem = query.Count();
+            query = query.OrderBy(e => e.FavouriteId)
+                         .Skip(input.Skip())
+                         .Take(input.PageSize);
+            result.Items = query.ToList();
+            return result;
         }
 
     }

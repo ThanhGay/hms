@@ -65,20 +65,25 @@ namespace HMS.WebAPI.Migrations
                     b.ToTable("AuthCustomerVoucher", "auth");
                 });
 
-            modelBuilder.Entity("HMS.Auth.Domain.AuthPermission", b =>
+            modelBuilder.Entity("HMS.Auth.Domain.AuthFavouriteRoom", b =>
                 {
-                    b.Property<string>("PermissonKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                    b.Property<int>("FavouriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("PermissionName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavouriteId"));
 
-                    b.HasKey("PermissonKey");
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
-                    b.ToTable("AuthPermission", "auth");
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FavouriteId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("AuthFavouriteRoom", "auth");
                 });
 
             modelBuilder.Entity("HMS.Auth.Domain.AuthReceptionist", b =>
@@ -219,6 +224,15 @@ namespace HMS.WebAPI.Migrations
                     b.HasOne("HMS.Auth.Domain.AuthVoucher", null)
                         .WithMany()
                         .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HMS.Auth.Domain.AuthFavouriteRoom", b =>
+                {
+                    b.HasOne("HMS.Auth.Domain.AuthCustomer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

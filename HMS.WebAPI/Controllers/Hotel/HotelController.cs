@@ -49,8 +49,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetHotelById })]
+        //[Authorize]
+        //[TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetHotelById })]
         [HttpGet("get/{hotelId}")]
         public IActionResult GetById(int hotelId)
         {
