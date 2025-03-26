@@ -19,6 +19,12 @@ namespace HMS.WebAPI.Controllers.Hotel
         {
             _billBookingService = billBookingService;
         }
+
+        /// <summary>
+        /// Tạo hóa đơn đặt phòng (dành cho nhân viên)
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateBooking })]
         [HttpPost("create-booking")]
@@ -36,6 +42,11 @@ namespace HMS.WebAPI.Controllers.Hotel
 
         }
 
+        /// <summary>
+        /// Tạo đơn đặt phòng trước (nhân viên và khách)
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreatePreBooking })]
         [HttpPost("create-pre-booking")]
@@ -53,6 +64,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Tạo hóa đơn phụ phí
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateCharge })]
         [HttpPost("create-charge")]
@@ -70,6 +86,12 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Thêm data vào bảng liên kết Room_BillBooking
+        /// </summary>
+        /// <param name="roomIds"></param>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateBookingRoom })]
         [HttpPost("create-booking-room")]
@@ -87,6 +109,12 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Thêm dữ liệu vào bảng nhiều - nhiều
+        /// </summary>
+        /// <param name="chargeIds"></param>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateBookingCharge })]
         [HttpPost("create-booking-charge")]
@@ -104,6 +132,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Checkin nhận phòng
+        /// </summary>
+        /// <param name="checkIn"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CheckIn })]
         [HttpPut("check-in")]
@@ -121,6 +154,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Checkout khi hêt hạn ở phòng
+        /// </summary>
+        /// <param name="checkOut"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CheckOut })]
         [HttpPut("check-out")]
@@ -138,6 +176,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Cập nhật thông tin của hóa đơn đặt phòng
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.UpdateBooking })]
         [HttpPut("update-booking")]
@@ -155,6 +198,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Xóa hóa đơn đặt phòng
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.DeleteBookingById })]
         [HttpDelete("delete-booking/{id}")]
@@ -172,6 +220,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Xem thông tin chi tiết đơn đặt phòng
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetBookingById })]
         [HttpGet("get-booking/{id}")]
@@ -188,6 +241,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Danh sách các hóa đơn đặt phòng
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetAllBooking })]
         [HttpGet("get-all-booking")]
@@ -205,6 +263,11 @@ namespace HMS.WebAPI.Controllers.Hotel
 
         }
 
+        /// <summary>
+        /// Tạm tính tổng tiền của hóa đơn
+        /// </summary>
+        /// <param name="billId"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetExpectedTotalByBillId })]
         [HttpGet("get-expected-total-by-billId/{billId}")]
@@ -227,6 +290,11 @@ namespace HMS.WebAPI.Controllers.Hotel
 
         }
 
+        /// <summary>
+        /// Tính tổng tiền thanh toán của hóa đơn
+        /// </summary>
+        /// <param name="billId"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetTotalAmountByBillId })]
         [HttpGet("get-total-amount-by-billId/{billId}")]
@@ -313,6 +381,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Hủy đặt phòng
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CancelBooking })]
         [HttpPut("cancel-booking")]
