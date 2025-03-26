@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.WebSockets;
 using System.Text;
 using HMS.Auth.ApplicationService.StartUp;
 using HMS.Hol.ApplicationService.Common;
@@ -98,20 +99,7 @@ namespace HMS.WebAPI
                     loggerConfig.ReadFrom.Configuration(context.Configuration);
                 }
             );
-            // Đăng ký dịch vụ cần thiết
-            //builder.Services.AddSingleton<DiagnosticContext>();
 
-            //Log.Logger = new LoggerConfiguration()
-            //    .ReadFrom.Configuration(builder.Configuration)
-            //    .CreateLogger();
-            //builder.Host.UseSerilog();
-            //builder.Services.AddHttpContextAccessor();
-            //builder.Services.AddScoped<Utils>();
-
-            // configure logging
-            //builder.Logging.ClearProviders();
-            //builder.Logging.AddConsole();
-            //builder.Logging.SetMinimumLevel(LogLevel.Information);
             // Add CORS
             builder.Services.AddCors(options =>
             {
@@ -124,6 +112,30 @@ namespace HMS.WebAPI
                 );
             });
             var app = builder.Build();
+
+            // Bật webSocket
+            var webSocketOptions = new WebSocketOptions
+            {
+                KeepAliveInterval = TimeSpan.FromMinutes(2) // Giữ kết nối webSocket
+            };
+            app.UseWebSockets(webSocketOptions);
+
+            // Middleware xử lí webSocket
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path == "/ws" && context.WebSockets.IsWebSocketRequest)
+                {
+                    using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                    await HandleWebSocket(webSocket);
+                }
+                else
+                {
+                    await next();
+                }
+            });
+
+
+
 
             app.UseCors("AllowAllOrigins");
 
@@ -151,6 +163,28 @@ namespace HMS.WebAPI
             app.MapControllers();
 
             app.Run();
+
+            async Task HandleWebSocket(WebSocket webSocket)
+            {
+                var buffer = new byte[1024 * 4];
+                while (webSocket.State == WebSocketState.Open)
+                {
+                    var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+
+                    if (result.MessageType  == WebSocketMessageType.Text)
+                    {
+                        var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                        Console.WriteLine($"Nhận từ client: {message}");
+
+                        var responseMessage = Encoding.UTF8.GetBytes($"Server nhân được: {message}");
+                        await webSocket.SendAsync(new ArraySegment<byte>(responseMessage), WebSocketMessageType.Text, true, CancellationToken.None);
+                    }
+                    else if(result.MessageType == WebSocketMessageType.Close)
+                    {
+                        await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Đóng kết nối", CancellationToken.None);
+                    }
+                }
+            }
         }
     }
 }
