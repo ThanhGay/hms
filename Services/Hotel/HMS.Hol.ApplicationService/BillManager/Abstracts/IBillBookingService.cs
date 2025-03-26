@@ -21,6 +21,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Abstracts
         void CheckIn(CheckInDto checkIn);
         void DeleteBooking(int id);
         PageResultDto<BookingDto> GetAllBooking(FilterDto input);
+        PageResultDto<BookingDto> GetBookingByCustomerId(FilterDto input, int? customerId);
         BookingDto GetIdBooking(int id);
         void UpdateBooking(BookingDto input);
         void CheckOut(CheckOutDto checkOut);
