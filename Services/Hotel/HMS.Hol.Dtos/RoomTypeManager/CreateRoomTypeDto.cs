@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HMS.Hol.Dtos.InteriorManager;
 
 namespace HMS.Hol.Dtos.RoomTypeManager
 {
@@ -32,10 +33,10 @@ namespace HMS.Hol.Dtos.RoomTypeManager
             set => _description = value.Trim();
         }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Giá phòng/giờ phải lớn hơn 0")]
-        public int PricePerHour { get; set; }
+        [Range(1, float.MaxValue, ErrorMessage = "Giá phòng/giờ phải lớn hơn 0")]
+        public decimal PricePerHour { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Giá phòng/giờ phải lớn hơn 0")]
-        public int PricePerNight { get; set; }
+        [Range(1, float.MaxValue, ErrorMessage = "Giá phòng/giờ phải lớn hơn 0")]
+        public decimal PricePerNight { get; set; }
     }
 }

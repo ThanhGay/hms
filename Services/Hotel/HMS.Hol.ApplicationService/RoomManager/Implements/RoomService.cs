@@ -7,6 +7,7 @@ using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Domain;
 using HMS.Hol.Dtos.RoomManager;
+using HMS.Hol.Dtos.Upload;
 using HMS.Hol.Infrastructures;
 using HMS.Shared.Constant.Common;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
         {
             var result = new PageResultDto<RoomDetailDto>();
 
-            var foundRoomQuery =
+            var foundRoomQuery = (
                 from r in _dbContext.Rooms
                 join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
                 join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
@@ -39,8 +40,22 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                     PricePerNight = p.PricePerNight,
                     RoomName = r.RoomName,
                     RoomTypeId = r.RoomTypeId,
-                };
-
+                    RoomImages = _dbContext
+                        .Images.Where(i => i.RoomId == r.RoomID)
+                        .Select(i => new ImageDto
+                        {
+                            Description = i.Description,
+                            ImageURL = i.URL,
+                            Name = i.Name,
+                        })
+                        .ToList(),
+                }
+            ).ToList();
+            //foreach (var item in foundRoomQuery)
+            //{
+            //    var listImage = GetAllImageByRoomId(item.RoomId);
+            //    item.RoomImages = listImage;
+            //}
             var totalRoom = foundRoomQuery.Count();
 
             result.TotalItem = totalRoom;
@@ -67,8 +82,8 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             {
                 var priceHoliDay = _dbContext.SubPrices.Any(r =>
                     r.RoomTypeID == existRoom.RoomTypeId
-                && (
-                DateOnly.FromDateTime(r.DayStart) <= DateOnly.FromDateTime(DateTime.Now)
+                    && (
+                        DateOnly.FromDateTime(r.DayStart) <= DateOnly.FromDateTime(DateTime.Now)
                         && DateOnly.FromDateTime(DateTime.Now) <= DateOnly.FromDateTime(r.DayEnd)
                     )
                 );
@@ -92,7 +107,20 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
                 else
                 {
@@ -114,7 +142,20 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
             }
         }
@@ -156,7 +197,20 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
                 else
                 {
@@ -178,7 +232,115 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             RoomTypeId = r.RoomTypeId,
                         };
 
-                    return foundRoomQuery.ToList()[0];
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
+                }
+            }
+        }
+
+        public RoomFullDetailDto GetById(int roomId, DateOnly start, DateOnly end)
+        {
+            var existRoom = _dbContext.Rooms.FirstOrDefault(r => r.RoomID == roomId);
+
+            if (existRoom == null)
+            {
+                throw new Exception($"Không tìm thấy phòng");
+            }
+            else
+            {
+                var priceHoliDay = _dbContext.SubPrices.Any(r =>
+                    r.RoomTypeID == existRoom.RoomTypeId
+                    && (
+                        DateOnly.FromDateTime(r.DayStart) <= start
+                        && end <= DateOnly.FromDateTime(r.DayEnd)
+                    )
+                );
+                if (priceHoliDay)
+                {
+                    var foundRoomQuery =
+                        from r in _dbContext.Rooms
+                        join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
+                        join sp in _dbContext.SubPrices on t.RoomTypeID equals sp.RoomTypeID
+                        join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
+                        where r.RoomID == roomId
+                        select new RoomFullDetailDto
+                        {
+                            RoomId = r.RoomID,
+                            Description = t.Description,
+                            RoomTypeName = t.RoomTypeName,
+                            Floor = r.Floor,
+                            HotelId = r.HotelId,
+                            PricePerHour = p.PricePerHour,
+                            PricePerNight = p.PricePerNight,
+                            PricePerHolidayHour = sp.PricePerHours,
+                            PricePerHolidayNight = sp.PricePerNight,
+                            RoomName = r.RoomName,
+                            RoomTypeId = r.RoomTypeId,
+                        };
+
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
+                }
+                else
+                {
+                    var foundRoomQuery =
+                        from r in _dbContext.Rooms
+                        join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
+                        join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
+                        where r.RoomID == roomId
+                        select new RoomFullDetailDto
+                        {
+                            RoomId = r.RoomID,
+                            Description = t.Description,
+                            RoomTypeName = t.RoomTypeName,
+                            Floor = r.Floor,
+                            HotelId = r.HotelId,
+                            PricePerHour = p.PricePerHour,
+                            PricePerNight = p.PricePerNight,
+                            PricePerHolidayHour = p.PricePerHour,
+                            PricePerHolidayNight = p.PricePerNight,
+                            RoomName = r.RoomName,
+                            RoomTypeId = r.RoomTypeId,
+                        };
+
+                    var imgs = _dbContext
+                        .Images.Where(i => i.RoomId == roomId)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList();
+
+                    var result = foundRoomQuery.ToList()[0];
+                    result.RoomImages = imgs;
+
+                    return result;
                 }
             }
         }
@@ -291,6 +453,90 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                 _dbContext.Rooms.Remove(existRoom);
                 _dbContext.SaveChanges();
             }
+        }
+
+        public async Task<ImageDto> AddImgae(UploadImageDto image, int roomId)
+        {
+            var existRoom = _dbContext.Rooms.Any(r => r.RoomID == roomId);
+            if (existRoom)
+            {
+                string createdImageName = "";
+
+                if (image.ImageFile != null)
+                {
+                    string[] allowedFileExtentions = [".jpg", ".jpeg", ".png"];
+
+                    var ext = Path.GetExtension(image.ImageFile.FileName);
+                    if (!allowedFileExtentions.Contains(ext))
+                    {
+                        throw new ArgumentException(
+                            $"Only {string.Join(",", allowedFileExtentions)} are allowed."
+                        );
+                    }
+
+                    if (image.ImageFile.Length > 0)
+                    {
+                        var path = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot",
+                            "Images",
+                            image.ImageFile.FileName
+                        );
+                        using (var stream = System.IO.File.Create(path))
+                        {
+                            await image.ImageFile.CopyToAsync(stream);
+                        }
+                        ;
+
+                        createdImageName = "/images/" + image.ImageFile.FileName;
+                    }
+
+                    var rtnData = new ImageDto
+                    {
+                        Description = image.Description,
+                        ImageURL = createdImageName,
+                        Name = image.Name,
+                    };
+
+                    var img = new HolImage
+                    {
+                        Name = image.Name,
+                        Description = image.Description,
+                        URL = createdImageName,
+                        RoomId = roomId,
+                    };
+
+                    _dbContext.Images.Add(img);
+                    _dbContext.SaveChanges();
+
+                    return rtnData;
+                }
+                else
+                {
+                    _logger.LogError($"Không có file nào dược chọn");
+                    throw new Exception($"No file selected");
+                }
+            }
+            else
+            {
+                _logger.LogError("Không tồn tại phòng");
+                throw new Exception($"Không tồn tại phòng");
+            }
+        }
+
+        public List<ImageDto> GetAllImageByRoomId(int roomId)
+        {
+            var result = _dbContext
+                .Images.Where(i => i.RoomId == roomId)
+                .Select(i => new ImageDto
+                {
+                    Name = i.Name,
+                    Description = i.Description,
+                    ImageURL = i.URL,
+                })
+                .ToList();
+
+            return result;
         }
     }
 }

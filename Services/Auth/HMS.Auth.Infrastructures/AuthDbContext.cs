@@ -21,7 +21,7 @@ namespace HMS.Auth.Infrastructures
         public DbSet<AuthRolePermission> AuthRolesPermissions { get; set; }
         public DbSet<AuthVoucher> AuthVouchers { get; set; }
         public DbSet<AuthCustomerVoucher> AuthCustomerVouchers { get; set; }
-
+        public DbSet<AuthFavouriteRoom> AuthFavouriteRooms { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
@@ -69,7 +69,11 @@ namespace HMS.Auth.Infrastructures
             modelBuilder
                 .Entity<AuthCustomerVoucher>()
                 .HasKey(e => new { e.VoucherId, e.CustomerId });
-
+            modelBuilder.Entity<AuthFavouriteRoom>()
+                .HasOne<AuthCustomer>()
+                .WithMany()
+                .HasForeignKey(f => f.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
             base.OnModelCreating(modelBuilder);
         }
     }

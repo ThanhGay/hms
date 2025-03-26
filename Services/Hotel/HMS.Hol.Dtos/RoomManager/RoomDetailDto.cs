@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HMS.Hol.Dtos.Upload;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,9 +15,10 @@ namespace HMS.Hol.Dtos.RoomManager
         public int Floor { get; set; }
         public required string RoomTypeName { get; set; }
         public required string Description { get; set; }
-        public int PricePerHour { get; set; }
-        public int PricePerNight { get; set; }
+        public decimal PricePerHour { get; set; }
+        public decimal PricePerNight { get; set; }
         public int RoomTypeId { get; set; }
         public int HotelId { get; set; }
+        public List<ImageDto>? RoomImages { get; set; }
     }
 }

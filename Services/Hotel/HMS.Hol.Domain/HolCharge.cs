@@ -13,8 +13,9 @@ namespace HMS.Hol.Domain
     public class HolCharge
     {
         [Key]
-        public int ChargeId { get; set; }
-        public int Price { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public decimal Price { get; set; }
         public string? Descreption { get; set; }
     }
 }

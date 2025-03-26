@@ -11,7 +11,7 @@ namespace HMS.Hol.Dtos.RoomTypeManager
         public int RoomTypeId { get; set; }
         public required string RoomTypeName { get; set; }
         public required string Description { get; set; }
-        public int PricePerHour { get; set; }
-        public int PricePerNight { get; set; }
+        public decimal PricePerHour { get; set; }
+        public decimal PricePerNight { get; set; }
     }
 }

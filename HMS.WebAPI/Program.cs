@@ -2,13 +2,15 @@
 using System.Text;
 using HMS.Auth.ApplicationService.StartUp;
 using HMS.Hol.ApplicationService.Common;
+using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.Startup;
+using HMS.Noti.ApplicationService.StartUp;
 using HMS.Noti.ApplicationService.StartUp;
 using HMS.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
-using HMS.Noti.ApplicationService.StartUp;
 using Serilog.Extensions.Hosting;
 using Serilog.Sinks.Network;
 
@@ -53,12 +55,49 @@ namespace HMS.WebAPI
             builder.ConfigureAuth(typeof(Program).Namespace);
             builder.ConfigureHotel(typeof(Program).Namespace);
             builder.ConfigureNotification(typeof(Program).Namespace);
-
-            //configure serilog
-            builder.Host.UseSerilog((context, loggerConfig) =>
+            // Thêm dịch vụ Swagger
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(options =>
             {
-                loggerConfig.ReadFrom.Configuration(context.Configuration);
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "API của tôi", Version = "v1" });
+
+                // Thêm cấu hình bảo mật Bearer Token
+                options.AddSecurityDefinition(
+                    "Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Description = "Nhập token vào ô bên dưới (không cần 'Bearer ' phía trước).",
+                    }
+                );
+                options.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer",
+                                },
+                            },
+                            new List<string>()
+                        },
+                    }
+                );
             });
+            //configure serilog
+            builder.Host.UseSerilog(
+                (context, loggerConfig) =>
+                {
+                    loggerConfig.ReadFrom.Configuration(context.Configuration);
+                }
+            );
             // Đăng ký dịch vụ cần thiết
             //builder.Services.AddSingleton<DiagnosticContext>();
 
@@ -73,8 +112,20 @@ namespace HMS.WebAPI
             //builder.Logging.ClearProviders();
             //builder.Logging.AddConsole();
             //builder.Logging.SetMinimumLevel(LogLevel.Information);
-
+            // Add CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowAllOrigins",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    }
+                );
+            });
             var app = builder.Build();
+
+            app.UseCors("AllowAllOrigins");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -86,6 +137,9 @@ namespace HMS.WebAPI
             //configure serilog
             app.UseMiddleware<RequestLogContextMiddleware>();
             app.UseSerilogRequestLogging();
+
+            //upload file
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 

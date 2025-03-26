@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Domain;
+using HMS.Hol.Dtos.InteriorManager;
 using HMS.Hol.Dtos.RoomTypeManager;
 using HMS.Hol.Infrastructures;
 using HMS.Shared.Constant.Common;
@@ -75,6 +76,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
             else
             {
+                _logger.LogError($"Không tìm thấy thể loại phòng có Id \"{roomTypeId}\".");
                 throw new Exception($"Không tìm thấy thể loại phòng có Id \"{roomTypeId}\".");
             }
         }
@@ -86,6 +88,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             );
             if (existType)
             {
+                _logger.LogError($"Đã tồn tại thể loại có tên \"{input.RoomTypeName}\".");
                 throw new Exception($"Đã tồn tại thể loại có tên \"{input.RoomTypeName}\".");
             }
             else
@@ -131,10 +134,12 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
 
             if (existTypeName)
             {
+                _logger.LogError($"Đã có thể loại phòng có tên \"{input.RoomTypeName}\".");
                 throw new Exception($"Đã có thể loại phòng có tên \"{input.RoomTypeName}\".");
             }
             else if (!existTypeId)
             {
+                _logger.LogError($"Không tìm thấy thể loại phòng có Id \"{input.RoomTypeId}\".");
                 throw new Exception($"Không tìm thấy thể loại phòng có Id \"{input.RoomTypeId}\".");
             }
             else
@@ -187,6 +192,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
             else
             {
+                _logger.LogError($"Không tìm thấy thể loại phòng có Id: \"{roomTypeId}\".");
                 throw new Exception($"Không tìm thấy thể loại phòng có Id: \"{roomTypeId}\".");
             }
         }
@@ -202,12 +208,16 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
 
             if (existSubPrice)
             {
+                _logger.LogError(
+                    $"Đã định giá cho thể loại phòng {input.RoomTypeId} từ ngày {DateOnly.FromDateTime(input.StartDate)} đến ngày {DateOnly.FromDateTime(input.EndDate)}."
+                );
                 throw new Exception(
                     $"Đã định giá cho thể loại phòng {input.RoomTypeId} từ ngày {DateOnly.FromDateTime(input.StartDate)} đến ngày {DateOnly.FromDateTime(input.EndDate)}."
                 );
             }
             else if (!existTypeId)
             {
+                _logger.LogError($"Không tìm thấy thể loại phòng có Id \"{input.RoomTypeId}\".");
                 throw new Exception($"Không tìm thấy thể loại phòng có Id \"{input.RoomTypeId}\".");
             }
             else
@@ -246,6 +256,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
             else
             {
+                _logger.LogError($"Không tìm thấy");
                 throw new Exception($"Không tìm thấy");
             }
         }
@@ -262,6 +273,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
             else
             {
+                _logger.LogError($"Không tìm thấy");
                 throw new Exception($"Không tìm thấy");
             }
         }

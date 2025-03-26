@@ -18,8 +18,6 @@ namespace HMS.WebAPI.Controllers.User
             _customerService = customerService;
         }
 
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.AddCustomer })]
         [HttpPost("/add-customer")]
 
         public IActionResult AddCustomers([FromBody] AddCustomerDto input)
@@ -67,17 +65,33 @@ namespace HMS.WebAPI.Controllers.User
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllVoucherCustomer })]
         [HttpGet("/get-all-voucher-customer")]
-        public IActionResult GetAllVoucherCustomer([FromQuery] FilterDto input, [FromForm] int customerId)
+        public IActionResult GetAllVoucherCustomer([FromQuery] FilterDto input)
         {
             try
             {
-                return Ok(_customerService.GetAllVoucherByCustomer(input, customerId));
+                return Ok(_customerService.GetAllVoucherByCustomer(input));
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllVoucherUse })]
+        [HttpGet("/get-all-voucher-customer-use")]
+        public IActionResult GetAllVoucherUse(int customerId)
+        {
+            try
+            {
+                return Ok(_customerService.GetAllVoucherUse(customerId));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateInfCustomer })]
@@ -103,6 +117,49 @@ namespace HMS.WebAPI.Controllers.User
             {
                 _customerService.DeleteCustomer(customerId);
                 return Ok("Thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("/add-favourite")]
+        public IActionResult AddFavouriteRoom(int roomId)
+        {
+            try
+            {
+                return Ok(_customerService.AddFavourite(roomId));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("/remove-favourite")]
+        public IActionResult RemoveFavouriteRoom(int roomId)
+        {
+            try
+            {
+                _customerService.RemoveFavourite(roomId);
+                return Ok("Thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("/get-all-favourite")]
+        public IActionResult GetAllFavourite([FromQuery] FilterDto input)
+        {
+            try
+            {
+                return Ok(_customerService.GetAllFavourite(input));
             }
             catch (Exception ex)
             {

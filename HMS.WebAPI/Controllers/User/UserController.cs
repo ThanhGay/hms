@@ -18,7 +18,7 @@ namespace HMS.WebAPI.Controllers.User
             _userService = userService;
         }
 
-        [HttpPost("/Login")]
+        [HttpPost("/login")]
         public IActionResult Login([FromBody] LoginDto input)
         {
             try
@@ -48,7 +48,6 @@ namespace HMS.WebAPI.Controllers.User
             }
         }
 
-        [Authorize]
         [HttpPost("/forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromForm] string email)
         {
@@ -109,7 +108,6 @@ namespace HMS.WebAPI.Controllers.User
         }
 
 
-        [Authorize]
         [HttpPut("/update-password")]
         public IActionResult UpdatePassword([FromBody] UpdatePassWordDto input)
         {
@@ -123,6 +121,5 @@ namespace HMS.WebAPI.Controllers.User
                 return BadRequest(ex.Message);
             }
         }
-
     }
 }

@@ -17,6 +17,8 @@ namespace HMS.Hol.Domain
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BillID { get; set; }
         public DateTime BookingDate { get; set; }
+        public DateTime ExpectedCheckIn { get; set; }
+        public DateTime ExpectedCheckOut { get; set; }
         public DateTime? CheckIn { get; set; }
         public DateTime? CheckOut { get; set; }
         public decimal? Prepayment { get; set; }
