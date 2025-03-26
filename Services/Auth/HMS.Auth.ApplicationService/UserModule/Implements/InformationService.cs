@@ -9,15 +9,15 @@ using Microsoft.Extensions.Logging;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
-    public class InformationService : AuthServiceBase, IInformationService
+    public class InformationService :  AuthServiceBase,IInformationService
     {
-        public InformationService(ILogger<UserService> logger, AuthDbContext dbContext)
-            : base(logger, dbContext) { }
-
+        public InformationService(ILogger<UserService> logger, AuthDbContext dbContext) : base(logger, dbContext)
+        {
+        }
         public AuthCustomer GetCustomerById(int id)
         {
             var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(r => r.CustomerId == id);
-            if (findCustomer == null)
+            if( findCustomer == null)
             {
                 throw new UserExceptions($"Không tồn tại customer có id là: {id}");
             }
@@ -33,9 +33,8 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
         public AuthReceptionist GetReceptionistById(int receptionistId)
         {
-            var findReceptionist =
-                _dbContext.AuthReceptionists.FirstOrDefault(r => r.ReceptionistId == receptionistId)
-                ?? throw new UserExceptions("Không tồn tại receptionist");
+            var findReceptionist = _dbContext.AuthReceptionists.FirstOrDefault(r => r.ReceptionistId == receptionistId)
+                    ?? throw new UserExceptions("Không tồn tại receptionist");
             var checkDelete = _dbContext.AuthUsers.FirstOrDefault(u => u.UserId == receptionistId);
 
             if (checkDelete.IsDeleted)
@@ -47,8 +46,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
         public float GetVoucherCustomer(int? voucherId)
         {
-            if (voucherId == null)
-            {
+            if (voucherId == null) {
                 return 0;
             }
             var findVou = _dbContext.AuthVouchers.Any(v => v.VoucherId == voucherId);
@@ -61,32 +59,27 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
             return result.Percent;
         }
-
         public void UseVoucher(int? voucherId, DateOnly useAt)
         {
-            if (voucherId == null) { }
+            if (voucherId == null)
+            {
+            }
             else
             {
-                var check = _dbContext.AuthCustomerVouchers.FirstOrDefault(v =>
-                    v.VoucherId == voucherId
-                );
+                var check = _dbContext.AuthCustomerVouchers.FirstOrDefault(v => v.VoucherId == voucherId);
                 check.UsedAt = useAt;
                 _dbContext.AuthCustomerVouchers.Update(check);
                 _dbContext.SaveChanges();
             }
+
         }
 
         public int CheckVoucher(int? voucherId, int customerId)
         {
-            if (voucherId != null)
+            var checkVoucher = _dbContext.AuthCustomerVouchers.FirstOrDefault(v => v.VoucherId == voucherId && v.CustomerId == customerId);
+            if (checkVoucher.UsedAt != null)
             {
-                var checkVoucher = _dbContext.AuthCustomerVouchers.FirstOrDefault(v =>
-                    v.VoucherId == voucherId && v.CustomerId == customerId
-                );
-                if (checkVoucher.UsedAt != null)
-                {
-                    return 1;
-                }
+                return 1;
             }
             return 0;
         }

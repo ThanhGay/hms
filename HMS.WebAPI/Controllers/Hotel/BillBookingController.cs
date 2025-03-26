@@ -12,7 +12,6 @@ namespace HMS.WebAPI.Controllers.Hotel
 {
     [Route("api/bill-booking")]
     [ApiController]
-    [Authorize]
     public class BillBookingController : ControllerBase
     {
         private readonly IBillBookingService _billBookingService;
@@ -25,7 +24,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Tạo hóa đơn đặt phòng (dành cho nhân viên)
         /// </summary>
         /// <param name="input"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateBooking })]
         [HttpPost("create-booking")]
         public IActionResult CreateBooking([FromBody] CreateBookingDto input)
@@ -46,8 +46,9 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Tạo đơn đặt phòng trước (nhân viên và khách)
         /// </summary>
         /// <param name="input"></param>
-        /// <returns></returns>        
-        //[TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreatePreBooking })]
+        /// <returns></returns>
+        [Authorize]
+        [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreatePreBooking })]
         [HttpPost("create-pre-booking")]
         public IActionResult CreatePreBooking([FromBody] CreatePreBookingDto input)
         {
@@ -67,7 +68,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Tạo hóa đơn phụ phí
         /// </summary>
         /// <param name="input"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateCharge })]
         [HttpPost("create-charge")]
         public IActionResult CreateCharge([FromBody] CreateChargeDto input)
@@ -89,7 +91,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// </summary>
         /// <param name="roomIds"></param>
         /// <param name="bookingId"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateBookingRoom })]
         [HttpPost("create-booking-room")]
         public IActionResult CreateBooking_Room(int roomIds, int bookingId)
@@ -111,7 +114,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// </summary>
         /// <param name="chargeIds"></param>
         /// <param name="bookingId"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CreateBookingCharge })]
         [HttpPost("create-booking-charge")]
         public IActionResult CreateBooking_Charge(int chargeIds, int bookingId)
@@ -132,7 +136,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Checkin nhận phòng
         /// </summary>
         /// <param name="checkIn"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CheckIn })]
         [HttpPut("check-in")]
         public IActionResult CheckIn(CheckInDto checkIn)
@@ -153,7 +158,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Checkout khi hêt hạn ở phòng
         /// </summary>
         /// <param name="checkOut"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CheckOut })]
         [HttpPut("check-out")]
         public IActionResult CheckOut(CheckOutDto checkOut)
@@ -174,7 +180,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Cập nhật thông tin của hóa đơn đặt phòng
         /// </summary>
         /// <param name="input"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.UpdateBooking })]
         [HttpPut("update-booking")]
         public IActionResult UpdateBooking([FromBody] BookingDto input)
@@ -195,7 +202,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Xóa hóa đơn đặt phòng
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.DeleteBookingById })]
         [HttpDelete("delete-booking/{id}")]
         public IActionResult DeleteBooking(int id)
@@ -216,7 +224,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Xem thông tin chi tiết đơn đặt phòng
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetBookingById })]
         [HttpGet("get-booking/{id}")]
         public IActionResult GetIdBooking(int id)
@@ -236,7 +245,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Danh sách các hóa đơn đặt phòng
         /// </summary>
         /// <param name="input"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetAllBooking })]
         [HttpGet("get-all-booking")]
         public IActionResult GetAllBooking([FromQuery] FilterDto input)
@@ -254,29 +264,11 @@ namespace HMS.WebAPI.Controllers.Hotel
         }
 
         /// <summary>
-        /// Danh sách các đơn dặt phòng của tôi
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        [HttpGet("get-my-booking")]
-        public IActionResult GetMyBooking([FromQuery] FilterDto input, [FromForm] int? customerId)
-        {
-            try
-            {
-                return Ok(_billBookingService.GetBookingByCustomerId(input, customerId));
-            } 
-            catch (Exception ex) 
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        /// <summary>
         /// Tạm tính tổng tiền của hóa đơn
         /// </summary>
         /// <param name="billId"></param>
         /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetExpectedTotalByBillId })]
         [HttpGet("get-expected-total-by-billId/{billId}")]
         public IActionResult GetExpectedTotalByBillId(int billId)
@@ -303,6 +295,7 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// </summary>
         /// <param name="billId"></param>
         /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetTotalAmountByBillId })]
         [HttpGet("get-total-amount-by-billId/{billId}")]
         public IActionResult GetTotalAmountByBillId(int billId)
@@ -322,7 +315,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
 
         }
-                
+
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.UpdateCharge })]
         [HttpPut("update-charge")]
         public IActionResult UpdateCharge([FromBody] ChargeDto input)
@@ -338,7 +332,8 @@ namespace HMS.WebAPI.Controllers.Hotel
                 return BadRequest(ex.Message);
             }
         }
-                
+
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.DeleteCharge })]
         [HttpDelete("delete-charge/{id}")]
         public IActionResult DeleteCharge(int id)
@@ -354,7 +349,8 @@ namespace HMS.WebAPI.Controllers.Hotel
                 return BadRequest(ex.Message);
             }
         }
-                
+
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetChargeById })]
         [HttpGet("get-charge/{id}")]
         public IActionResult GetChargeById(int id)
@@ -370,6 +366,7 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetChargeByIdBooking })]
         [HttpGet("get-all-charge-by-booking/{id}")]
         public IActionResult GetChargeByIdBooking(int id)
@@ -388,7 +385,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// Hủy đặt phòng
         /// </summary>
         /// <param name="bookingId"></param>
-        /// <returns></returns>        
+        /// <returns></returns>
+        [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.CancelBooking })]
         [HttpPut("cancel-booking")]
         public IActionResult CancelBooking(int bookingId)

@@ -25,14 +25,12 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
 {
     public class BillBookingService : HotelServiceBase, IBillBookingService
     {
-        private readonly IInformationService _informationService;
-        private readonly IHttpContextAccessor _contextAccessor;
+        private IInformationService _informationService;
 
-        public BillBookingService(ILogger<BillBookingService> logger, HotelDbContext dbContext, IInformationService informationService, IHttpContextAccessor httpContextAccessor)
+        public BillBookingService(ILogger<BillBookingService> logger, HotelDbContext dbContext, IInformationService informationService)
             : base(logger, dbContext)
         {
             _informationService = informationService;
-            _contextAccessor = httpContextAccessor;
         }
 
         public BookingDto CreateBooking(CreateBookingDto input)
@@ -750,67 +748,6 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 string.IsNullOrEmpty(input.Keyword)
                 || e.BookingDate.ToString().ToLower().Contains(input.Keyword.ToLower())
             );
-
-            result.TotalItem = query.Count();
-
-            query = query
-                .OrderByDescending(s => s.BookingDate)
-                .ThenByDescending(s => s.BillID)
-                .Skip(input.SkipCount())
-                .Take(input.PageSize);
-
-            result.Items = query
-                .Select(s => new BookingDto
-                {
-                    BillID = s.BillID,
-                    BookingDate = s.BookingDate,
-                    CheckIn = s.CheckIn,
-                    CheckOut = s.CheckOut,
-                    CustomerID = s.CustomerID,
-                    DiscountID = s.DiscountID,
-                    ExpectedCheckIn = s.ExpectedCheckIn,
-                    ExpectedCheckOut = s.ExpectedCheckOut,
-                    Prepayment = s.Prepayment,
-                    ReceptionistID = s.ReceptionistID,
-                    Rooms = _dbContext.BillBooking_Rooms
-                    .Where(br => br.BillID == s.BillID)
-                    .Join(_dbContext.Rooms,
-                          br => br.RoomID,
-                          r => r.RoomID,
-                          (br, r) => new RoomBookingDto
-                          {
-                              RoomID = r.RoomID,
-                              RoomName = r.RoomName,
-                              Floor = r.Floor,
-                              RoomTypeId = r.RoomTypeId,
-                              HotelId = r.HotelId,
-                          })
-                    .ToList(),
-                    Status = s.Status
-                })
-                .ToList();
-
-            return result;
-        }
-
-        public PageResultDto<BookingDto> GetBookingByCustomerId(FilterDto input, int? customerId)
-        {
-            var result = new PageResultDto<BookingDto>();
-            int userId = CommonUtils.GetCurrentUserId(_contextAccessor);
-
-            var query = _dbContext.BillBookings.Where(e =>
-                string.IsNullOrEmpty(input.Keyword)
-                || e.BookingDate.ToString().ToLower().Contains(input.Keyword.ToLower())
-            );
-
-            if (customerId != null)
-            {
-                query = query.Where(b => b.CustomerID == customerId && b.Status != "Cancelled" && b.Status != "Done");
-            }
-            else
-            {
-                query = query.Where(b => b.CustomerID == userId);
-            }
 
             result.TotalItem = query.Count();
 
