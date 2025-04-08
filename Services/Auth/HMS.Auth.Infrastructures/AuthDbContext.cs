@@ -74,7 +74,13 @@ namespace HMS.Auth.Infrastructures
                 .WithMany()
                 .HasForeignKey(f => f.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            //SeedData.SeedAuthRole(modelBuilder);
+            //SeedData.SeedAuthRolePermission(modelBuilder);
+            //SeedData.SeedAccount(modelBuilder);
+
             base.OnModelCreating(modelBuilder);
+
         }
     }
 }

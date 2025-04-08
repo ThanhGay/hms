@@ -14,6 +14,7 @@ namespace HMS.Auth.Domain
     public class AuthRolePermission
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int RoleId { get; set; }
         [MaxLength(128)]
