@@ -260,7 +260,7 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// <param name="customerId"></param>
         /// <returns></returns>
         [HttpGet("get-my-booking")]
-        public IActionResult GetMyBooking([FromQuery] FilterDto input, [FromForm] int? customerId)
+        public IActionResult GetMyBooking([FromQuery] FilterDto input, [FromQuery] int? customerId)
         {
             try
             {
