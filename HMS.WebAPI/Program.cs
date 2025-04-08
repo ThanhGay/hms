@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using HMS.Auth.ApplicationService.StartUp;
+using HMS.Auth.ApplicationService.UserModule.Implements;
 using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.Startup;
@@ -123,9 +124,22 @@ namespace HMS.WebAPI
                     }
                 );
             });
+
+            // fire base
+            // signaIR
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
+            // core
             app.UseCors("AllowAllOrigins");
+
+            // Chat hub
+            app.MapHub<ChatHub>("/chatHub");
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapHub<ChatHub>("/chatHub");
+            //});
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
