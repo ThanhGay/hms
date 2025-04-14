@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Security;
 
 namespace ZaloPay.Helper.Crypto
 {
@@ -26,7 +24,7 @@ namespace ZaloPay.Helper.Crypto
             //You can then easily import the key parameters into RSACryptoServiceProvider:
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
             rsa.ImportParameters(rsaParameters);
-            
+
             //Finally, do your encryption:
             byte[] dataToEncrypt = Encoding.UTF8.GetBytes(data);
             // Sign data with Pkcs1

@@ -2,26 +2,20 @@
 using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Domain;
 using HMS.Auth.Dtos;
-using HMS.Auth.Dtos.Customer;
 using HMS.Auth.Dtos.Voucher;
 using HMS.Auth.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
     public class VoucherService : AuthServiceBase, IVoucherService
     {
-        public VoucherService(ILogger<VoucherService> logger, AuthDbContext authDbContext ) : base( logger, authDbContext ) { }
+        public VoucherService(ILogger<VoucherService> logger, AuthDbContext authDbContext) : base(logger, authDbContext) { }
 
         public AuthVoucher CreateVoucher([FromQuery] CreateVoucherDto input)
         {
-            if(input.Percent > 100 || input.Percent <= 0)
+            if (input.Percent > 100 || input.Percent <= 0)
             {
                 throw new UserExceptions("Giảm giá phải lớn hơn 0% và bé hơn 100%");
             }
@@ -31,7 +25,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                 StartDate = input.StartDate,
                 ExpDate = input.ExpDate,
             };
-            _dbContext.AuthVouchers.Add( newVoucher );
+            _dbContext.AuthVouchers.Add(newVoucher);
             _dbContext.SaveChanges();
             return newVoucher;
         }
@@ -39,12 +33,12 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         public AuthVoucher UpdateVoucher([FromBody] UpdateVoucherDto input)
         {
             var findVoucher = _dbContext.AuthVouchers.FirstOrDefault(x => x.VoucherId == input.VoucherId)
-                ??  throw new UserExceptions("Không tồn tại voucher");
-            
+                ?? throw new UserExceptions("Không tồn tại voucher");
+
             findVoucher.Percent = input.Percent;
             findVoucher.StartDate = input.StartDate;
             findVoucher.ExpDate = input.ExpDate;
-            _dbContext.AuthVouchers.Update( findVoucher );
+            _dbContext.AuthVouchers.Update(findVoucher);
             _dbContext.SaveChanges();
             return findVoucher;
         }

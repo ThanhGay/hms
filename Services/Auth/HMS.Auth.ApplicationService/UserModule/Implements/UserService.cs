@@ -1,18 +1,12 @@
-﻿using BCrypt.Net;
-using HMS.Auth.ApplicationService.Common;
+﻿using HMS.Auth.ApplicationService.Common;
 using HMS.Auth.ApplicationService.UserModule.Abstracts;
-using HMS.Auth.Domain;
 using HMS.Auth.Dtos;
-using HMS.Auth.Dtos.Customer;
-using HMS.Auth.Dtos.Receptionist;
 using HMS.Auth.Infrastructures;
 using HMS.Shared.ApplicationService.Notification;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -25,13 +19,13 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         private static List<string> blackList = new List<string>();
         private static Dictionary<string, (string Otp, DateTime Expiry)> otpStore = new Dictionary<string, (string, DateTime)>();
         private readonly INotificationService _notificationService;
-        public UserService(ILogger<UserService> logger, AuthDbContext dbContext,IConfiguration configuration, INotificationService notificationService) : base(logger, dbContext) 
+        public UserService(ILogger<UserService> logger, AuthDbContext dbContext, IConfiguration configuration, INotificationService notificationService) : base(logger, dbContext)
         {
             _configuration = configuration;
             _notificationService = notificationService;
         }
 
-        private string Createtokens(UserDto input,int role)
+        private string Createtokens(UserDto input, int role)
         {
 
             var claims = new[]
@@ -50,7 +44,7 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             var token = new JwtSecurityToken(
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
-                claims: claims, 
+                claims: claims,
                 expires: DateTime.Now.AddMinutes(_configuration.GetValue<int>("JwtSettings:ExpiryMinutes")),
                 signingCredentials: creds
             );
@@ -61,17 +55,19 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         public ResultLogin Login([FromQuery] LoginDto input)
         {
             var checkDelete = _dbContext.AuthUsers.Any(e => e.Email == input.Email && e.IsDeleted == true);
-            if (checkDelete) 
+            if (checkDelete)
             {
                 _logger.LogError("Tài khoản đã bị khóa");
-                throw new UserExceptions("Tài khoản đã bị xóa"); 
-            };
+                throw new UserExceptions("Tài khoản đã bị xóa");
+            }
+            ;
             var resultAuth = _dbContext.AuthUsers.FirstOrDefault(a => a.Email == input.Email);
-            if(resultAuth == null) 
+            if (resultAuth == null)
             {
                 _logger.LogError("không tồn tại email");
                 throw new UserExceptions("Không tồn tại Email");
-            };
+            }
+            ;
             var roleName = _dbContext.AuthRoles.FirstOrDefault(r => r.RoleId == resultAuth.RoleId);
 
             var checkPassword = BCrypt.Net.BCrypt.Verify(input.Password, resultAuth.Password);
@@ -188,12 +184,12 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
         public async Task ForgotPassword([FromForm] string email)
         {
-            var findEmail = _dbContext.AuthUsers.Any( u => u.Email == email );
+            var findEmail = _dbContext.AuthUsers.Any(u => u.Email == email);
             if (!findEmail) { throw new UserExceptions("Tài khoản chưa đăng kí"); }
             Random random = new Random();
             string randomNumber = random.Next(0, 1000000).ToString("D6");
             otpStore[email] = (randomNumber, DateTime.Now.AddMinutes(5));
-            await _notificationService.SendEmail(email, "OTP của bạn để lấy lại mật khẩu: ", randomNumber ); 
+            await _notificationService.SendEmail(email, "OTP của bạn để lấy lại mật khẩu: ", randomNumber);
         }
 
         public void ResetPassword(UpdatePassWordDto input)
@@ -201,12 +197,12 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             if (otpStore.ContainsKey(input.Email))
             {
                 var (storedOtp, expiry) = otpStore[input.Email];
-                if(DateTime.Now > expiry)
+                if (DateTime.Now > expiry)
                 {
                     otpStore.Remove(input.Email);
                     throw new UserExceptions("Đã hết hạn Otp");
                 }
-                if(storedOtp == input.Otp)
+                if (storedOtp == input.Otp)
                 {
                     var findUser = _dbContext.AuthUsers.FirstOrDefault(u => u.Email == input.Email);
                     findUser.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);

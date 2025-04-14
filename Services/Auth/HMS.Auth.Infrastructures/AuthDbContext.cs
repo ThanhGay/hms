@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Auth.Domain;
+﻿using HMS.Auth.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMS.Auth.Infrastructures
@@ -74,7 +69,13 @@ namespace HMS.Auth.Infrastructures
                 .WithMany()
                 .HasForeignKey(f => f.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            //SeedData.SeedAuthRole(modelBuilder);
+            //SeedData.SeedAuthRolePermission(modelBuilder);
+            //SeedData.SeedAccount(modelBuilder);
+
             base.OnModelCreating(modelBuilder);
+
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Dtos;
-using HMS.Auth.Dtos.Receptionist;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 
 namespace HMS.WebAPI.Controllers.User
 {
@@ -18,12 +16,12 @@ namespace HMS.WebAPI.Controllers.User
             _userService = userService;
         }
 
-        [HttpPost("/Login")]
+        [HttpPost("/login")]
         public IActionResult Login([FromBody] LoginDto input)
         {
             try
             {
-                
+
                 return Ok(_userService.Login(input));
             }
             catch (Exception ex)
