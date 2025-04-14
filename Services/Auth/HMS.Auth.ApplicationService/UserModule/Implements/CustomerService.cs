@@ -225,23 +225,26 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
             var result = new PageResultDto<FavouriteRoomDto>();
 
-            var findFavourite = from v in _dbContext.AuthFavouriteRooms
-                              where v.CustomerId == userId
-                                select new FavouriteRoomDto
-                                {
-                                  HotelId = _informationRoomService.FindHotelRoom(v.RoomId),
-                                  FavouriteId = v.FavouriteId,
-                                  RoomId = v.RoomId
-                              };
+            var favourites = _dbContext.AuthFavouriteRooms
+                .Where(v => v.CustomerId == userId)
+                .ToList(); // lấy trước rồi mới xử lý service
+
+            var findFavourite = favourites.Select(v => new FavouriteRoomDto
+            {
+                HotelId = _informationRoomService.FindHotelRoom(v.RoomId),
+                FavouriteId = v.FavouriteId,
+                RoomId = v.RoomId
+            });
 
 
             var query = findFavourite.Where(e =>
             string.IsNullOrEmpty(input.KeyWord)
-            || e.FavouriteId.ToString().ToLower().Contains(input.KeyWord.ToLower()));
+            || e.HotelId.ToString().ToLower().Contains(input.KeyWord.ToLower()));
             result.TotalItem = query.Count();
-            query = query.OrderBy(e => e.FavouriteId)
+            query = query.OrderByDescending(e => e.FavouriteId)
                          .Skip(input.Skip())
-                         .Take(input.PageSize);
+                         .Take(input.PageSize)
+                         ;
             result.Items = query.ToList();
             return result;
         }
