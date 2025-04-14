@@ -3,7 +3,6 @@ using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Dtos.Customer;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.WebAPI.Controllers.User
@@ -13,7 +12,7 @@ namespace HMS.WebAPI.Controllers.User
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
-        public CustomerController(ICustomerService customerService )
+        public CustomerController(ICustomerService customerService)
         {
             _customerService = customerService;
         }
@@ -86,7 +85,7 @@ namespace HMS.WebAPI.Controllers.User
             {
                 return Ok(_customerService.GetAllVoucherUse(customerId));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -132,7 +131,7 @@ namespace HMS.WebAPI.Controllers.User
             {
                 return Ok(_customerService.AddFavourite(roomId));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

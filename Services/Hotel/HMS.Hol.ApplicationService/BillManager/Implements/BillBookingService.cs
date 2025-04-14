@@ -1,25 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Hol.ApplicationService.BillManager.Abstracts;
+﻿using HMS.Hol.ApplicationService.BillManager.Abstracts;
 using HMS.Hol.ApplicationService.Common;
-using HMS.Hol.ApplicationService.RoomManager.Implements;
 using HMS.Hol.Domain;
 using HMS.Hol.Dtos.BookingManager;
-using HMS.Hol.Dtos.RoomManager;
 using HMS.Hol.Infrastructures;
 using HMS.Shared.ApplicationService.Auth;
 using HMS.Shared.Constant.Common;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HMS.Hol.ApplicationService.BillManager.Implements
 {
@@ -162,7 +149,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             }
 
             var check = _informationService.CheckVoucher(input.DiscountID, input.CustomerID);
-            if(check == 1)
+            if (check == 1)
             {
                 throw new HotelExceptions("Voucher đã được sử dụng");
             }
@@ -460,7 +447,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
         public decimal GetTotalChargeByBillId(int billId)
         {
             var checkCharge = _dbContext.BillBooking_Charges.FirstOrDefault(b => b.BillID == billId);
-           
+
             if (checkCharge == null)
             {
                 return 0;
@@ -476,7 +463,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             decimal total = 0;
             foreach (var item in totalCharge)
             {
-                total += item.money;  
+                total += item.money;
             }
             Console.WriteLine($"TOtal charge: {total}");
             return total;
@@ -584,8 +571,8 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             if (bill.DiscountID != null)
             {
                 decimal voucher = Convert.ToDecimal(_informationService.GetVoucherCustomer(bill.DiscountID));
-                totalAmount = totalAmount - ((voucher/100) * totalAmount);
-                
+                totalAmount = totalAmount - ((voucher / 100) * totalAmount);
+
                 return totalAmount;
             }
             return totalAmount;
@@ -634,7 +621,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             var bill = _dbContext.BillBookings.FirstOrDefault(s => s.BillID == billId);
 
             decimal checkOutLate = 0;
-            
+
             Console.WriteLine($"checkout: {bill.CheckOut}");
             Console.WriteLine($"expert check out:{bill.ExpectedCheckOut}");
 

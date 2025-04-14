@@ -1,18 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using HMS.Auth.ApplicationService.StartUp;
-using HMS.Hol.ApplicationService.Common;
-using HMS.Hol.ApplicationService.Common;
+﻿using HMS.Auth.ApplicationService.StartUp;
 using HMS.Hol.ApplicationService.Startup;
-using HMS.Noti.ApplicationService.StartUp;
 using HMS.Noti.ApplicationService.StartUp;
 using HMS.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Extensions.Hosting;
-using Serilog.Sinks.Network;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace HMS.WebAPI
 {

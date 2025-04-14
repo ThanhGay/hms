@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Hol.Domain;
+﻿using HMS.Hol.Domain;
 using HMS.Hol.Dtos.RoomManager;
 using HMS.Hol.Dtos.Upload;
 using HMS.Shared.Constant.Common;

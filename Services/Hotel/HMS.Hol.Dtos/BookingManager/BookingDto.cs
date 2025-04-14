@@ -1,11 +1,4 @@
-﻿using HMS.Hol.Dtos.RoomManager;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HMS.Hol.Dtos.BookingManager
+﻿namespace HMS.Hol.Dtos.BookingManager
 {
     public class BookingDto
     {

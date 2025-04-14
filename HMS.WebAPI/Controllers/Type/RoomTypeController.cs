@@ -3,7 +3,6 @@ using HMS.Hol.Dtos.RoomTypeManager;
 using HMS.Shared.Constant.Common;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.WebAPI.Controllers.Type
@@ -66,7 +65,7 @@ namespace HMS.WebAPI.Controllers.Type
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        
+
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.CreateRoomType })]
         [HttpPost("create")]

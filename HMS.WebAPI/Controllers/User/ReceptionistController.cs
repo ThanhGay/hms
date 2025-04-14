@@ -1,10 +1,8 @@
 ﻿using HMS.Auth.ApplicationService.Common;
 using HMS.Auth.ApplicationService.UserModule.Abstracts;
-using HMS.Auth.ApplicationService.UserModule.Implements;
 using HMS.Auth.Dtos.Receptionist;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.WebAPI.Controllers.User
@@ -75,7 +73,7 @@ namespace HMS.WebAPI.Controllers.User
             {
                 return Ok(_receptionistService.UpdateInfReceptionist(input));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

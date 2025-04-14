@@ -4,13 +4,8 @@ using HMS.Hol.Infrastructures;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ZaloPay.Helper.Crypto;
 using ZaloPay.Helper;
+using ZaloPay.Helper.Crypto;
 
 namespace HMS.Hol.ApplicationService.BillManager.Implements
 {

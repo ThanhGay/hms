@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Hol.Domain;
+﻿using HMS.Hol.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMS.Hol.Infrastructures
@@ -87,7 +82,7 @@ namespace HMS.Hol.Infrastructures
                 .Entity<HolBillBooking_Room>()
                 .HasOne<HolRoom>()
                 .WithMany()
-                .HasForeignKey(e=> e.RoomID)
+                .HasForeignKey(e => e.RoomID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder

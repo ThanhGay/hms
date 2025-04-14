@@ -1,10 +1,8 @@
 ﻿using HMS.Auth.ApplicationService.Common;
-using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Domain;
 using HMS.Auth.Dtos;
 using HMS.Auth.Infrastructures;
 using HMS.Shared.ApplicationService.Auth;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements

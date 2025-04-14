@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Hol.ApplicationService.Common;
+﻿using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Domain;
 using HMS.Hol.Dtos.RoomManager;
@@ -11,7 +6,6 @@ using HMS.Hol.Dtos.Upload;
 using HMS.Hol.Infrastructures;
 using HMS.Shared.Constant.Common;
 using Microsoft.Extensions.Logging;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HMS.Hol.ApplicationService.RoomManager.Implements
 {

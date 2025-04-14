@@ -2,13 +2,13 @@
 using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Domain;
 using HMS.Auth.Dtos;
+using HMS.Auth.Dtos.Customer;
 using HMS.Auth.Infrastructures;
+using HMS.Shared.ApplicationService.Auth;
+using HMS.Shared.ApplicationService.Hotel.Room;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using HMS.Auth.Dtos.Customer;
-using HMS.Shared.ApplicationService.Hotel.Room;
-using HMS.Shared.ApplicationService.Auth;
-using Microsoft.AspNetCore.Http;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
@@ -183,8 +183,8 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
             var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(c => c.CustomerId == userId)
                 ?? throw new UserExceptions("Không tồn tại người dùng");
-            
-            
+
+
             if (_informationRoomService.CheckRoom(roomId))
             {
                 AuthFavouriteRoom addFav = new AuthFavouriteRoom { CustomerId = userId, RoomId = roomId };
@@ -226,13 +226,13 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             var result = new PageResultDto<FavouriteRoomDto>();
 
             var findFavourite = from v in _dbContext.AuthFavouriteRooms
-                              where v.CustomerId == userId
+                                where v.CustomerId == userId
                                 select new FavouriteRoomDto
                                 {
-                                  HotelId = _informationRoomService.FindHotelRoom(v.RoomId),
-                                  FavouriteId = v.FavouriteId,
-                                  RoomId = v.RoomId
-                              };
+                                    HotelId = _informationRoomService.FindHotelRoom(v.RoomId),
+                                    FavouriteId = v.FavouriteId,
+                                    RoomId = v.RoomId
+                                };
 
 
             var query = findFavourite.Where(e =>

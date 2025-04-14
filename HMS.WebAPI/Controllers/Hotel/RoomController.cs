@@ -3,7 +3,6 @@ using HMS.Hol.Dtos.RoomManager;
 using HMS.Hol.Dtos.Upload;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.WebAPI.Controllers.Hotel

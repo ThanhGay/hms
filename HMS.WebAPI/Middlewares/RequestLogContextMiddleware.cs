@@ -1,6 +1,5 @@
-﻿using System.Text.Json;
-using Serilog;
-using Microsoft.AspNetCore.Http;
+﻿using Serilog;
+using System.Text.Json;
 
 namespace HMS.WebAPI.Middlewares
 {

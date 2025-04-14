@@ -66,7 +66,7 @@ namespace HMS.Hol.ApplicationService.HotelManager.Implements
                                   HotelName = h.HotelName,
                                   HotelAddress = h.HotelAddress,
                                   Hotline = h.Hotline,
-                                  TotalRoom = hotelRooms.Count() 
+                                  TotalRoom = hotelRooms.Count()
                               };
 
             var query = hotelsQuery.Where(e =>

@@ -4,21 +4,14 @@ using HMS.Auth.Domain;
 using HMS.Auth.Dtos;
 using HMS.Auth.Dtos.Receptionist;
 using HMS.Auth.Infrastructures;
-using HMS.Shared.Constant.Permission;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
     public class ReceptionistService : AuthServiceBase, IReceptionistService
     {
-        public ReceptionistService(ILogger<ReceptionistService> logger, AuthDbContext dbContext) : base(logger, dbContext) 
+        public ReceptionistService(ILogger<ReceptionistService> logger, AuthDbContext dbContext) : base(logger, dbContext)
         {
         }
 

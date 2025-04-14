@@ -1,12 +1,10 @@
 ﻿
 using HMS.Hol.ApplicationService.BillManager.Abstracts;
-using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.Dtos.BookingManager;
 using HMS.Shared.Constant.Common;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Specialized;
 
 namespace HMS.WebAPI.Controllers.Hotel
 {
@@ -265,8 +263,8 @@ namespace HMS.WebAPI.Controllers.Hotel
             try
             {
                 return Ok(_billBookingService.GetBookingByCustomerId(input, customerId));
-            } 
-            catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -322,7 +320,7 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
 
         }
-                
+
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.UpdateCharge })]
         [HttpPut("update-charge")]
         public IActionResult UpdateCharge([FromBody] ChargeDto input)
@@ -338,7 +336,7 @@ namespace HMS.WebAPI.Controllers.Hotel
                 return BadRequest(ex.Message);
             }
         }
-                
+
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.DeleteCharge })]
         [HttpDelete("delete-charge/{id}")]
         public IActionResult DeleteCharge(int id)
@@ -354,7 +352,7 @@ namespace HMS.WebAPI.Controllers.Hotel
                 return BadRequest(ex.Message);
             }
         }
-                
+
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new Object[] { PermissionKeys.GetChargeById })]
         [HttpGet("get-charge/{id}")]
         public IActionResult GetChargeById(int id)
