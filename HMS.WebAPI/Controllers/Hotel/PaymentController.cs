@@ -69,8 +69,8 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// <summary>
         /// Xử lý URL trả về từ VNPAY
         /// </summary>
-        [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.ReturnVnPayUrl })]
+        //[Authorize]
+        //[TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.ReturnVnPayUrl })]
         [HttpGet("return-vnpay-url")]
         public IActionResult ReturnVnpayUrl([FromQuery] VnPayResponse response)
         {

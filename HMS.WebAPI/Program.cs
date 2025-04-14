@@ -2,6 +2,9 @@
 using System.Net.WebSockets;
 using System.Text;
 using HMS.Auth.ApplicationService.StartUp;
+using HMS.Auth.ApplicationService.UserModule.Implements;
+using HMS.Hol.ApplicationService.Common;
+using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.Startup;
 using HMS.Noti.ApplicationService.StartUp;
 using HMS.WebAPI.Middlewares;
@@ -108,33 +111,22 @@ namespace HMS.WebAPI
                     }
                 );
             });
+
+            // fire base
+            // signaIR
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
-            // Bật webSocket
-            var webSocketOptions = new WebSocketOptions
-            {
-                KeepAliveInterval = TimeSpan.FromMinutes(2) // Giữ kết nối webSocket
-            };
-            app.UseWebSockets(webSocketOptions);
-
-            // Middleware xử lí webSocket
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Path == "/ws" && context.WebSockets.IsWebSocketRequest)
-                {
-                    using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                    await HandleWebSocket(webSocket);
-                }
-                else
-                {
-                    await next();
-                }
-            });
-
-
-
-
+            // core
             app.UseCors("AllowAllOrigins");
+
+            // Chat hub
+            app.MapHub<ChatHub>("/chatHub");
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapHub<ChatHub>("/chatHub");
+            //});
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
