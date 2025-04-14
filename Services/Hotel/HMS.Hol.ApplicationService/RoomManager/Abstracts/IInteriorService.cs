@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Hol.Dtos.InteriorManager;
+﻿using HMS.Hol.Dtos.InteriorManager;
 
 namespace HMS.Hol.ApplicationService.RoomManager.Abstracts
 {

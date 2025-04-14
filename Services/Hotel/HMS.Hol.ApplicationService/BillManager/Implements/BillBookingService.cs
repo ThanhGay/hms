@@ -1,36 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Hol.ApplicationService.BillManager.Abstracts;
+﻿using HMS.Hol.ApplicationService.BillManager.Abstracts;
 using HMS.Hol.ApplicationService.Common;
-using HMS.Hol.ApplicationService.RoomManager.Implements;
 using HMS.Hol.Domain;
 using HMS.Hol.Dtos.BookingManager;
-using HMS.Hol.Dtos.RoomManager;
 using HMS.Hol.Infrastructures;
 using HMS.Shared.ApplicationService.Auth;
 using HMS.Shared.Constant.Common;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HMS.Hol.ApplicationService.BillManager.Implements
 {
     public class BillBookingService : HotelServiceBase, IBillBookingService
     {
-        private IInformationService _informationService;
+        private readonly IInformationService _informationService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public BillBookingService(ILogger<BillBookingService> logger, HotelDbContext dbContext, IInformationService informationService)
+        public BillBookingService(ILogger<BillBookingService> logger, HotelDbContext dbContext, IInformationService informationService, IHttpContextAccessor httpContextAccessor)
             : base(logger, dbContext)
         {
             _informationService = informationService;
+            _contextAccessor = httpContextAccessor;
         }
 
         public BookingDto CreateBooking(CreateBookingDto input)
@@ -160,7 +149,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             }
 
             var check = _informationService.CheckVoucher(input.DiscountID, input.CustomerID);
-            if(check == 1)
+            if (check == 1)
             {
                 throw new HotelExceptions("Voucher đã được sử dụng");
             }
@@ -458,7 +447,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
         public decimal GetTotalChargeByBillId(int billId)
         {
             var checkCharge = _dbContext.BillBooking_Charges.FirstOrDefault(b => b.BillID == billId);
-           
+
             if (checkCharge == null)
             {
                 return 0;
@@ -474,7 +463,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             decimal total = 0;
             foreach (var item in totalCharge)
             {
-                total += item.money;  
+                total += item.money;
             }
             Console.WriteLine($"TOtal charge: {total}");
             return total;
@@ -582,8 +571,8 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             if (bill.DiscountID != null)
             {
                 decimal voucher = Convert.ToDecimal(_informationService.GetVoucherCustomer(bill.DiscountID));
-                totalAmount = totalAmount - ((voucher/100) * totalAmount);
-                
+                totalAmount = totalAmount - ((voucher / 100) * totalAmount);
+
                 return totalAmount;
             }
             return totalAmount;
@@ -632,7 +621,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             var bill = _dbContext.BillBookings.FirstOrDefault(s => s.BillID == billId);
 
             decimal checkOutLate = 0;
-            
+
             Console.WriteLine($"checkout: {bill.CheckOut}");
             Console.WriteLine($"expert check out:{bill.ExpectedCheckOut}");
 
@@ -748,6 +737,67 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 string.IsNullOrEmpty(input.Keyword)
                 || e.BookingDate.ToString().ToLower().Contains(input.Keyword.ToLower())
             );
+
+            result.TotalItem = query.Count();
+
+            query = query
+                .OrderByDescending(s => s.BookingDate)
+                .ThenByDescending(s => s.BillID)
+                .Skip(input.SkipCount())
+                .Take(input.PageSize);
+
+            result.Items = query
+                .Select(s => new BookingDto
+                {
+                    BillID = s.BillID,
+                    BookingDate = s.BookingDate,
+                    CheckIn = s.CheckIn,
+                    CheckOut = s.CheckOut,
+                    CustomerID = s.CustomerID,
+                    DiscountID = s.DiscountID,
+                    ExpectedCheckIn = s.ExpectedCheckIn,
+                    ExpectedCheckOut = s.ExpectedCheckOut,
+                    Prepayment = s.Prepayment,
+                    ReceptionistID = s.ReceptionistID,
+                    Rooms = _dbContext.BillBooking_Rooms
+                    .Where(br => br.BillID == s.BillID)
+                    .Join(_dbContext.Rooms,
+                          br => br.RoomID,
+                          r => r.RoomID,
+                          (br, r) => new RoomBookingDto
+                          {
+                              RoomID = r.RoomID,
+                              RoomName = r.RoomName,
+                              Floor = r.Floor,
+                              RoomTypeId = r.RoomTypeId,
+                              HotelId = r.HotelId,
+                          })
+                    .ToList(),
+                    Status = s.Status
+                })
+                .ToList();
+
+            return result;
+        }
+
+        public PageResultDto<BookingDto> GetBookingByCustomerId(FilterDto input, int? customerId)
+        {
+            var result = new PageResultDto<BookingDto>();
+            int userId = CommonUtils.GetCurrentUserId(_contextAccessor);
+
+            var query = _dbContext.BillBookings.Where(e =>
+                string.IsNullOrEmpty(input.Keyword)
+                || e.BookingDate.ToString().ToLower().Contains(input.Keyword.ToLower())
+            );
+
+            if (customerId != null)
+            {
+                query = query.Where(b => b.CustomerID == customerId && b.Status != "Cancelled" && b.Status != "Done");
+            }
+            else
+            {
+                query = query.Where(b => b.CustomerID == userId);
+            }
 
             result.TotalItem = query.Count();
 

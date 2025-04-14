@@ -1,11 +1,6 @@
 ﻿using HMS.Shared.Constant.Database;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HMS.Hol.Domain
 {
@@ -21,6 +16,6 @@ namespace HMS.Hol.Domain
         public string HotelAddress { get; set; }
         [MaxLength(100)]
         public string Hotline { get; set; }
-        
+
     }
 }

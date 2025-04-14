@@ -1,9 +1,9 @@
 ﻿using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Dtos.RoomManager;
+using HMS.Hol.Dtos.RoomManager.Review;
 using HMS.Hol.Dtos.Upload;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.WebAPI.Controllers.Hotel
@@ -19,6 +19,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             _roomService = roomService;
         }
 
+        /// <summary>
+        /// danh sách phòng của khách sạn
+        /// </summary>
+        /// <param name="hotelId"></param>
+        /// <returns></returns>
         [HttpGet("all")]
         public IActionResult GetAllRoomInHotel([FromQuery] int hotelId)
         {
@@ -32,6 +37,11 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// thông tin phòng (giá cúa ngày hiện tại)
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
         [HttpGet("get/{roomId}")]
         public IActionResult GetById(int roomId)
         {
@@ -45,8 +55,17 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Thông tin phòng (giá của ngày cần tìm)
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
         [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAllTimeByRoomId })]
+        [TypeFilter(
+            typeof(AuthorizationFilter),
+            Arguments = new object[] { PermissionKeys.GetAllTimeByRoomId }
+        )]
         [HttpGet("get-at-time/{roomId}")]
         public IActionResult GetById(int roomId, [FromQuery] DateOnly date)
         {
@@ -60,8 +79,18 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Thông tin phòng (giá trong khoảng thời gian)
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.GetAtRangeTimeByRoomId })]
+        [TypeFilter(
+            typeof(AuthorizationFilter),
+            Arguments = new object[] { PermissionKeys.GetAtRangeTimeByRoomId }
+        )]
         [HttpGet("get-at-range-time/{roomId}")]
         public IActionResult GetByById(
             int roomId,
@@ -79,8 +108,17 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Tạo phòng cho khách sạn
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="hotelId"></param>
+        /// <returns></returns>
         [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.CreateRoomInHotel })]
+        [TypeFilter(
+            typeof(AuthorizationFilter),
+            Arguments = new object[] { PermissionKeys.CreateRoomInHotel }
+        )]
         [HttpPost("create")]
         public IActionResult CreateRoomInHotel(CreateRoomDto input, [FromQuery] int hotelId)
         {
@@ -94,8 +132,17 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Chỉnh sửa thông tin phòng
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="hotelId"></param>
+        /// <returns></returns>
         [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.UpdateRoomByIdInHotel })]
+        [TypeFilter(
+            typeof(AuthorizationFilter),
+            Arguments = new object[] { PermissionKeys.UpdateRoomByIdInHotel }
+        )]
         [HttpPut("update")]
         public IActionResult UpdateRoom(UpdateRoomDto input, [FromQuery] int hotelId)
         {
@@ -109,8 +156,16 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Xóa phòng
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
         [Authorize]
-        [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] { PermissionKeys.DeleteRoomById })]
+        [TypeFilter(
+            typeof(AuthorizationFilter),
+            Arguments = new object[] { PermissionKeys.DeleteRoomById }
+        )]
         [HttpDelete("delete/{roomId}")]
         public IActionResult DeleteRoom(int roomId)
         {
@@ -125,6 +180,12 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Thêm ảnh cho phòng
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
         [HttpPost("add-image/{roomId}")]
         public async Task<IActionResult> UploadImage(UploadImageDto image, int roomId)
         {
@@ -138,6 +199,12 @@ namespace HMS.WebAPI.Controllers.Hotel
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Lấy tất cả ảnh mô tả của phòng
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
         [HttpGet("get-all-image-by-roomid")]
         public IActionResult GetAllImageByRoomId(int roomId)
         {
@@ -145,11 +212,48 @@ namespace HMS.WebAPI.Controllers.Hotel
             {
                 return Ok(_roomService.GetAllImageByRoomId(roomId));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Đánh giá phòng (bình luận, đánh giá sao)
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("vote/create")]
+        public IActionResult CreateReviewRoom(CreateReviewRoomDto dto)
+        {
+            try
+            {
+                _roomService.ReviewRoom(dto);
+                return Ok("Đánh giá thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật đánh giá phòng
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPut("vote/update")]
+        public IActionResult UpdateReviewRoom(UpdateReviewRoomDto dto)
+        {
+            try
+            {
+                _roomService.UpdateReviewRoom(dto);
+                return Ok("Cập nhật đánh giá thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

@@ -1,13 +1,7 @@
 ﻿using HMS.Hol.ApplicationService.Common;
-using HMS.Hol.Domain;
 using HMS.Hol.Infrastructures;
 using HMS.Shared.ApplicationService.Hotel.Room;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HMS.Hol.ApplicationService.RoomManager.Implements
 {
@@ -22,10 +16,10 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             return checkRoom != null;
         }
 
-         public int FindHotelRoom(int roomId)
+        public int FindHotelRoom(int roomId)
         {
             var findRoom = _dbContext.Rooms.FirstOrDefault(r => r.RoomID == roomId);
-            return findRoom.HotelId ;
+            return findRoom.HotelId;
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using HMS.Hol.ApplicationService.HotelManager.Abstracts;
-using HMS.Hol.ApplicationService.RoomManager.Abstracts;
-using HMS.Hol.ApplicationService.RoomManager.Implements;
 using HMS.Hol.Dtos.HotelManager;
-using HMS.Hol.Dtos.RoomManager;
 using HMS.Shared.Constant.Common;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;

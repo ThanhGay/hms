@@ -1,24 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Hol.ApplicationService.Common;
+﻿using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Domain;
 using HMS.Hol.Dtos.RoomManager;
+using HMS.Hol.Dtos.RoomManager.Review;
 using HMS.Hol.Dtos.Upload;
 using HMS.Hol.Infrastructures;
+using HMS.Shared.ApplicationService.Auth;
 using HMS.Shared.Constant.Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HMS.Hol.ApplicationService.RoomManager.Implements
 {
     public class RoomService : HotelServiceBase, IRoomService
     {
-        public RoomService(ILogger<RoomService> logger, HotelDbContext dbContext)
-            : base(logger, dbContext) { }
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public RoomService(
+            ILogger<RoomService> logger,
+            HotelDbContext dbContext,
+            IHttpContextAccessor httpContextAccessor
+        )
+            : base(logger, dbContext)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
 
         public PageResultDto<RoomDetailDto> GetAllRoom(int hotelId)
         {
@@ -206,9 +212,11 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             Name = img.Name,
                         })
                         .ToList();
+                    var reviews = GetAllReviewByRoomId( roomId );
 
                     var result = foundRoomQuery.ToList()[0];
                     result.RoomImages = imgs;
+                    result.Reviews = reviews;
 
                     return result;
                 }
@@ -241,9 +249,11 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             Name = img.Name,
                         })
                         .ToList();
+                    var reviews = GetAllReviewByRoomId(roomId);
 
                     var result = foundRoomQuery.ToList()[0];
                     result.RoomImages = imgs;
+                    result.Reviews = reviews;
 
                     return result;
                 }
@@ -299,9 +309,11 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             Name = img.Name,
                         })
                         .ToList();
+                    var reviews = GetAllReviewByRoomId(roomId);
 
                     var result = foundRoomQuery.ToList()[0];
                     result.RoomImages = imgs;
+                    result.Reviews = reviews;
 
                     return result;
                 }
@@ -336,9 +348,11 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             Name = img.Name,
                         })
                         .ToList();
+                    var reviews = GetAllReviewByRoomId (roomId);
 
                     var result = foundRoomQuery.ToList()[0];
                     result.RoomImages = imgs;
+                    result.Reviews = reviews;
 
                     return result;
                 }
@@ -537,6 +551,78 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                 .ToList();
 
             return result;
+        }
+
+        public void ReviewRoom(CreateReviewRoomDto dto)
+        {
+            var elapsed = DateTime.Now.Ticks - dto.Create.Ticks;
+            if (elapsed < 1000)
+            {
+                throw new Exception("Don\'t spam");
+            }
+            else
+            {
+                var currentUserId = CommonUtils.GetCurrentUserId(_httpContextAccessor);
+                var newReview = new HolRoomReview
+                {
+                    RoomId = dto.RoomId,
+                    Comment = dto.Commemt,
+                    CreatedAt = dto.Create,
+                    Star = dto.Star,
+
+                    UserId = currentUserId,
+                };
+                _dbContext.RoomReviews.Add(newReview);
+                _dbContext.SaveChanges();
+            }
+        }
+
+        public void UpdateReviewRoom(UpdateReviewRoomDto dto)
+        {
+            var exist = _dbContext.RoomReviews.Any(r => r.Id == dto.ReviewId);
+            if (exist)
+            {
+                var rv = _dbContext.RoomReviews.FirstOrDefault(r => r.Id == dto.ReviewId);
+                if (!rv!.IsDeleted)
+                {
+                    rv.Star = dto.Star;
+                    rv.Comment = dto.Commemt;
+                    _dbContext.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("Đánh giá này đã bị xóa");
+                }
+            }
+            else
+            {
+                throw new Exception("Không tìm thấy đánh giá này");
+            }
+        }
+
+        public List<ViewRoomReviewDto> GetAllReviewByRoomId(int roomId)
+        {
+            var existRoom = _dbContext.Rooms.Any(r => r.RoomID == roomId);
+            if (existRoom)
+            {
+                var query = _dbContext
+                    .RoomReviews.Where(rv => rv.RoomId == roomId && !rv.IsDeleted)
+                    .Select(rv => new ViewRoomReviewDto
+                    {
+                        RoomId = rv.RoomId,
+                        Commemt = rv.Comment,
+                        Star = rv.Star,
+                        Create = rv.CreatedAt,
+                        UserId = rv.UserId,
+                    })
+                    .ToList();
+
+                return query;
+            }
+            else
+            {
+                throw new Exception($"Không tồn tại phòng với id: {roomId}");
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace ZaloPay.Helper.Crypto
 {
@@ -37,7 +36,7 @@ namespace ZaloPay.Helper.Crypto
                     hashMessage = new HMACSHA256(keyByte).ComputeHash(messageBytes);
                     break;
             }
-            
+
             return BitConverter.ToString(hashMessage).Replace("-", "").ToLower();
         }
     }
