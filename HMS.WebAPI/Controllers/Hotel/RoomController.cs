@@ -1,5 +1,6 @@
 ﻿using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Dtos.RoomManager;
+using HMS.Hol.Dtos.RoomManager.Review;
 using HMS.Hol.Dtos.Upload;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
@@ -210,6 +211,44 @@ namespace HMS.WebAPI.Controllers.Hotel
             try
             {
                 return Ok(_roomService.GetAllImageByRoomId(roomId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Đánh giá phòng (bình luận, đánh giá sao)
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("vote/create")]
+        public IActionResult CreateReviewRoom(CreateReviewRoomDto dto)
+        {
+            try
+            {
+                _roomService.ReviewRoom(dto);
+                return Ok("Đánh giá thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật đánh giá phòng
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPut("vote/update")]
+        public IActionResult UpdateReviewRoom(UpdateReviewRoomDto dto)
+        {
+            try
+            {
+                _roomService.UpdateReviewRoom(dto);
+                return Ok("Cập nhật đánh giá thành công");
             }
             catch (Exception ex)
             {

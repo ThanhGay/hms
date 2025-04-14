@@ -1,5 +1,6 @@
 ﻿using HMS.Hol.Domain;
 using HMS.Hol.Dtos.RoomManager;
+using HMS.Hol.Dtos.RoomManager.Review;
 using HMS.Hol.Dtos.Upload;
 using HMS.Shared.Constant.Common;
 
@@ -15,6 +16,15 @@ namespace HMS.Hol.ApplicationService.RoomManager.Abstracts
         public RoomDetailDto GetById(int roomId, DateOnly date);
         public RoomFullDetailDto GetById(int roomId, DateOnly start, DateOnly end);
         public Task<ImageDto> AddImgae(UploadImageDto image, int roomId);
-        List<ImageDto> GetAllImageByRoomId(int roomId);
+        public List<ImageDto> GetAllImageByRoomId(int roomId);
+
+        #region review
+        public void ReviewRoom(CreateReviewRoomDto input);
+
+        public void UpdateReviewRoom(UpdateReviewRoomDto input);
+        
+        public List<ViewRoomReviewDto> GetAllReviewByRoomId(int roomId);
+
+        #endregion
     }
 }
