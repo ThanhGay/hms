@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20250414145522_AddReview")]
-    partial class AddReview
+    [Migration("20250415061321_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

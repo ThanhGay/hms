@@ -6,11 +6,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     /// <inheritdoc />
-    public partial class AddReview : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "hol");
+
+           
             migrationBuilder.CreateTable(
                 name: "HolRoomReview",
                 schema: "hol",
