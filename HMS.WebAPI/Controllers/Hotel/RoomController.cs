@@ -255,5 +255,18 @@ namespace HMS.WebAPI.Controllers.Hotel
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("vote/view/{roomId}")]
+        public IActionResult GetReview(int roomId)
+        {
+            try
+            {
+                return Ok(_roomService.GetAllReviewByRoomId(roomId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

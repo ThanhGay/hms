@@ -18,6 +18,6 @@ namespace HMS.Hol.Dtos.RoomManager
         public int RoomTypeId { get; set; }
         public int HotelId { get; set; }
         public List<ImageDto>? RoomImages { get; set; }
-        public List<ViewRoomReviewDto>? Reviews { get; set; }
+        public ResultRoomReviewDto? Reviews { get; set; }
     }
 }

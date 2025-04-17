@@ -26,6 +26,11 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// <summary>
+        /// Danh sách phòng theo khách sạn
+        /// </summary>
+        /// <param name="hotelId"></param>
+        /// <returns></returns>
         public PageResultDto<RoomDetailDto> GetAllRoom(int hotelId)
         {
             var result = new PageResultDto<RoomDetailDto>();
@@ -124,7 +129,10 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                         .ToList();
 
                     var result = foundRoomQuery.ToList()[0];
+                    var reviews = GetAllReviewByRoomId(roomId);
+
                     result.RoomImages = imgs;
+                    result.Reviews = reviews;
 
                     return result;
                 }
@@ -159,13 +167,23 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                         .ToList();
 
                     var result = foundRoomQuery.ToList()[0];
+                    var reviews = GetAllReviewByRoomId(roomId);
+
                     result.RoomImages = imgs;
+                    result.Reviews = reviews;
 
                     return result;
                 }
             }
         }
 
+        /// <summary>
+        /// Return information of room (price in date parameter)
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public RoomDetailDto GetById(int roomId, DateOnly date)
         {
             var existRoom = _dbContext.Rooms.FirstOrDefault(r => r.RoomID == roomId);
@@ -212,9 +230,10 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             Name = img.Name,
                         })
                         .ToList();
-                    var reviews = GetAllReviewByRoomId( roomId );
 
                     var result = foundRoomQuery.ToList()[0];
+                    var reviews = GetAllReviewByRoomId(roomId);
+
                     result.RoomImages = imgs;
                     result.Reviews = reviews;
 
@@ -249,9 +268,10 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             Name = img.Name,
                         })
                         .ToList();
-                    var reviews = GetAllReviewByRoomId(roomId);
 
                     var result = foundRoomQuery.ToList()[0];
+                    var reviews = GetAllReviewByRoomId(roomId);
+
                     result.RoomImages = imgs;
                     result.Reviews = reviews;
 
@@ -260,6 +280,14 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
         }
 
+        /// <summary>
+        /// Return information of room (price in date range)
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public RoomFullDetailDto GetById(int roomId, DateOnly start, DateOnly end)
         {
             var existRoom = _dbContext.Rooms.FirstOrDefault(r => r.RoomID == roomId);
@@ -309,9 +337,10 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             Name = img.Name,
                         })
                         .ToList();
-                    var reviews = GetAllReviewByRoomId(roomId);
 
                     var result = foundRoomQuery.ToList()[0];
+                    var reviews = GetAllReviewByRoomId(roomId);
+
                     result.RoomImages = imgs;
                     result.Reviews = reviews;
 
@@ -348,9 +377,10 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             Name = img.Name,
                         })
                         .ToList();
-                    var reviews = GetAllReviewByRoomId (roomId);
 
                     var result = foundRoomQuery.ToList()[0];
+                    var reviews = GetAllReviewByRoomId(roomId);
+
                     result.RoomImages = imgs;
                     result.Reviews = reviews;
 
@@ -359,6 +389,13 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
         }
 
+        /// <summary>
+        /// Create room
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="HotelId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public HolRoom CreateRoom(CreateRoomDto input, int HotelId)
         {
             var existHotel = _dbContext.Hotels.Any(h => h.HotelId == HotelId);
@@ -404,6 +441,13 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
         }
 
+        /// <summary>
+        /// Update basic information of room
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="HotelId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public HolRoom UpdateRoom(UpdateRoomDto input, int HotelId)
         {
             var existRoom = _dbContext.Rooms.FirstOrDefault(r =>
@@ -454,6 +498,11 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
         }
 
+        /// <summary>
+        /// Delete room from database
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <exception cref="Exception"></exception>
         public void DeleteRoom(int roomId)
         {
             var existRoom = _dbContext.Rooms.FirstOrDefault(r => r.RoomID == roomId);
@@ -469,6 +518,14 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
         }
 
+        /// <summary>
+        /// Add image for roomId
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception"></exception>
         public async Task<ImageDto> AddImgae(UploadImageDto image, int roomId)
         {
             var existRoom = _dbContext.Rooms.Any(r => r.RoomID == roomId);
@@ -538,6 +595,11 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
         }
 
+        /// <summary>
+        /// Return all image with roomId
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
         public List<ImageDto> GetAllImageByRoomId(int roomId)
         {
             var result = _dbContext
@@ -553,30 +615,44 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             return result;
         }
 
+        /// <summary>
+        /// Đánh giá phòng
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <exception cref="Exception"></exception>
         public void ReviewRoom(CreateReviewRoomDto dto)
         {
-            var elapsed = DateTime.Now.Ticks - dto.Create.Ticks;
-            if (elapsed < 1000)
-            {
-                throw new Exception("Don\'t spam");
-            }
-            else
-            {
-                var currentUserId = CommonUtils.GetCurrentUserId(_httpContextAccessor);
-                var newReview = new HolRoomReview
-                {
-                    RoomId = dto.RoomId,
-                    Comment = dto.Commemt,
-                    CreatedAt = dto.Create,
-                    Star = dto.Star,
+            var currentUserId = CommonUtils.GetCurrentUserId(_httpContextAccessor);
 
-                    UserId = currentUserId,
-                };
-                _dbContext.RoomReviews.Add(newReview);
-                _dbContext.SaveChanges();
+            var lastReview = _dbContext.RoomReviews
+                .Where(r => r.UserId == currentUserId && r.RoomId == dto.RoomId)
+                .OrderByDescending(r => r.CreatedAt)
+                .FirstOrDefault();
+
+            if (lastReview != null && (DateTime.Now - lastReview.CreatedAt) < TimeSpan.FromSeconds(30))
+            {
+                throw new Exception("Don't spam");
             }
+
+            var newReview = new HolRoomReview
+            {
+                RoomId = dto.RoomId,
+                Comment = dto.Comment,
+                CreatedAt = DateTime.Now,
+                Star = dto.Star,
+                UserId = currentUserId,
+            };
+
+            _dbContext.RoomReviews.Add(newReview);
+            _dbContext.SaveChanges();
         }
 
+
+        /// <summary>
+        /// Cập nhật đánh giá phòng
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <exception cref="Exception"></exception>
         public void UpdateReviewRoom(UpdateReviewRoomDto dto)
         {
             var exist = _dbContext.RoomReviews.Any(r => r.Id == dto.ReviewId);
@@ -587,12 +663,12 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                 {
                     rv.Star = dto.Star;
                     rv.Comment = dto.Commemt;
-                    _dbContext.SaveChanges();
                 }
                 else
                 {
                     throw new Exception("Đánh giá này đã bị xóa");
                 }
+                _dbContext.SaveChanges();
             }
             else
             {
@@ -600,7 +676,39 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
         }
 
-        public List<ViewRoomReviewDto> GetAllReviewByRoomId(int roomId)
+        /// <summary>
+        /// Xóa mềm bản đánh giá phòng
+        /// </summary>
+        /// <param name="reviewId"></param>
+        /// <exception cref="Exception"></exception>
+        public void DeleteReviewRoom(int reviewId)
+        {
+            var existRv = _dbContext.RoomReviews.Any(rv => rv.Id == reviewId && !rv.IsDeleted);
+            if (existRv)
+            {
+                var currentUserId = CommonUtils.GetCurrentUserId(_httpContextAccessor);
+                var _rv = _dbContext.RoomReviews.FirstOrDefault(rv => rv.Id == reviewId);
+                if (_rv != null)
+                {
+                    _rv.IsDeleted = true;
+                    _rv.DeletedBy = currentUserId;
+                    _rv.DeletedAt = DateTime.Now;
+                }
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                throw new Exception($"Đánh giá không tồn tại hoặc đã bị xóa");
+            }
+        }
+
+        /// <summary>
+        /// Trả ra thông tin đánh giá phòng
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public ResultRoomReviewDto GetAllReviewByRoomId(int roomId)
         {
             var existRoom = _dbContext.Rooms.Any(r => r.RoomID == roomId);
             if (existRoom)
@@ -614,15 +722,43 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                         Star = rv.Star,
                         Create = rv.CreatedAt,
                         UserId = rv.UserId,
-                    })
-                    .ToList();
+                    });
 
-                return query;
+                var totalCount = query.Count();
+
+                var totalStarValue = 0.0;
+                var listDetail = new List<DetailStar>();
+                for (int i = 1; i < 6; i++)
+                {
+                    var item = GetDetailStar(i, roomId);
+                    totalStarValue += item.Star * item.Count;
+                    listDetail.Add(item);
+                }
+
+                var result = new ResultRoomReviewDto
+                {
+                    RoomId = roomId,
+                    Total = totalCount,
+                    Value = totalStarValue / totalCount,
+                    DetailStars = listDetail,
+                    DetailReviews = query.ToList(),
+                };
+
+                return result;
             }
             else
             {
                 throw new Exception($"Không tồn tại phòng với id: {roomId}");
             }
+        }
+
+        private DetailStar GetDetailStar(int star, int roomId)
+        {
+            var count = _dbContext.RoomReviews.Count(rv =>
+                rv.RoomId == roomId && rv.Star == star && !rv.IsDeleted
+            );
+
+            return new DetailStar { Star = star, Count = count };
         }
     }
 }
