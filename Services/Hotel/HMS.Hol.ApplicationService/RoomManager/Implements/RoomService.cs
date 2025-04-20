@@ -726,6 +726,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                         Create = rv.CreatedAt,
                         UserId = rv.UserId,
                     })
+                    .OrderByDescending(rv => rv.Create)
                     .Take(15);
 
                 var totalCount = query.Count();
