@@ -1,10 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using HMS.Shared.Constant.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMS.Hol.Domain
 {
     [Table(nameof(HolRoomReview), Schema = DbSchema.Hotel)]
+    [Index(
+        nameof(Id),
+        nameof(Star),
+        nameof(IsDeleted),
+        IsUnique = false,
+        Name = $"IX_{nameof(HolRoomReview)}"
+    )]
     public class HolRoomReview
     {
         [Key]

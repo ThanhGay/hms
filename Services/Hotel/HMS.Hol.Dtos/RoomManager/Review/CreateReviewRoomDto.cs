@@ -13,7 +13,6 @@ namespace HMS.Hol.Dtos.RoomManager.Review
 
         [Range(1, 5, ErrorMessage = "Số sao phải 1 - 5")]
         public int Star { get; set; }
-        public string? Commemt { get; set; }
-        public DateTime Create { get; set; } = DateTime.Now;
+        public string? Comment { get; set; }
     }
 }

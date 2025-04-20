@@ -19,7 +19,7 @@ namespace HMS.Hol.Dtos.RoomManager
         public decimal PricePerHolidayHour { get; set; }
         public int RoomTypeId { get; set; }
         public List<ImageDto>? RoomImages { get; set; }
-        public List<ViewRoomReviewDto>? Reviews { get; set; }
+        public ResultRoomReviewDto? Reviews { get; set; }
         public int HotelId { get; set; }
     }
 }

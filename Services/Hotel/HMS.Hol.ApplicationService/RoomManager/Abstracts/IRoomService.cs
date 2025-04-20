@@ -20,10 +20,9 @@ namespace HMS.Hol.ApplicationService.RoomManager.Abstracts
 
         #region review
         public void ReviewRoom(CreateReviewRoomDto input);
-
         public void UpdateReviewRoom(UpdateReviewRoomDto input);
-        
-        public List<ViewRoomReviewDto> GetAllReviewByRoomId(int roomId);
+        public void DeleteReviewRoom(int reviewId);        
+        public ResultRoomReviewDto GetAllReviewByRoomId(int roomId);
 
         #endregion
     }
