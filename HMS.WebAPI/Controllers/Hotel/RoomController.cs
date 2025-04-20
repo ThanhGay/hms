@@ -109,6 +109,24 @@ namespace HMS.WebAPI.Controllers.Hotel
         }
 
         /// <summary>
+        /// Thông tin đánh giá của phòng
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        [HttpGet("vote/view/{roomId}")]
+        public IActionResult GetReview(int roomId)
+        {
+            try
+            {
+                return Ok(_roomService.GetAllReviewByRoomId(roomId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Tạo phòng cho khách sạn
         /// </summary>
         /// <param name="input"></param>
@@ -157,7 +175,7 @@ namespace HMS.WebAPI.Controllers.Hotel
         }
 
         /// <summary>
-        /// Xóa phòng
+        /// Xóa phòng (xóa hẳn)
         /// </summary>
         /// <param name="roomId"></param>
         /// <returns></returns>
@@ -256,12 +274,18 @@ namespace HMS.WebAPI.Controllers.Hotel
             }
         }
 
-        [HttpGet("vote/view/{roomId}")]
-        public IActionResult GetReview(int roomId)
+        /// <summary>
+        /// Xóa đánh giá (xóa mềm)
+        /// </summary>
+        /// <param name="reviewId"></param>
+        /// <returns></returns>
+        [HttpDelete("vote/delete/{reviewId}")]
+        public IActionResult DeleteReviewRoom(int reviewId)
         {
             try
             {
-                return Ok(_roomService.GetAllReviewByRoomId(roomId));
+                _roomService.DeleteReviewRoom(reviewId);
+                return Ok("Xóa đánh giá thành công");
             }
             catch (Exception ex)
             {

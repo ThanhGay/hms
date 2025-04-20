@@ -624,12 +624,15 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
         {
             var currentUserId = CommonUtils.GetCurrentUserId(_httpContextAccessor);
 
-            var lastReview = _dbContext.RoomReviews
-                .Where(r => r.UserId == currentUserId && r.RoomId == dto.RoomId)
+            var lastReview = _dbContext
+                .RoomReviews.Where(r => r.UserId == currentUserId && r.RoomId == dto.RoomId)
                 .OrderByDescending(r => r.CreatedAt)
                 .FirstOrDefault();
 
-            if (lastReview != null && (DateTime.Now - lastReview.CreatedAt) < TimeSpan.FromSeconds(30))
+            if (
+                lastReview != null
+                && (DateTime.Now - lastReview.CreatedAt) < TimeSpan.FromSeconds(30)
+            )
             {
                 throw new Exception("Don't spam");
             }
@@ -646,7 +649,6 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             _dbContext.RoomReviews.Add(newReview);
             _dbContext.SaveChanges();
         }
-
 
         /// <summary>
         /// Cập nhật đánh giá phòng
@@ -713,6 +715,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             var existRoom = _dbContext.Rooms.Any(r => r.RoomID == roomId);
             if (existRoom)
             {
+                // lấy ra 20 đánh giá mới nhất
                 var query = _dbContext
                     .RoomReviews.Where(rv => rv.RoomId == roomId && !rv.IsDeleted)
                     .Select(rv => new ViewRoomReviewDto
@@ -722,7 +725,8 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                         Star = rv.Star,
                         Create = rv.CreatedAt,
                         UserId = rv.UserId,
-                    });
+                    })
+                    .Take(15);
 
                 var totalCount = query.Count();
 
