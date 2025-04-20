@@ -1,5 +1,11 @@
-﻿using HMS.Auth.ApplicationService.Common;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
+using Google.Apis.Auth.OAuth2;
+using HMS.Auth.ApplicationService.Common;
 using HMS.Auth.ApplicationService.UserModule.Abstracts;
+using HMS.Auth.Domain;
 using HMS.Auth.Dtos;
 using HMS.Auth.Infrastructures;
 using HMS.Shared.ApplicationService.Notification;
@@ -7,9 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace HMS.Auth.ApplicationService.UserModule.Implements
 {
@@ -17,9 +21,17 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
     {
         private readonly IConfiguration _configuration;
         private static List<string> blackList = new List<string>();
-        private static Dictionary<string, (string Otp, DateTime Expiry)> otpStore = new Dictionary<string, (string, DateTime)>();
+        private static Dictionary<string, (string Otp, DateTime Expiry)> otpStore =
+            new Dictionary<string, (string, DateTime)>();
         private readonly INotificationService _notificationService;
-        public UserService(ILogger<UserService> logger, AuthDbContext dbContext, IConfiguration configuration, INotificationService notificationService) : base(logger, dbContext)
+
+        public UserService(
+            ILogger<UserService> logger,
+            AuthDbContext dbContext,
+            IConfiguration configuration,
+            INotificationService notificationService
+        )
+            : base(logger, dbContext)
         {
             _configuration = configuration;
             _notificationService = notificationService;
@@ -27,25 +39,26 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
         private string Createtokens(UserDto input, int role)
         {
-
             var claims = new[]
             {
                 new Claim(CustomClaimTypes.UserId, $"{input.UserId}"),
                 new Claim(CustomClaimTypes.FullName, input.FirstName + input.LastName),
                 new Claim(CustomClaimTypes.DateOfBirth, $"{input.DateOfBirth}"),
                 new Claim(CustomClaimTypes.PhoneNumber, input.PhoneNumber),
-                new Claim(CustomClaimTypes.Role, $"{role}")
-
-
+                new Claim(CustomClaimTypes.Role, $"{role}"),
             };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"])
+            );
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(_configuration.GetValue<int>("JwtSettings:ExpiryMinutes")),
+                expires: DateTime.Now.AddMinutes(
+                    _configuration.GetValue<int>("JwtSettings:ExpiryMinutes")
+                ),
                 signingCredentials: creds
             );
 
@@ -54,7 +67,9 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
 
         public ResultLogin Login([FromQuery] LoginDto input)
         {
-            var checkDelete = _dbContext.AuthUsers.Any(e => e.Email == input.Email && e.IsDeleted == true);
+            var checkDelete = _dbContext.AuthUsers.Any(e =>
+                e.Email == input.Email && e.IsDeleted == true
+            );
             if (checkDelete)
             {
                 _logger.LogError("Tài khoản đã bị khóa");
@@ -78,7 +93,9 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                 var user = new UserDto();
                 if (resultAuth.RoleId == 1)
                 {
-                    var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(c => c.CustomerId == resultAuth.UserId);
+                    var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(c =>
+                        c.CustomerId == resultAuth.UserId
+                    );
                     user.UserId = findCustomer.CustomerId;
                     user.FirstName = findCustomer.FirstName;
                     user.LastName = findCustomer.LastName;
@@ -87,10 +104,27 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                     user.DateOfBirth = findCustomer.DateOfBirth;
                     result.User = user;
                     result.Token = Createtokens(user, resultAuth.RoleId);
+
+                    // Thêm thiết bị khi đăng nhập
+                    var checkDevice = _dbContext.AuthCustomerDevices.Any(x =>
+                        x.DeviceToken == input.DeviceToken
+                    );
+                    if (!checkDevice)
+                    {
+                        var device = new AuthCustomerDevice
+                        {
+                            CustomerId = findCustomer.CustomerId,
+                            DeviceToken = input.DeviceToken,
+                        };
+                        _dbContext.AuthCustomerDevices.Add(device);
+                        _dbContext.SaveChanges();
+                    }
                 }
                 else
                 {
-                    var findCustomer = _dbContext.AuthReceptionists.FirstOrDefault(c => c.ReceptionistId == resultAuth.UserId);
+                    var findCustomer = _dbContext.AuthReceptionists.FirstOrDefault(c =>
+                        c.ReceptionistId == resultAuth.UserId
+                    );
                     user.UserId = findCustomer.ReceptionistId;
                     user.FirstName = findCustomer.FirstName;
                     user.LastName = findCustomer.LastName;
@@ -114,14 +148,11 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         {
             var func = new List<string>();
 
-            var findFunc = from p in _dbContext.AuthRolesPermissions
-                           join pn in _dbContext.AuthPermissions on p.PermissonKey equals pn.PermissonKey
-                           where p.RoleId == 3
-                           select new
-                           {
-                               permission = p.PermissonKey,
-                               permissionName = pn.PermissionName
-                           };
+            var findFunc =
+                from p in _dbContext.AuthRolesPermissions
+                join pn in _dbContext.AuthPermissions on p.PermissonKey equals pn.PermissonKey
+                where p.RoleId == 3
+                select new { permission = p.PermissonKey, permissionName = pn.PermissionName };
             foreach (var item in findFunc)
             {
                 func.Add(item.permissionName);
@@ -133,14 +164,11 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         {
             var func = new List<string>();
 
-            var findFunc = from p in _dbContext.AuthRolesPermissions
-                           join pn in _dbContext.AuthPermissions on p.PermissonKey equals pn.PermissonKey
-                           where p.RoleId == 2
-                           select new
-                           {
-                               permission = p.PermissonKey,
-                               permissionName = pn.PermissionName
-                           };
+            var findFunc =
+                from p in _dbContext.AuthRolesPermissions
+                join pn in _dbContext.AuthPermissions on p.PermissonKey equals pn.PermissonKey
+                where p.RoleId == 2
+                select new { permission = p.PermissonKey, permissionName = pn.PermissionName };
             foreach (var item in findFunc)
             {
                 func.Add(item.permissionName);
@@ -152,14 +180,11 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         {
             var func = new List<string>();
 
-            var findFunc = from p in _dbContext.AuthRolesPermissions
-                           join pn in _dbContext.AuthPermissions on p.PermissonKey equals pn.PermissonKey
-                           where p.RoleId == 1
-                           select new
-                           {
-                               permission = p.PermissonKey,
-                               permissionName = pn.PermissionName
-                           };
+            var findFunc =
+                from p in _dbContext.AuthRolesPermissions
+                join pn in _dbContext.AuthPermissions on p.PermissonKey equals pn.PermissonKey
+                where p.RoleId == 1
+                select new { permission = p.PermissonKey, permissionName = pn.PermissionName };
             foreach (var item in findFunc)
             {
                 func.Add(item.permissionName);
@@ -168,13 +193,11 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         }
 
         public void AddToBlacklist(string token)
-
         {
             if (!blackList.Contains(token))
             {
                 blackList.Add(token);
             }
-
         }
 
         public bool IsTokenBlacklisted(string token)
@@ -185,11 +208,18 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         public async Task ForgotPassword([FromForm] string email)
         {
             var findEmail = _dbContext.AuthUsers.Any(u => u.Email == email);
-            if (!findEmail) { throw new UserExceptions("Tài khoản chưa đăng kí"); }
+            if (!findEmail)
+            {
+                throw new UserExceptions("Tài khoản chưa đăng kí");
+            }
             Random random = new Random();
             string randomNumber = random.Next(0, 1000000).ToString("D6");
             otpStore[email] = (randomNumber, DateTime.Now.AddMinutes(5));
-            await _notificationService.SendEmail(email, "OTP của bạn để lấy lại mật khẩu: ", randomNumber);
+            await _notificationService.SendEmail(
+                email,
+                "OTP của bạn để lấy lại mật khẩu: ",
+                randomNumber
+            );
         }
 
         public void ResetPassword(UpdatePassWordDto input)
@@ -225,5 +255,58 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             }
         }
 
+        public async Task SendNotification(SendNotificationDto dto)
+        {
+            var listDevice = (
+                from cd in _dbContext.AuthCustomerDevices
+                where cd.CustomerId == dto.CustomerId
+                select cd
+            ).ToList();
+            if (listDevice == null || !listDevice.Any())
+            {
+                throw new UserExceptions("Chưa đăng nhập vào bất kì thiết bị nào");
+            }
+            foreach (var item in listDevice)
+            {
+                await SendDevice(item.DeviceToken, dto.Title, dto.Body);
+            }
+        }
+
+        public async Task SendDevice(string fcm, string sender, string messageCotent)
+        {
+            var path = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "hms-db-6db29-firebase-adminsdk-fbsvc-65b12e9d80.json"
+            );
+            var credential = GoogleCredential
+                .FromFile(path)
+                .CreateScoped("https://www.googleapis.com/auth/firebase.messaging");
+            var token = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync();
+
+            var message = new
+            {
+                message = new
+                {
+                    token = fcm,
+                    notification = new { title = sender, body = messageCotent },
+                },
+            };
+
+            var jsonMessage = JsonConvert.SerializeObject(message);
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                "Bearer",
+                token
+            );
+
+            var content = new StringContent(jsonMessage, Encoding.UTF8, "application/json");
+
+            await client.PostAsync(
+                "https://fcm.googleapis.com/v1/projects/hms-db-6db29/messages:send",
+                content
+            );
+        }
     }
 }

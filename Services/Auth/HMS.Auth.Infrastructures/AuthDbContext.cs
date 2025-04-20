@@ -17,6 +17,7 @@ namespace HMS.Auth.Infrastructures
         public DbSet<AuthVoucher> AuthVouchers { get; set; }
         public DbSet<AuthCustomerVoucher> AuthCustomerVouchers { get; set; }
         public DbSet<AuthFavouriteRoom> AuthFavouriteRooms { get; set; }
+        public DbSet<AuthCustomerDevice> AuthCustomerDevices { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
@@ -73,7 +74,11 @@ namespace HMS.Auth.Infrastructures
             //SeedData.SeedAuthRole(modelBuilder);
             //SeedData.SeedAuthRolePermission(modelBuilder);
             //SeedData.SeedAccount(modelBuilder);
-
+            modelBuilder.Entity<AuthCustomerDevice>()
+                .HasOne<AuthCustomer>()
+                .WithMany()
+                .HasForeignKey(a => a.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
             base.OnModelCreating(modelBuilder);
 
         }

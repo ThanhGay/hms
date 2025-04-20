@@ -13,5 +13,6 @@ namespace HMS.Auth.ApplicationService.UserModule.Abstracts
         bool IsTokenBlacklisted(string token);
         ResultLogin Login([FromQuery] LoginDto input);
         void ResetPassword(UpdatePassWordDto input);
+        Task SendNotification(SendNotificationDto dto);
     }
 }
