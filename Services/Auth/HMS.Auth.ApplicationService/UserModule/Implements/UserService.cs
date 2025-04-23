@@ -255,6 +255,26 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
             }
         }
 
+        public void checkOtp(checkOtpDto dto)
+        {
+            if (otpStore.ContainsKey(dto.Email))
+            {
+                var (storeOTP, expiry) = otpStore[dto.Email];
+                if (DateTime.Now > expiry)
+                {
+                    otpStore.Remove(dto.Email);
+                    throw new UserExceptions("Đã hết hạn Otp");
+                }
+                if (storeOTP != dto.Otp)
+                {
+                    throw new UserExceptions("Không đúng OTP");
+                }
+            }
+            else
+            {
+                throw new UserExceptions("Không đúng OTP");
+            }
+        }
         public async Task SendNotification(SendNotificationDto dto)
         {
             var listDevice = (

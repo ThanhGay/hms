@@ -1,6 +1,7 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Dtos;
+using HMS.Hol.Dtos.BookingManager;
 using HMS.Shared.ApplicationService.Notification;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
@@ -119,6 +120,20 @@ namespace HMS.WebAPI.Controllers.User
             {
                 _userService.ResetPassword(input);
                 return Ok("Đã đổi mật khẩu thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("/check-otp")]
+        public IActionResult CheckOTP(checkOtpDto dto)
+        {
+            try
+            {
+                _userService.checkOtp(dto);
+                return Ok("Chính xác OTP");
             }
             catch (Exception ex)
             {
