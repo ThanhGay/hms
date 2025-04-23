@@ -9,6 +9,7 @@ using HMS.Shared.ApplicationService.Auth;
 using HMS.Shared.Constant.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace HMS.Hol.ApplicationService.RoomManager.Implements
 {
@@ -713,43 +714,68 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
         public ResultRoomReviewDto GetAllReviewByRoomId(int roomId)
         {
             var existRoom = _dbContext.Rooms.Any(r => r.RoomID == roomId);
+            var existRoomReview = _dbContext.RoomReviews.Any(r => r.RoomId == roomId);
+
             if (existRoom)
             {
-                // lấy ra 20 đánh giá mới nhất
-                var query = _dbContext
-                    .RoomReviews.Where(rv => rv.RoomId == roomId && !rv.IsDeleted)
-                    .Select(rv => new ViewRoomReviewDto
+                if (!existRoomReview)
+                {
+                    var listDetail = new List<DetailStar>();
+                    for (int i = 1; i < 6; i++)
                     {
-                        RoomId = rv.RoomId,
-                        Commemt = rv.Comment,
-                        Star = rv.Star,
-                        Create = rv.CreatedAt,
-                        UserId = rv.UserId,
-                    })
-                    .OrderByDescending(rv => rv.Create)
-                    .Take(15);
+                        var item = GetDetailStar(i, roomId);
+                        listDetail.Add(item);
+                    }
 
-                var totalCount = query.Count();
+                    var result = new ResultRoomReviewDto
+                    {
+                        RoomId = roomId,
+                        Total = 0,
+                        Value = 0,
+                        DetailStars = listDetail,
+                        DetailReviews = [],
+                    };
 
-                var totalStarValue = 0.0;
-                var listDetail = new List<DetailStar>();
-                for (int i = 1; i < 6; i++)
-                {
-                    var item = GetDetailStar(i, roomId);
-                    totalStarValue += item.Star * item.Count;
-                    listDetail.Add(item);
+                    return result;
                 }
-
-                var result = new ResultRoomReviewDto
+                else
                 {
-                    RoomId = roomId,
-                    Total = totalCount,
-                    Value = totalStarValue / totalCount,
-                    DetailStars = listDetail,
-                    DetailReviews = query.ToList(),
-                };
+                    // lấy ra 20 đánh giá mới nhất
+                    var query = _dbContext
+                        .RoomReviews.Where(rv => rv.RoomId == roomId && !rv.IsDeleted)
+                        .Select(rv => new ViewRoomReviewDto
+                        {
+                            RoomId = rv.RoomId,
+                            Commemt = rv.Comment,
+                            Star = rv.Star,
+                            Create = rv.CreatedAt,
+                            UserId = rv.UserId,
+                        })
+                        .OrderByDescending(rv => rv.Create)
+                        .Take(15);
 
-                return result;
+                    var totalCount = query.Count();
+
+                    var totalStarValue = 0.0;
+                    var listDetail = new List<DetailStar>();
+                    for (int i = 1; i < 6; i++)
+                    {
+                        var item = GetDetailStar(i, roomId);
+                        totalStarValue += item.Star * item.Count;
+                        listDetail.Add(item);
+                    }
+
+                    var result = new ResultRoomReviewDto
+                    {
+                        RoomId = roomId,
+                        Total = totalCount,
+                        Value = totalStarValue / totalCount,
+                        DetailStars = listDetail,
+                        DetailReviews = query.ToList(),
+                    };
+
+                    return result;
+                }
             }
             else
             {
