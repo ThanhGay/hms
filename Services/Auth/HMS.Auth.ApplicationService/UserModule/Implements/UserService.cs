@@ -105,19 +105,22 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
                     result.User = user;
                     result.Token = Createtokens(user, resultAuth.RoleId);
 
-                    // Thêm thiết bị khi đăng nhập
-                    var checkDevice = _dbContext.AuthCustomerDevices.Any(x =>
-                        x.DeviceToken == input.DeviceToken
-                    );
-                    if (!checkDevice)
+                    if(input.DeviceToken != null)
                     {
-                        var device = new AuthCustomerDevice
+                        // Thêm thiết bị khi đăng nhập
+                        var checkDevice = _dbContext.AuthCustomerDevices.Any(x =>
+                            x.DeviceToken == input.DeviceToken
+                        );
+                        if (!checkDevice)
                         {
-                            CustomerId = findCustomer.CustomerId,
-                            DeviceToken = input.DeviceToken,
-                        };
-                        _dbContext.AuthCustomerDevices.Add(device);
-                        _dbContext.SaveChanges();
+                            var device = new AuthCustomerDevice
+                            {
+                                CustomerId = findCustomer.CustomerId,
+                                DeviceToken = input.DeviceToken,
+                            };
+                            _dbContext.AuthCustomerDevices.Add(device);
+                            _dbContext.SaveChanges();
+                        }
                     }
                 }
                 else

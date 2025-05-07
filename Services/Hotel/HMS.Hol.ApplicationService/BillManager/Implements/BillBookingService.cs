@@ -141,6 +141,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
 
         public BookingDto CreatePreBooking(CreatePreBookingDto input)
         {
+
             var existsCustomer = _informationService.GetCustomerById(input.CustomerID);
             if (existsCustomer == null)
             {
@@ -148,13 +149,19 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 throw new HotelExceptions("Customer này đã không tồn tại!");
             }
 
-            var check = _informationService.CheckVoucher(input.DiscountID, input.CustomerID);
-            if (check == 1)
-            {
-                throw new HotelExceptions("Voucher đã được sử dụng");
-            }
-            var exists = _dbContext.BillBookings
-            .FirstOrDefault(s => s.BookingDate == input.BookingDate);
+
+            //var exists = _dbContext.BillBookings
+            //.FirstOrDefault(s => s.ExpectedCheckIn == input.ExpectedCheckIn && s.ExpectedCheckOut == input.ExpectedCheckOut && s.CustomerID == input.CustomerID);
+
+            var exists = (from b in _dbContext.BillBookings
+                          join br in _dbContext.BillBooking_Rooms
+                              on b.BillID equals br.BillID
+                          where b.ExpectedCheckIn == input.ExpectedCheckIn
+                                && b.ExpectedCheckOut == input.ExpectedCheckOut
+                                && b.CustomerID == input.CustomerID
+                                && input.RoomIds.Contains(br.RoomID)
+                          select b)
+                          .FirstOrDefault();
 
             if (exists != null)
             {
@@ -270,7 +277,6 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             bookingExists.Status = "Cancelled";
             _dbContext.SaveChanges();
         }
-
 
         public void CreateBooking_Room(int roomId, int bookingId)
         {

@@ -242,6 +242,7 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost("vote/create")]
+        [Authorize]
         public IActionResult CreateReviewRoom(CreateReviewRoomDto dto)
         {
             try
@@ -261,6 +262,7 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPut("vote/update")]
+        [Authorize]
         public IActionResult UpdateReviewRoom(UpdateReviewRoomDto dto)
         {
             try
@@ -280,6 +282,7 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// <param name="reviewId"></param>
         /// <returns></returns>
         [HttpDelete("vote/delete/{reviewId}")]
+        [Authorize]
         public IActionResult DeleteReviewRoom(int reviewId)
         {
             try
