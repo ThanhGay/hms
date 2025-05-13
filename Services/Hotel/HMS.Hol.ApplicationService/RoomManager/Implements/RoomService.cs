@@ -16,15 +16,18 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
     public class RoomService : HotelServiceBase, IRoomService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IInformationService _informationService;
 
         public RoomService(
             ILogger<RoomService> logger,
             HotelDbContext dbContext,
-            IHttpContextAccessor httpContextAccessor
+            IHttpContextAccessor httpContextAccessor,
+            IInformationService informationService
         )
             : base(logger, dbContext)
         {
             _httpContextAccessor = httpContextAccessor;
+            _informationService = informationService;
         }
 
         /// <summary>
@@ -740,7 +743,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                 }
                 else
                 {
-                    // lấy ra 20 đánh giá mới nhất
+                    // lấy ra 15 đánh giá mới nhất
                     var query = _dbContext
                         .RoomReviews.Where(rv => rv.RoomId == roomId && !rv.IsDeleted)
                         .Select(rv => new ViewRoomReviewDto
@@ -750,6 +753,7 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                             Star = rv.Star,
                             Create = rv.CreatedAt,
                             UserId = rv.UserId,
+                            Name = _informationService.GetCustomerById(rv.UserId).LastName,
                         })
                         .OrderByDescending(rv => rv.Create)
                         .Take(15);

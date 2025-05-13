@@ -11,6 +11,7 @@ namespace HMS.Hol.Dtos.RoomManager.Review
     {
         public int RoomId { get; set; }
         public int? UserId { get; set; }
+        public String? Name { get; set; }
         public int Star { get; set; }
         public string? Commemt { get; set; }
         public DateTime Create { get; set; }

@@ -12,21 +12,28 @@ namespace HMS.Auth.ApplicationService.UserModule.Implements
         public InformationService(ILogger<UserService> logger, AuthDbContext dbContext)
             : base(logger, dbContext) { }
 
-        public AuthCustomer GetCustomerById(int id)
+        public AuthCustomer GetCustomerById(int? id)
         {
-            var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(r => r.CustomerId == id);
-            if (findCustomer == null)
+            if (id == null)
             {
-                throw new UserExceptions($"Không tồn tại customer có id là: {id}");
+                throw new ArgumentNullException("Param customerId trống", nameof(id));
             }
-            var checkDelete = _dbContext.AuthUsers.FirstOrDefault(u => u.UserId == id);
-
-            if (checkDelete.IsDeleted)
+            else
             {
-                throw new UserExceptions("Người dùng đã bị xóa");
-            }
+                var findCustomer = _dbContext.AuthCustomers.FirstOrDefault(r => r.CustomerId == id);
+                if (findCustomer == null)
+                {
+                    throw new UserExceptions($"Không tồn tại customer có id là: {id}");
+                }
+                var checkDelete = _dbContext.AuthUsers.FirstOrDefault(u => u.UserId == id);
 
-            return findCustomer;
+                if (checkDelete.IsDeleted)
+                {
+                    throw new UserExceptions("Người dùng đã bị xóa");
+                }
+
+                return findCustomer;
+            }
         }
 
         public AuthReceptionist GetReceptionistById(int receptionistId)
