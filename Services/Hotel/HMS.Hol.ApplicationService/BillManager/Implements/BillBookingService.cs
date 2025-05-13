@@ -15,7 +15,12 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
         private readonly IInformationService _informationService;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public BillBookingService(ILogger<BillBookingService> logger, HotelDbContext dbContext, IInformationService informationService, IHttpContextAccessor httpContextAccessor)
+        public BillBookingService(
+            ILogger<BillBookingService> logger,
+            HotelDbContext dbContext,
+            IInformationService informationService,
+            IHttpContextAccessor httpContextAccessor
+        )
             : base(logger, dbContext)
         {
             _informationService = informationService;
@@ -38,8 +43,9 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 throw new HotelExceptions("Receptionist này đã không tồn tại!");
             }
 
-            var exists = _dbContext.BillBookings
-                .FirstOrDefault(s => s.BookingDate == input.BookingDate);
+            var exists = _dbContext.BillBookings.FirstOrDefault(s =>
+                s.BookingDate == input.BookingDate
+            );
 
             if (exists != null)
             {
@@ -94,7 +100,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                     {
                         BillID = newBooking.BillID,
                         RoomID = roomId,
-                        status = newBooking.Status
+                        status = newBooking.Status,
                     };
                     _dbContext.BillBooking_Rooms.Add(bookingRoom);
                 }
@@ -120,28 +126,28 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 Status = newBooking.Status,
                 CustomerID = newBooking.CustomerID,
                 ReceptionistID = newBooking.ReceptionistID,
-                Rooms = _dbContext.BillBooking_Rooms
-                    .Where(br => br.BillID == newBooking.BillID)
-                    .Join(_dbContext.Rooms,
-                          br => br.RoomID,
-                          r => r.RoomID,
-                          (br, r) => new RoomBookingDto
-                          {
-                              RoomID = r.RoomID,
-                              RoomName = r.RoomName,
-                              Floor = r.Floor,
-                              RoomTypeId = r.RoomTypeId,
-                              HotelId = r.HotelId,
-                          })
-                    .ToList()
+                Rooms = _dbContext
+                    .BillBooking_Rooms.Where(br => br.BillID == newBooking.BillID)
+                    .Join(
+                        _dbContext.Rooms,
+                        br => br.RoomID,
+                        r => r.RoomID,
+                        (br, r) =>
+                            new RoomBookingDto
+                            {
+                                RoomID = r.RoomID,
+                                RoomName = r.RoomName,
+                                Floor = r.Floor,
+                                RoomTypeId = r.RoomTypeId,
+                                HotelId = r.HotelId,
+                            }
+                    )
+                    .ToList(),
             };
         }
 
-
-
         public BookingDto CreatePreBooking(CreatePreBookingDto input)
         {
-
             var existsCustomer = _informationService.GetCustomerById(input.CustomerID);
             if (existsCustomer == null)
             {
@@ -149,19 +155,16 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 throw new HotelExceptions("Customer này đã không tồn tại!");
             }
 
-
-            //var exists = _dbContext.BillBookings
-            //.FirstOrDefault(s => s.ExpectedCheckIn == input.ExpectedCheckIn && s.ExpectedCheckOut == input.ExpectedCheckOut && s.CustomerID == input.CustomerID);
-
-            var exists = (from b in _dbContext.BillBookings
-                          join br in _dbContext.BillBooking_Rooms
-                              on b.BillID equals br.BillID
-                          where b.ExpectedCheckIn == input.ExpectedCheckIn
-                                && b.ExpectedCheckOut == input.ExpectedCheckOut
-                                && b.CustomerID == input.CustomerID
-                                && input.RoomIds.Contains(br.RoomID)
-                          select b)
-                          .FirstOrDefault();
+            var exists = (
+                from b in _dbContext.BillBookings
+                join br in _dbContext.BillBooking_Rooms on b.BillID equals br.BillID
+                where
+                    b.ExpectedCheckIn == input.ExpectedCheckIn
+                    && b.ExpectedCheckOut == input.ExpectedCheckOut
+                    && b.CustomerID == input.CustomerID
+                    && input.RoomIds.Contains(br.RoomID)
+                select b
+            ).FirstOrDefault();
 
             if (exists != null)
             {
@@ -203,7 +206,6 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 _informationService.UseVoucher(newBooking.DiscountID, bookingDateOnly);
             }
 
-
             if (input.RoomIds != null && input.RoomIds.Any())
             {
                 foreach (var roomId in input.RoomIds)
@@ -219,7 +221,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                     {
                         BillID = newBooking.BillID,
                         RoomID = roomId,
-                        status = newBooking.Status
+                        status = newBooking.Status,
                     };
                     _dbContext.BillBooking_Rooms.Add(bookingRoom);
                 }
@@ -245,20 +247,23 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 Status = newBooking.Status,
                 CustomerID = newBooking.CustomerID,
                 ReceptionistID = newBooking.ReceptionistID,
-                Rooms = _dbContext.BillBooking_Rooms
-                    .Where(br => br.BillID == newBooking.BillID)
-                    .Join(_dbContext.Rooms,
-                          br => br.RoomID,
-                          r => r.RoomID,
-                          (br, r) => new RoomBookingDto
-                          {
-                              RoomID = r.RoomID,
-                              RoomName = r.RoomName,
-                              Floor = r.Floor,
-                              RoomTypeId = r.RoomTypeId,
-                              HotelId = r.HotelId,
-                          })
-                    .ToList()
+                Rooms = _dbContext
+                    .BillBooking_Rooms.Where(br => br.BillID == newBooking.BillID)
+                    .Join(
+                        _dbContext.Rooms,
+                        br => br.RoomID,
+                        r => r.RoomID,
+                        (br, r) =>
+                            new RoomBookingDto
+                            {
+                                RoomID = r.RoomID,
+                                RoomName = r.RoomName,
+                                Floor = r.Floor,
+                                RoomTypeId = r.RoomTypeId,
+                                HotelId = r.HotelId,
+                            }
+                    )
+                    .ToList(),
             };
 
             return booking;
@@ -266,8 +271,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
 
         public void CancelBooking(int bookingId)
         {
-            var bookingExists = _dbContext.BillBookings
-        .FirstOrDefault(b => b.BillID == bookingId);
+            var bookingExists = _dbContext.BillBookings.FirstOrDefault(b => b.BillID == bookingId);
             if (bookingExists == null)
             {
                 _logger.LogError($"Booking với ID {bookingId} không tồn tại.");
@@ -280,8 +284,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
 
         public void CreateBooking_Room(int roomId, int bookingId)
         {
-            var bookingExists = _dbContext.BillBookings
-        .FirstOrDefault(b => b.BillID == bookingId);
+            var bookingExists = _dbContext.BillBookings.FirstOrDefault(b => b.BillID == bookingId);
             if (bookingExists == null)
             {
                 _logger.LogError($"Booking với ID {bookingId} không tồn tại.");
@@ -299,18 +302,15 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             {
                 BillID = bookingId,
                 RoomID = roomId,
-                status = bookingExists.Status
+                status = bookingExists.Status,
             };
             _dbContext.BillBooking_Rooms.Add(booking_room);
             _dbContext.SaveChanges();
-
         }
 
         public ChargeDto CreateCharge(CreateChargeDto input)
         {
-
-            var exists = _dbContext.Charges
-                .FirstOrDefault(s => s.Descreption == input.Descreption);
+            var exists = _dbContext.Charges.FirstOrDefault(s => s.Descreption == input.Descreption);
 
             if (exists != null)
             {
@@ -318,11 +318,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 throw new HotelExceptions("Charge này đã tồn tại!");
             }
 
-            var charge = new HolCharge
-            {
-                Descreption = input.Descreption,
-                Price = input.Price,
-            };
+            var charge = new HolCharge { Descreption = input.Descreption, Price = input.Price };
 
             _dbContext.Charges.Add(charge);
             _dbContext.SaveChanges();
@@ -358,13 +354,11 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             };
             _dbContext.BillBooking_Charges.Add(booking_charge);
             _dbContext.SaveChanges();
-
         }
 
         public void CheckIn(CheckInDto checkIn)
         {
-            var booking = _dbContext.BillBookings
-                .FirstOrDefault(b => b.BillID == checkIn.BillID);
+            var booking = _dbContext.BillBookings.FirstOrDefault(b => b.BillID == checkIn.BillID);
 
             if (booking == null)
             {
@@ -380,8 +374,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
 
         public void CheckOut(CheckOutDto checkOut)
         {
-            var booking = _dbContext.BillBookings
-               .FirstOrDefault(b => b.BillID == checkOut.BillId);
+            var booking = _dbContext.BillBookings.FirstOrDefault(b => b.BillID == checkOut.BillId);
 
             if (booking == null)
             {
@@ -416,28 +409,32 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
 
         public PriceDto GetPriceRoom(int id)
         {
-            var defaultP = (from room in _dbContext.Rooms
-                            join roomType in _dbContext.RoomTypes
-                                on room.RoomTypeId equals roomType.RoomTypeID
-                            join defaultPrice in _dbContext.DefaultPrices on roomType.RoomTypeID equals defaultPrice.RoomTypeID
-                            where room.RoomID == id
-                            select new
-                            {
-                                PriceNight = defaultPrice.PricePerNight,
-                                PriceHour = defaultPrice.PricePerHour
-                            }).FirstOrDefault();
-            var sub = (from room in _dbContext.Rooms
-                       join roomType in _dbContext.RoomTypes
-                              on room.RoomTypeId equals roomType.RoomTypeID
-                       join subPrice in _dbContext.SubPrices on roomType.RoomTypeID equals subPrice.RoomTypeID
-                       where room.RoomID == id
-                       select new
-                       {
-                           PriceNight = subPrice.PricePerNight,
-                           PriceHour = subPrice.PricePerHours,
-                           DateStart = subPrice.DayStart,
-                           DateEnd = subPrice.DayEnd,
-                       }).FirstOrDefault();
+            var defaultP = (
+                from room in _dbContext.Rooms
+                join roomType in _dbContext.RoomTypes on room.RoomTypeId equals roomType.RoomTypeID
+                join defaultPrice in _dbContext.DefaultPrices
+                    on roomType.RoomTypeID equals defaultPrice.RoomTypeID
+                where room.RoomID == id
+                select new
+                {
+                    PriceNight = defaultPrice.PricePerNight,
+                    PriceHour = defaultPrice.PricePerHour,
+                }
+            ).FirstOrDefault();
+            var sub = (
+                from room in _dbContext.Rooms
+                join roomType in _dbContext.RoomTypes on room.RoomTypeId equals roomType.RoomTypeID
+                join subPrice in _dbContext.SubPrices
+                    on roomType.RoomTypeID equals subPrice.RoomTypeID
+                where room.RoomID == id
+                select new
+                {
+                    PriceNight = subPrice.PricePerNight,
+                    PriceHour = subPrice.PricePerHours,
+                    DateStart = subPrice.DayStart,
+                    DateEnd = subPrice.DayEnd,
+                }
+            ).FirstOrDefault();
             return new PriceDto
             {
                 PricePerHourDefault = defaultP?.PriceHour ?? 0,
@@ -445,27 +442,27 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 PricePerHourSub = sub?.PriceHour ?? 0,
                 PricePerNightSub = sub?.PriceNight ?? 0,
                 DateStart = sub?.DateStart ?? DateTime.Now,
-                DateEnd = sub?.DateEnd ?? DateTime.Now
+                DateEnd = sub?.DateEnd ?? DateTime.Now,
             };
         }
 
         // Tính tổng các phí ngoài
         public decimal GetTotalChargeByBillId(int billId)
         {
-            var checkCharge = _dbContext.BillBooking_Charges.FirstOrDefault(b => b.BillID == billId);
+            var checkCharge = _dbContext.BillBooking_Charges.FirstOrDefault(b =>
+                b.BillID == billId
+            );
 
             if (checkCharge == null)
             {
                 return 0;
             }
-            var totalCharge = (from bookingCharge in _dbContext.BillBooking_Charges
-                               join charge in _dbContext.Charges
-                               on bookingCharge.ChargeID equals charge.Id
-                               where bookingCharge.BillID == billId
-                               select new
-                               {
-                                   money = charge.Price
-                               }).ToList();
+            var totalCharge = (
+                from bookingCharge in _dbContext.BillBooking_Charges
+                join charge in _dbContext.Charges on bookingCharge.ChargeID equals charge.Id
+                where bookingCharge.BillID == billId
+                select new { money = charge.Price }
+            ).ToList();
             decimal total = 0;
             foreach (var item in totalCharge)
             {
@@ -475,18 +472,17 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             return total;
         }
 
-
         public decimal GetTotalAmountByRoom(DateTime checkIn, DateTime checkOut, int roomId)
         {
-
             var priceRoom = GetPriceRoom(roomId);
-            // 
+            //
             if (checkIn >= priceRoom.DateStart && checkOut <= priceRoom.DateEnd)
             {
                 TimeSpan overlap = checkOut - checkIn;
                 int days = overlap.Days;
                 int hours = overlap.Hours;
-                decimal totalAmount = days * priceRoom.PricePerNightSub + hours * priceRoom.PricePerHourSub;
+                decimal totalAmount =
+                    days * priceRoom.PricePerNightSub + hours * priceRoom.PricePerHourSub;
                 return totalAmount;
             }
             else if (checkOut < priceRoom.DateStart || checkIn > priceRoom.DateEnd)
@@ -494,10 +490,15 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 TimeSpan overlap = checkOut - checkIn;
                 int days = overlap.Days;
                 int hours = overlap.Hours;
-                decimal totalAmount = days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerHourDefault;
+                decimal totalAmount =
+                    days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerHourDefault;
                 return totalAmount;
             }
-            else if (checkIn < priceRoom.DateStart && checkOut > priceRoom.DateStart && checkOut < priceRoom.DateEnd)
+            else if (
+                checkIn < priceRoom.DateStart
+                && checkOut > priceRoom.DateStart
+                && checkOut < priceRoom.DateEnd
+            )
             {
                 TimeSpan overlap = priceRoom.DateStart - checkIn;
                 TimeSpan overlapSub = checkOut - priceRoom.DateStart;
@@ -505,12 +506,18 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 int hours = overlap.Hours;
                 int daysSub = overlapSub.Days;
                 int hoursSub = overlapSub.Hours;
-                decimal totalAmount = days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerHourDefault
-                    + daysSub * priceRoom.PricePerNightSub + hoursSub * priceRoom.PricePerHourSub;
+                decimal totalAmount =
+                    days * priceRoom.PricePerNightDefault
+                    + hours * priceRoom.PricePerHourDefault
+                    + daysSub * priceRoom.PricePerNightSub
+                    + hoursSub * priceRoom.PricePerHourSub;
                 return totalAmount;
             }
-
-            else if (checkIn > priceRoom.DateStart && checkIn < priceRoom.DateEnd && checkOut > priceRoom.DateEnd)
+            else if (
+                checkIn > priceRoom.DateStart
+                && checkIn < priceRoom.DateEnd
+                && checkOut > priceRoom.DateEnd
+            )
             {
                 TimeSpan overlap = checkOut - priceRoom.DateEnd;
                 TimeSpan overlapSub = priceRoom.DateEnd - checkIn;
@@ -518,8 +525,11 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 int hours = overlap.Hours;
                 int daysSub = overlapSub.Days;
                 int hoursSub = overlapSub.Hours;
-                decimal totalAmount = days * priceRoom.PricePerNightDefault + hours * priceRoom.PricePerHourDefault
-                    + daysSub * priceRoom.PricePerNightSub + hoursSub * priceRoom.PricePerHourSub;
+                decimal totalAmount =
+                    days * priceRoom.PricePerNightDefault
+                    + hours * priceRoom.PricePerHourDefault
+                    + daysSub * priceRoom.PricePerNightSub
+                    + hoursSub * priceRoom.PricePerHourSub;
                 return totalAmount;
             }
             else
@@ -533,8 +543,11 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 int hours2 = overlap2.Hours;
                 int daysSub = overlapSub.Days;
                 int hoursSub = overlapSub.Hours;
-                decimal totalAmount = (days1 + days2) * priceRoom.PricePerNightDefault + (hours1 + hours2) * priceRoom.PricePerHourDefault
-                    + daysSub * priceRoom.PricePerNightSub + hoursSub * priceRoom.PricePerHourSub;
+                decimal totalAmount =
+                    (days1 + days2) * priceRoom.PricePerNightDefault
+                    + (hours1 + hours2) * priceRoom.PricePerHourDefault
+                    + daysSub * priceRoom.PricePerNightSub
+                    + hoursSub * priceRoom.PricePerHourSub;
                 return totalAmount;
             }
         }
@@ -548,18 +561,19 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 _logger.LogError("Booking không tồn tại!");
                 throw new HotelExceptions("Booking không tồn tại!");
             }
-            var roomList = (from booking in _dbContext.BillBookings
-                            join bookingRoom in _dbContext.BillBooking_Rooms
-                                on booking.BillID equals bookingRoom.BillID
-                            join room in _dbContext.Rooms
-                                on bookingRoom.RoomID equals room.RoomID
-                            where booking.BillID == billId
-                            select new
-                            {
-                                RoomId = room.RoomID,
-                                CheckIn = booking.ExpectedCheckIn,
-                                CheckOut = booking.ExpectedCheckOut
-                            }).ToList();
+            var roomList = (
+                from booking in _dbContext.BillBookings
+                join bookingRoom in _dbContext.BillBooking_Rooms
+                    on booking.BillID equals bookingRoom.BillID
+                join room in _dbContext.Rooms on bookingRoom.RoomID equals room.RoomID
+                where booking.BillID == billId
+                select new
+                {
+                    RoomId = room.RoomID,
+                    CheckIn = booking.ExpectedCheckIn,
+                    CheckOut = booking.ExpectedCheckOut,
+                }
+            ).ToList();
 
             if (!roomList.Any())
             {
@@ -572,34 +586,35 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             {
                 totalAmount += GetTotalAmountByRoom(room.CheckIn, room.CheckOut, room.RoomId);
                 Console.WriteLine($"Total: {totalAmount}");
-
             }
             if (bill.DiscountID != null)
             {
-                decimal voucher = Convert.ToDecimal(_informationService.GetVoucherCustomer(bill.DiscountID));
+                decimal voucher = Convert.ToDecimal(
+                    _informationService.GetVoucherCustomer(bill.DiscountID)
+                );
                 totalAmount = totalAmount - ((voucher / 100) * totalAmount);
 
                 return totalAmount;
             }
             return totalAmount;
-
         }
 
         // Tính tiền nếu trả phòng muộn
         public decimal GetTotalLateByBillId(int billId)
         {
-            var roomList = (from booking in _dbContext.BillBookings
-                            join bookingRoom in _dbContext.BillBooking_Rooms
-                                on booking.BillID equals bookingRoom.BillID
-                            join room in _dbContext.Rooms
-                                on bookingRoom.RoomID equals room.RoomID
-                            where booking.BillID == billId
-                            select new
-                            {
-                                RoomId = room.RoomID,
-                                CheckIn = booking.ExpectedCheckOut,
-                                CheckOut = booking.CheckOut ?? DateTime.Now
-                            }).ToList();
+            var roomList = (
+                from booking in _dbContext.BillBookings
+                join bookingRoom in _dbContext.BillBooking_Rooms
+                    on booking.BillID equals bookingRoom.BillID
+                join room in _dbContext.Rooms on bookingRoom.RoomID equals room.RoomID
+                where booking.BillID == billId
+                select new
+                {
+                    RoomId = room.RoomID,
+                    CheckIn = booking.ExpectedCheckOut,
+                    CheckOut = booking.CheckOut ?? DateTime.Now,
+                }
+            ).ToList();
 
             if (!roomList.Any())
             {
@@ -616,7 +631,6 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             }
 
             return totalAmount;
-
         }
 
         //Tính tiền tổng bill
@@ -655,16 +669,17 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
         public void DeleteBooking(int id)
         {
             var findBooking = FindBooking(id);
-            var relatedBookingRooms = _dbContext.BillBooking_Rooms
-                                        .Where(br => br.BillID == id)
-                                        .ToList();
+            var relatedBookingRooms = _dbContext
+                .BillBooking_Rooms.Where(br => br.BillID == id)
+                .ToList();
             if (relatedBookingRooms.Any())
             {
                 _dbContext.BillBooking_Rooms.RemoveRange(relatedBookingRooms);
             }
 
-            var relatedBookingCharges = _dbContext.BillBooking_Charges
-                .Where(br => br.BillID == id).ToList();
+            var relatedBookingCharges = _dbContext
+                .BillBooking_Charges.Where(br => br.BillID == id)
+                .ToList();
             if (relatedBookingCharges.Any())
             {
                 _dbContext.BillBooking_Charges.RemoveRange(relatedBookingCharges);
@@ -705,33 +720,39 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 CustomerID = findBooking.CustomerID,
                 ReceptionistID = findBooking.ReceptionistID,
                 BookingDate = findBooking.BookingDate,
-                Rooms = _dbContext.BillBooking_Rooms
-                    .Where(br => br.BillID == findBooking.BillID)
-                    .Join(_dbContext.Rooms,
-                          br => br.RoomID,
-                          r => r.RoomID,
-                          (br, r) => new RoomBookingDto
-                          {
-                              RoomID = r.RoomID,
-                              RoomName = r.RoomName,
-                              Floor = r.Floor,
-                              RoomTypeId = r.RoomTypeId,
-                              HotelId = r.HotelId,
-                          })
+                Rooms = _dbContext
+                    .BillBooking_Rooms.Where(br => br.BillID == findBooking.BillID)
+                    .Join(
+                        _dbContext.Rooms,
+                        br => br.RoomID,
+                        r => r.RoomID,
+                        (br, r) =>
+                            new RoomBookingDto
+                            {
+                                RoomID = r.RoomID,
+                                RoomName = r.RoomName,
+                                Floor = r.Floor,
+                                RoomTypeId = r.RoomTypeId,
+                                HotelId = r.HotelId,
+                            }
+                    )
                     .ToList(),
-                Charges = _dbContext.BillBooking_Charges
-                    .Where(br => br.BillID == findBooking.BillID)
-                    .Join(_dbContext.Charges,
-                          br => br.ChargeID,
-                          r => r.Id,
-                          (br, r) => new ChargeDto
-                          {
-                              ChargeId = r.Id,
-                              Descreption = r.Descreption,
-                              Price = r.Price,
-                          })
+                Charges = _dbContext
+                    .BillBooking_Charges.Where(br => br.BillID == findBooking.BillID)
+                    .Join(
+                        _dbContext.Charges,
+                        br => br.ChargeID,
+                        r => r.Id,
+                        (br, r) =>
+                            new ChargeDto
+                            {
+                                ChargeId = r.Id,
+                                Descreption = r.Descreption,
+                                Price = r.Price,
+                            }
+                    )
                     .ToList(),
-                Status = findBooking.Status
+                Status = findBooking.Status,
             };
         }
 
@@ -765,21 +786,24 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                     ExpectedCheckOut = s.ExpectedCheckOut,
                     Prepayment = s.Prepayment,
                     ReceptionistID = s.ReceptionistID,
-                    Rooms = _dbContext.BillBooking_Rooms
-                    .Where(br => br.BillID == s.BillID)
-                    .Join(_dbContext.Rooms,
-                          br => br.RoomID,
-                          r => r.RoomID,
-                          (br, r) => new RoomBookingDto
-                          {
-                              RoomID = r.RoomID,
-                              RoomName = r.RoomName,
-                              Floor = r.Floor,
-                              RoomTypeId = r.RoomTypeId,
-                              HotelId = r.HotelId,
-                          })
-                    .ToList(),
-                    Status = s.Status
+                    Rooms = _dbContext
+                        .BillBooking_Rooms.Where(br => br.BillID == s.BillID)
+                        .Join(
+                            _dbContext.Rooms,
+                            br => br.RoomID,
+                            r => r.RoomID,
+                            (br, r) =>
+                                new RoomBookingDto
+                                {
+                                    RoomID = r.RoomID,
+                                    RoomName = r.RoomName,
+                                    Floor = r.Floor,
+                                    RoomTypeId = r.RoomTypeId,
+                                    HotelId = r.HotelId,
+                                }
+                        )
+                        .ToList(),
+                    Status = s.Status,
                 })
                 .ToList();
 
@@ -798,7 +822,9 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
 
             if (customerId != null)
             {
-                query = query.Where(b => b.CustomerID == customerId && b.Status != "Cancelled" && b.Status != "Done");
+                query = query.Where(b =>
+                    b.CustomerID == customerId && b.Status != "Cancelled" && b.Status != "Done"
+                );
             }
             else
             {
@@ -826,21 +852,24 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                     ExpectedCheckOut = s.ExpectedCheckOut,
                     Prepayment = s.Prepayment,
                     ReceptionistID = s.ReceptionistID,
-                    Rooms = _dbContext.BillBooking_Rooms
-                    .Where(br => br.BillID == s.BillID)
-                    .Join(_dbContext.Rooms,
-                          br => br.RoomID,
-                          r => r.RoomID,
-                          (br, r) => new RoomBookingDto
-                          {
-                              RoomID = r.RoomID,
-                              RoomName = r.RoomName,
-                              Floor = r.Floor,
-                              RoomTypeId = r.RoomTypeId,
-                              HotelId = r.HotelId,
-                          })
-                    .ToList(),
-                    Status = s.Status
+                    Rooms = _dbContext
+                        .BillBooking_Rooms.Where(br => br.BillID == s.BillID)
+                        .Join(
+                            _dbContext.Rooms,
+                            br => br.RoomID,
+                            r => r.RoomID,
+                            (br, r) =>
+                                new RoomBookingDto
+                                {
+                                    RoomID = r.RoomID,
+                                    RoomName = r.RoomName,
+                                    Floor = r.Floor,
+                                    RoomTypeId = r.RoomTypeId,
+                                    HotelId = r.HotelId,
+                                }
+                        )
+                        .ToList(),
+                    Status = s.Status,
                 })
                 .ToList();
 
@@ -871,8 +900,9 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
         {
             var findCharge = FindCharge(id);
 
-            var relatedBookingCharges = _dbContext.BillBooking_Charges
-                .Where(br => br.ChargeID == id).ToList();
+            var relatedBookingCharges = _dbContext
+                .BillBooking_Charges.Where(br => br.ChargeID == id)
+                .ToList();
             if (relatedBookingCharges.Any())
             {
                 _dbContext.BillBooking_Charges.RemoveRange(relatedBookingCharges);
@@ -901,19 +931,19 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 throw new HotelExceptions($"Booking với ID {bookingId} không tồn tại.");
             }
 
-            var charges = (from bc in _dbContext.BillBooking_Charges
-                           join c in _dbContext.Charges
-                           on bc.ChargeID equals c.Id
-                           where bc.BillID == bookingId
-                           select new ChargeDto
-                           {
-                               ChargeId = c.Id,
-                               Price = c.Price,
-                               Descreption = c.Descreption
-                           }).ToList();
+            var charges = (
+                from bc in _dbContext.BillBooking_Charges
+                join c in _dbContext.Charges on bc.ChargeID equals c.Id
+                where bc.BillID == bookingId
+                select new ChargeDto
+                {
+                    ChargeId = c.Id,
+                    Price = c.Price,
+                    Descreption = c.Descreption,
+                }
+            ).ToList();
 
             return charges;
         }
     }
-
 }
