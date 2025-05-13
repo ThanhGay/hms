@@ -25,11 +25,11 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// <param name="hotelId"></param>
         /// <returns></returns>
         [HttpGet("all")]
-        public IActionResult GetAllRoomInHotel([FromQuery] int hotelId)
+        public IActionResult GetAllRoomInHotel([FromQuery] FilterRoomDto dto)
         {
             try
             {
-                return Ok(_roomService.GetAllRoom(hotelId));
+                return Ok(_roomService.GetAllRoom(dto));
             }
             catch (Exception ex)
             {
