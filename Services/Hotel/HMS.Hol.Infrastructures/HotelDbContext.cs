@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Hol.Domain;
+﻿using HMS.Hol.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMS.Hol.Infrastructures
@@ -22,6 +17,7 @@ namespace HMS.Hol.Infrastructures
         public DbSet<HolRoomDetail> RoomDetails { get; set; }
         public DbSet<HolRoomType> RoomTypes { get; set; }
         public DbSet<HolRoomType_RoomDetail> RoomType_RoomDetails { get; set; }
+        public DbSet<HolRoomReview> RoomReviews { get; set; }
 
         public HotelDbContext(DbContextOptions<HotelDbContext> options)
             : base(options) { }
@@ -87,7 +83,7 @@ namespace HMS.Hol.Infrastructures
                 .Entity<HolBillBooking_Room>()
                 .HasOne<HolRoom>()
                 .WithMany()
-                .HasForeignKey(e=> e.RoomID)
+                .HasForeignKey(e => e.RoomID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder
@@ -104,6 +100,12 @@ namespace HMS.Hol.Infrastructures
                 .HasForeignKey(e => e.ChargeID)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder
+                .Entity<HolRoomReview>()
+                .HasOne<HolRoom>()
+                .WithMany()
+                .HasForeignKey(e => e.RoomId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }

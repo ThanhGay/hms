@@ -47,6 +47,29 @@ namespace HMS.WebAPI.Migrations
                     b.ToTable("AuthCustomer", "auth");
                 });
 
+            modelBuilder.Entity("HMS.Auth.Domain.AuthCustomerDevice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DeviceToken")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("AuthCustomerDevice", "auth");
+                });
+
             modelBuilder.Entity("HMS.Auth.Domain.AuthCustomerVoucher", b =>
                 {
                     b.Property<int>("VoucherId")
@@ -63,6 +86,27 @@ namespace HMS.WebAPI.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("AuthCustomerVoucher", "auth");
+                });
+
+            modelBuilder.Entity("HMS.Auth.Domain.AuthFavouriteRoom", b =>
+                {
+                    b.Property<int>("FavouriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavouriteId"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FavouriteId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("AuthFavouriteRoom", "auth");
                 });
 
             modelBuilder.Entity("HMS.Auth.Domain.AuthPermission", b =>
@@ -208,6 +252,15 @@ namespace HMS.WebAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HMS.Auth.Domain.AuthCustomerDevice", b =>
+                {
+                    b.HasOne("HMS.Auth.Domain.AuthCustomer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HMS.Auth.Domain.AuthCustomerVoucher", b =>
                 {
                     b.HasOne("HMS.Auth.Domain.AuthCustomer", null)
@@ -219,6 +272,15 @@ namespace HMS.WebAPI.Migrations
                     b.HasOne("HMS.Auth.Domain.AuthVoucher", null)
                         .WithMany()
                         .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HMS.Auth.Domain.AuthFavouriteRoom", b =>
+                {
+                    b.HasOne("HMS.Auth.Domain.AuthCustomer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

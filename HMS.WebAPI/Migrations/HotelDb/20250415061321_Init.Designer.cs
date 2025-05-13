@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.WebAPI.Migrations.HotelDb
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20241217040259_HolDb")]
-    partial class HolDb
+    [Migration("20250415061321_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -272,6 +272,45 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.ToTable("HolRoomDetail", "hol");
                 });
 
+            modelBuilder.Entity("HMS.Hol.Domain.HolRoomReview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Star")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("HolRoomReview", "hol");
+                });
+
             modelBuilder.Entity("HMS.Hol.Domain.HolRoomType", b =>
                 {
                     b.Property<int>("RoomTypeID")
@@ -397,6 +436,15 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.HasOne("HMS.Hol.Domain.HolRoomType", null)
                         .WithMany()
                         .HasForeignKey("RoomTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HMS.Hol.Domain.HolRoomReview", b =>
+                {
+                    b.HasOne("HMS.Hol.Domain.HolRoom", null)
+                        .WithMany()
+                        .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Hol.ApplicationService.Common;
+﻿using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Domain;
 using HMS.Hol.Dtos.RoomTypeManager;

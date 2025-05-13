@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HMS.Hol.Dtos.RoomTypeManager
+﻿namespace HMS.Hol.Dtos.RoomTypeManager
 {
     public class RoomTypeDefaultInformationDto
     {

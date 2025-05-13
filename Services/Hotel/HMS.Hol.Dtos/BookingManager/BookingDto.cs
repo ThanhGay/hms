@@ -1,11 +1,4 @@
-﻿using HMS.Hol.Dtos.RoomManager;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HMS.Hol.Dtos.BookingManager
+﻿namespace HMS.Hol.Dtos.BookingManager
 {
     public class BookingDto
     {
@@ -21,5 +14,6 @@ namespace HMS.Hol.Dtos.BookingManager
         public int? CustomerID { get; set; }
         public int? ReceptionistID { get; set; }
         public List<RoomBookingDto> Rooms { get; set; }
+        public List<ChargeDto> Charges { get; set; }
     }
 }

@@ -1,14 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using HMS.Auth.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Auth.Infrastructures;
-using HMS.Auth.Dtos;
-using System.Xml.Linq;
-using HMS.Auth.ApplicationService.UserModule.Abstracts;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HMS.WebAPI
 {

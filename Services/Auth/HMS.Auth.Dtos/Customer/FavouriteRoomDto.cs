@@ -1,0 +1,9 @@
+﻿namespace HMS.Auth.Dtos.Customer
+{
+    public class FavouriteRoomDto
+    {
+        public int FavouriteId { get; set; }
+        public int HotelId { get; set; }
+        public int RoomId { get; set; }
+    }
+}

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMS.Auth.Domain;
+﻿using HMS.Auth.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMS.Auth.Infrastructures
@@ -21,7 +16,8 @@ namespace HMS.Auth.Infrastructures
         public DbSet<AuthRolePermission> AuthRolesPermissions { get; set; }
         public DbSet<AuthVoucher> AuthVouchers { get; set; }
         public DbSet<AuthCustomerVoucher> AuthCustomerVouchers { get; set; }
-
+        public DbSet<AuthFavouriteRoom> AuthFavouriteRooms { get; set; }
+        public DbSet<AuthCustomerDevice> AuthCustomerDevices { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
@@ -69,8 +65,22 @@ namespace HMS.Auth.Infrastructures
             modelBuilder
                 .Entity<AuthCustomerVoucher>()
                 .HasKey(e => new { e.VoucherId, e.CustomerId });
+            modelBuilder.Entity<AuthFavouriteRoom>()
+                .HasOne<AuthCustomer>()
+                .WithMany()
+                .HasForeignKey(f => f.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            //SeedData.SeedAuthRole(modelBuilder);
+            //SeedData.SeedAuthRolePermission(modelBuilder);
+            //SeedData.SeedAccount(modelBuilder);
+            modelBuilder.Entity<AuthCustomerDevice>()
+                .HasOne<AuthCustomer>()
+                .WithMany()
+                .HasForeignKey(a => a.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
             base.OnModelCreating(modelBuilder);
+
         }
     }
 }

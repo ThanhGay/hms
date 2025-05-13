@@ -1,10 +1,15 @@
-﻿using HMS.Auth.ApplicationService.UserModule.Abstracts;
+﻿using Google.Apis.Auth.OAuth2;
+using HMS.Auth.ApplicationService.UserModule.Abstracts;
 using HMS.Auth.Dtos;
-using HMS.Auth.Dtos.Receptionist;
+using HMS.Hol.Dtos.BookingManager;
+using HMS.Shared.ApplicationService.Notification;
 using HMS.Shared.Constant.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace HMS.WebAPI.Controllers.User
 {
@@ -18,12 +23,12 @@ namespace HMS.WebAPI.Controllers.User
             _userService = userService;
         }
 
-        [HttpPost("/Login")]
+        [HttpPost("/login")]
         public IActionResult Login([FromBody] LoginDto input)
         {
             try
             {
-                
+
                 return Ok(_userService.Login(input));
             }
             catch (Exception ex)
@@ -121,5 +126,34 @@ namespace HMS.WebAPI.Controllers.User
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("/check-otp")]
+        public IActionResult CheckOTP(checkOtpDto dto)
+        {
+            try
+            {
+                _userService.checkOtp(dto);
+                return Ok("Chính xác OTP");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("send-notification-message")]
+        public async Task<IActionResult> SendNotification(SendNotificationDto dto)
+        {
+            try
+            {
+                await _userService.SendNotification(dto);
+                return Ok("Thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

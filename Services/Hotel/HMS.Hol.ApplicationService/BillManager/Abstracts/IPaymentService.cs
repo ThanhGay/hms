@@ -1,6 +1,4 @@
 ﻿using HMS.Hol.ApplicationService.Common;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace HMS.Hol.ApplicationService.BillManager.Abstracts
 {

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HMS.Hol.Dtos.RoomManager.Review;
+using HMS.Hol.Dtos.Upload;
 
 namespace HMS.Hol.Dtos.RoomManager
 {
-    // return room with default price
+    /// <summary>
+    /// return room with price in holidays
+    /// </summary>
     public class RoomFullDetailDto
     {
         public int RoomId { get; set; }
@@ -19,6 +18,8 @@ namespace HMS.Hol.Dtos.RoomManager
         public decimal PricePerHolidayNight { get; set; }
         public decimal PricePerHolidayHour { get; set; }
         public int RoomTypeId { get; set; }
+        public List<ImageDto>? RoomImages { get; set; }
+        public ResultRoomReviewDto? Reviews { get; set; }
         public int HotelId { get; set; }
     }
 }

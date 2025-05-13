@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HMS.Shared.Constant.Permission
+﻿namespace HMS.Shared.Constant.Permission
 {
     public class PermissionKeys
     {
@@ -73,5 +67,8 @@ namespace HMS.Shared.Constant.Permission
         public const string GetChargeById = "get_charge_by_id";
         public const string GetChargeByIdBooking = "get_charge_by_id_booking";
         public const string CancelBooking = "cancel_booking";
+        public const string CreateReviewRoom = "create_review_room";
+        public const string UpdateReviewRoom = "update_review_room";
+        public const string DeleteReviewRoom = "delete_review_room";
     }
 }

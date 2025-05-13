@@ -26,6 +26,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HMS.Shared.Constant", "Services\Shared\HMS.Shared.Constant\HMS.Shared.Constant.csproj", "{62E6C64F-C0BF-4B6D-8834-036D3AC4BC5D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HMS.Shared.ApplicationService", "Services\Shared\HMS.Shared.ApplicationService\HMS.Shared.ApplicationService.csproj", "{E9629465-2245-4EBB-B6BF-3CA2A4D6B872}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A6E38944-50A1-4EE5-85F4-39668D631915} = {A6E38944-50A1-4EE5-85F4-39668D631915}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HMS.Noti.Infrastructures", "Services\Notification\HMS.Noti.Infrastructures\HMS.Noti.Infrastructures.csproj", "{447385D5-08C4-415D-AB51-6253407DFDE1}"
 EndProject
