@@ -56,6 +56,15 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                     PricePerNight = p.PricePerNight,
                     RoomName = r.RoomName,
                     RoomTypeId = r.RoomTypeId,
+                    RoomImages  = _dbContext
+                        .Images.Where(i => i.RoomId == r.RoomID)
+                        .Select(img => new ImageDto
+                        {
+                            Description = img.Description,
+                            ImageURL = img.URL,
+                            Name = img.Name,
+                        })
+                        .ToList()
                 };
 
             // Lọc theo từ khóa tìm kiếm (RoomName hoặc Description)
@@ -69,22 +78,22 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
             }
 
             // Lọc theo loại phòng (phòng đơn/phòng đôi)
-            if (dto.isSingleRoom && !dto.isDoubleRoom)
+            if (dto.isSingleRoom.GetValueOrDefault() && !dto.isDoubleRoom.GetValueOrDefault())
             {
                 foundRoomQuery = foundRoomQuery.Where(x => x.RoomTypeName.ToLower().Contains("đơn"));
             }
-            else if (dto.isDoubleRoom && !dto.isSingleRoom)
+            else if (dto.isDoubleRoom.GetValueOrDefault() && !dto.isSingleRoom.GetValueOrDefault())
             {
                 foundRoomQuery = foundRoomQuery.Where(x => x.RoomTypeName.ToLower().Contains("đôi"));
             }
             // nếu cả hai được bật thì không cần lọc gì thêm
 
             // Sắp xếp theo giá
-            if (dto.isLowHigh && !dto.isHighLow)
+            if (dto.isLowHigh.GetValueOrDefault() && !dto.isHighLow.GetValueOrDefault())
             {
                 foundRoomQuery = foundRoomQuery.OrderBy(x => x.PricePerNight);
             }
-            else if (dto.isHighLow && !dto.isLowHigh)
+            else if (dto.isHighLow.GetValueOrDefault() && !dto.isLowHigh.GetValueOrDefault())
             {
                 foundRoomQuery = foundRoomQuery.OrderByDescending(x => x.PricePerNight);
             }
