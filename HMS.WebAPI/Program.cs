@@ -4,7 +4,6 @@ using System.Text;
 using HMS.Auth.ApplicationService.StartUp;
 using HMS.Auth.ApplicationService.UserModule.Implements;
 using HMS.Hol.ApplicationService.Common;
-using HMS.Hol.ApplicationService.Common;
 using HMS.Hol.ApplicationService.Startup;
 using HMS.Noti.ApplicationService.StartUp;
 using HMS.WebAPI.Middlewares;

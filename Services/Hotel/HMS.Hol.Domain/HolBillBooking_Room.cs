@@ -12,6 +12,10 @@ namespace HMS.Hol.Domain
         public int ID { get; set; }
         public int BillID { get; set; }
         public int RoomID { get; set; }
-        public string status { get; set; }
+        public string Status { get; set; }
+        public decimal PricePerNight { get; set; }
+        public decimal PricePerHour { get; set; }
+        public string RoomTypeDescription { get; set; }
+        public string RoomTypeName { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HMS.Hol.ApplicationService.BillManager.Abstracts;
 using HMS.Hol.ApplicationService.Common;
+using HMS.Hol.ApplicationService.RoomManager.Abstracts;
 using HMS.Hol.Domain;
 using HMS.Hol.Dtos.BookingManager;
 using HMS.Hol.Infrastructures;
@@ -14,17 +15,20 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
     {
         private readonly IInformationService _informationService;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IRoomService _roomService;
 
         public BillBookingService(
             ILogger<BillBookingService> logger,
             HotelDbContext dbContext,
             IInformationService informationService,
-            IHttpContextAccessor httpContextAccessor
+            IHttpContextAccessor httpContextAccessor,
+            IRoomService roomService
         )
             : base(logger, dbContext)
         {
             _informationService = informationService;
             _contextAccessor = httpContextAccessor;
+            _roomService = roomService;
         }
 
         public BookingDto CreateBooking(CreateBookingDto input)
@@ -89,8 +93,8 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             {
                 foreach (var roomId in input.RoomIds)
                 {
-                    var roomExists = _dbContext.Rooms.Any(r => r.RoomID == roomId);
-                    if (!roomExists)
+                    var roomExists = _roomService.GetById(roomId);
+                    if (roomExists == null)
                     {
                         _logger.LogError($"Room với ID {roomId} không tồn tại.");
                         throw new HotelExceptions($"Room với ID {roomId} không tồn tại.");
@@ -100,7 +104,11 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                     {
                         BillID = newBooking.BillID,
                         RoomID = roomId,
-                        status = newBooking.Status,
+                        Status = newBooking.Status,
+                        PricePerHour = roomExists.PricePerHour,
+                        PricePerNight = roomExists.PricePerNight,
+                        RoomTypeName = roomExists.RoomTypeName,
+                        RoomTypeDescription = roomExists.Description,
                     };
                     _dbContext.BillBooking_Rooms.Add(bookingRoom);
                 }
@@ -140,6 +148,10 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                                 Floor = r.Floor,
                                 RoomTypeId = r.RoomTypeId,
                                 HotelId = r.HotelId,
+                                PricePerHour = br.PricePerHour,
+                                PricePerNight = br.PricePerNight,
+                                RoomTypeName = br.RoomTypeName,
+                                RoomTypeDescription = br.RoomTypeDescription,
                             }
                     )
                     .ToList(),
@@ -210,8 +222,8 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             {
                 foreach (var roomId in input.RoomIds)
                 {
-                    var roomExists = _dbContext.Rooms.Any(r => r.RoomID == roomId);
-                    if (!roomExists)
+                    var roomExists = _roomService.GetById(roomId);
+                    if (roomExists == null)
                     {
                         _logger.LogError($"Room với ID {roomId} không tồn tại.");
                         throw new HotelExceptions($"Room với ID {roomId} không tồn tại.");
@@ -221,7 +233,11 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                     {
                         BillID = newBooking.BillID,
                         RoomID = roomId,
-                        status = newBooking.Status,
+                        Status = newBooking.Status,
+                        PricePerHour = roomExists.PricePerHour,
+                        PricePerNight = roomExists.PricePerNight,
+                        RoomTypeName = roomExists.RoomTypeName,
+                        RoomTypeDescription = roomExists.Description,
                     };
                     _dbContext.BillBooking_Rooms.Add(bookingRoom);
                 }
@@ -261,6 +277,10 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                                 Floor = r.Floor,
                                 RoomTypeId = r.RoomTypeId,
                                 HotelId = r.HotelId,
+                                PricePerHour = br.PricePerHour,
+                                PricePerNight = br.PricePerNight,
+                                RoomTypeName = br.RoomTypeName,
+                                RoomTypeDescription = br.RoomTypeDescription,
                             }
                     )
                     .ToList(),
@@ -291,8 +311,8 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                 throw new HotelExceptions($"Booking với ID {bookingId} không tồn tại.");
             }
 
-            var roomExists = _dbContext.Rooms.Any(b => b.RoomID == roomId);
-            if (!roomExists)
+            var roomExists = _roomService.GetById(roomId);
+            if (roomExists == null)
             {
                 _logger.LogError($"Room với ID {roomId} không tồn tại.");
                 throw new HotelExceptions($"Room với ID {roomId} không tồn tại.");
@@ -302,7 +322,11 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             {
                 BillID = bookingId,
                 RoomID = roomId,
-                status = bookingExists.Status,
+                Status = bookingExists.Status,
+                PricePerHour = roomExists.PricePerHour,
+                PricePerNight = roomExists.PricePerNight,
+                RoomTypeName = roomExists.RoomTypeName,
+                RoomTypeDescription = roomExists.Description,
             };
             _dbContext.BillBooking_Rooms.Add(booking_room);
             _dbContext.SaveChanges();
@@ -734,6 +758,10 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                                 Floor = r.Floor,
                                 RoomTypeId = r.RoomTypeId,
                                 HotelId = r.HotelId,
+                                PricePerHour = br.PricePerHour,
+                                PricePerNight = br.PricePerNight,
+                                RoomTypeName = br.RoomTypeName,
+                                RoomTypeDescription = br.RoomTypeDescription,
                             }
                     )
                     .ToList(),
@@ -800,6 +828,10 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                                     Floor = r.Floor,
                                     RoomTypeId = r.RoomTypeId,
                                     HotelId = r.HotelId,
+                                    PricePerHour = br.PricePerHour,
+                                    PricePerNight = br.PricePerNight,
+                                    RoomTypeName = br.RoomTypeName,
+                                    RoomTypeDescription = br.RoomTypeDescription,
                                 }
                         )
                         .ToList(),
@@ -866,6 +898,10 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
                                     Floor = r.Floor,
                                     RoomTypeId = r.RoomTypeId,
                                     HotelId = r.HotelId,
+                                    PricePerHour = br.PricePerHour,
+                                    PricePerNight = br.PricePerNight,
+                                    RoomTypeName = br.RoomTypeName,
+                                    RoomTypeDescription = br.RoomTypeDescription,
                                 }
                         )
                         .ToList(),

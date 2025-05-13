@@ -106,7 +106,7 @@ namespace HMS.WebAPI.Migrations.HotelDb
                     b.Property<int>("RoomID")
                         .HasColumnType("int");
 
-                    b.Property<string>("status")
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
