@@ -19,15 +19,16 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
         public RoomService(ILogger<RoomService> logger, HotelDbContext dbContext)
             : base(logger, dbContext) { }
 
-        public PageResultDto<RoomDetailDto> GetAllRoom(int hotelId)
+        public PageResultDto<RoomDetailDto> GetAllRoom(FilterRoomDto dto)
         {
             var result = new PageResultDto<RoomDetailDto>();
 
+            // Câu truy vấn gốc
             var foundRoomQuery =
                 from r in _dbContext.Rooms
                 join t in _dbContext.RoomTypes on r.RoomTypeId equals t.RoomTypeID
                 join p in _dbContext.DefaultPrices on t.RoomTypeID equals p.RoomTypeID
-                where r.HotelId == hotelId
+                where r.HotelId == dto.hotelId
                 select new RoomDetailDto
                 {
                     RoomId = r.RoomID,
@@ -41,10 +42,43 @@ namespace HMS.Hol.ApplicationService.RoomManager.Implements
                     RoomTypeId = r.RoomTypeId,
                 };
 
-            var totalRoom = foundRoomQuery.Count();
+            // Lọc theo từ khóa tìm kiếm (RoomName hoặc Description)
+            if (!string.IsNullOrWhiteSpace(dto.Search))
+            {
+                string keyword = dto.Search.ToLower();
+                foundRoomQuery = foundRoomQuery.Where(x =>
+                    x.RoomName.ToLower().Contains(keyword) ||
+                    x.Description.ToLower().Contains(keyword)
+                );
+            }
 
-            result.TotalItem = totalRoom;
-            result.Items = foundRoomQuery;
+            // Lọc theo loại phòng (phòng đơn/phòng đôi)
+            if (dto.isSingleRoom && !dto.isDoubleRoom)
+            {
+                foundRoomQuery = foundRoomQuery.Where(x => x.RoomTypeName.ToLower().Contains("đơn"));
+            }
+            else if (dto.isDoubleRoom && !dto.isSingleRoom)
+            {
+                foundRoomQuery = foundRoomQuery.Where(x => x.RoomTypeName.ToLower().Contains("đôi"));
+            }
+            // nếu cả hai được bật thì không cần lọc gì thêm
+
+            // Sắp xếp theo giá
+            if (dto.isLowHigh && !dto.isHighLow)
+            {
+                foundRoomQuery = foundRoomQuery.OrderBy(x => x.PricePerNight);
+            }
+            else if (dto.isHighLow && !dto.isLowHigh)
+            {
+                foundRoomQuery = foundRoomQuery.OrderByDescending(x => x.PricePerNight);
+            }
+            // nếu cả hai đều false thì giữ nguyên
+
+            // Tổng số phòng sau lọc
+            result.TotalItem = foundRoomQuery.Count();
+
+            // Thực thi truy vấn
+            result.Items = foundRoomQuery.ToList();
 
             return result;
         }

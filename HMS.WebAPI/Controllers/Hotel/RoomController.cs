@@ -20,11 +20,11 @@ namespace HMS.WebAPI.Controllers.Hotel
         [Authorize]
         [TypeFilter(typeof(AuthorizationFilter), Arguments = new object[] {PermissionKeys.GetAllRoomInHotel })]
         [HttpGet("all")]
-        public IActionResult GetAllRoomInHotel([FromQuery] int hotelId)
+        public IActionResult GetAllRoomInHotel([FromQuery] FilterRoomDto dto)
         {
             try
             {
-                return Ok(_roomService.GetAllRoom(hotelId));
+                return Ok(_roomService.GetAllRoom(dto));
             }
             catch (Exception ex)
             {

@@ -152,6 +152,7 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
 
         public BookingDto CreatePreBooking(CreatePreBookingDto input)
         {
+
             var existsCustomer = _informationService.GetCustomerById(input.CustomerID);
             if (existsCustomer == null)
             {
@@ -160,8 +161,18 @@ namespace HMS.Hol.ApplicationService.BillManager.Implements
             }
 
 
-            var exists = _dbContext.BillBookings
-            .FirstOrDefault(s => s.BookingDate == input.BookingDate);
+            //var exists = _dbContext.BillBookings
+            //.FirstOrDefault(s => s.ExpectedCheckIn == input.ExpectedCheckIn && s.ExpectedCheckOut == input.ExpectedCheckOut && s.CustomerID == input.CustomerID);
+
+            var exists = (from b in _dbContext.BillBookings
+                          join br in _dbContext.BillBooking_Rooms
+                              on b.BillID equals br.BillID
+                          where b.ExpectedCheckIn == input.ExpectedCheckIn
+                                && b.ExpectedCheckOut == input.ExpectedCheckOut
+                                && b.CustomerID == input.CustomerID
+                                && input.RoomIds.Contains(br.RoomID)
+                          select b)
+                          .FirstOrDefault();
 
             if (exists != null)
             {
