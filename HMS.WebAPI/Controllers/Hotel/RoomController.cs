@@ -243,6 +243,10 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// <returns></returns>
         [HttpPost("vote/create")]
         [Authorize]
+        [TypeFilter(
+            typeof(AuthorizationFilter),
+            Arguments = new object[] { PermissionKeys.CreateReviewRoom }
+        )]
         public IActionResult CreateReviewRoom(CreateReviewRoomDto dto)
         {
             try
@@ -263,6 +267,10 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// <returns></returns>
         [HttpPut("vote/update")]
         [Authorize]
+        [TypeFilter(
+            typeof(AuthorizationFilter),
+            Arguments = new object[] { PermissionKeys.UpdateReviewRoom }
+        )]
         public IActionResult UpdateReviewRoom(UpdateReviewRoomDto dto)
         {
             try
@@ -283,6 +291,10 @@ namespace HMS.WebAPI.Controllers.Hotel
         /// <returns></returns>
         [HttpDelete("vote/delete/{reviewId}")]
         [Authorize]
+        [TypeFilter(
+            typeof(AuthorizationFilter),
+            Arguments = new object[] { PermissionKeys.DeleteReviewRoom }
+        )]
         public IActionResult DeleteReviewRoom(int reviewId)
         {
             try
